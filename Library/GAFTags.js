@@ -45,21 +45,22 @@ cc.gaf.Tag._base = cc.Class.extend({
     parse : function(stream, tagId, header){
         this.header = header;
         var size = stream.readU32();
+
+        stream.startNestedBuffer(size);
         var result = this.doParse(stream, size);
+        stream.endNestedBuffer();
+
         result.tagName = this.name;
         result.tagId = tagId;
         return result;
     },
     doParse : function(stream, size){
-        stream.seek(stream.tell() + size);
         return {};
     }
 });
-
 cc.gaf.Tag.End = cc.gaf.Tag._base.extend({
     name : "TagEnd"
 });
-
 cc.gaf.Tag.DefineAtlas = cc.gaf.Tag._base.extend({
     name : "TagDefineAtlas",
     doParse : function(stream, size){
@@ -87,52 +88,127 @@ cc.gaf.Tag.DefineAtlas = cc.gaf.Tag._base.extend({
     }
 });
 cc.gaf.Tag.DefineAnimationMasks = cc.gaf.Tag._base.extend({
-    name : "TagDefineAnimationMasks"
-
+    name : "TagDefineAnimationMasks",
+    doParse : function(stream, size) {
+        var result = {};
+        result.count = stream.readU32();
+        result.objects = [];
+        for(var i = 0; i < result.count; ++i){
+            var object = {};
+            object.objectId = stream.readU32();
+            object.elementAtlasIdRef  = stream.readU32();
+            result.objects.push(object);
+        }
+        return result;
+    }
 });
 cc.gaf.Tag.DefineAnimationObjects = cc.gaf.Tag._base.extend({
-    name : "TagDefineAnimationObjects"
-
+    name : "TagDefineAnimationObjects",
+    doParse : function(stream, size) {
+        var result = {};
+        result.count = stream.readU32();
+        result.objects = [];
+        for(var i = 0; i < result.count; ++i){
+            var object = {};
+            object.objectId = stream.readU32();
+            object.elementAtlasIdRef  = stream.readU32();
+            result.objects.push(object);
+        }
+        return result;
+    }
 });
 cc.gaf.Tag.DefineAnimationFrames = cc.gaf.Tag._base.extend({
-    name : "TagDefineAnimationFrames"
-
+    name : "TagDefineAnimationFrames",
+    doParse : function(stream, size) {
+        var result = {};
+        return result;
+    }
 });
 cc.gaf.Tag.DefineNamedParts = cc.gaf.Tag._base.extend({
-    name : "TagDefineNamedParts"
-
+    name : "TagDefineNamedParts",
+    doParse : function(stream, size) {
+        var result = {};
+        result.count = stream.readU32();
+        result.objects = [];
+        for(var i = 0; i < result.count; ++i){
+            var object = {};
+            object.objectIdRef = stream.readU32();
+            object.name = stream.readString();
+            result.objects.push(object);
+        }
+        return result;
+    }
 });
 cc.gaf.Tag.DefineSequences = cc.gaf.Tag._base.extend({
-    name : "TagDefineSequences"
-
+    name : "TagDefineSequences",
+    doParse : function(stream, size) {
+        var result = {};
+        result.count = stream.readU32();
+        result.objects = [];
+        for(var i = 0; i < result.count; ++i){
+            var object = {};
+            object.id = stream.readString();
+            object.start = stream.readU16();
+            object.end = stream.readU16();
+            result.objects.push(object);
+        }
+        return result;
+    }
 });
 cc.gaf.Tag.DefineTextFields = cc.gaf.Tag._base.extend({
     name : "TagDefineTextFields"
-
 });
 cc.gaf.Tag.DefineAtlas2 = cc.gaf.Tag._base.extend({
     name : "TagDefineAtlas2"
-
 });
 cc.gaf.Tag.DefineStage = cc.gaf.Tag._base.extend({
-    name : "TagDefineStage"
-
+    name : "TagDefineStage",
+    doParse : function(stream, size) {
+        var result = {};
+        result.fps = stream.readU8();
+        result.color = stream.readU32();
+        result.width = stream.readU16();
+        result.height = stream.readU16();
+        return result;
+    }
 });
 cc.gaf.Tag.DefineAnimationObjects2 = cc.gaf.Tag._base.extend({
-    name : "TagDefineAnimationObjects2"
-
+    name : "TagDefineAnimationObjects2",
+    doParse : function(stream, size) {
+        var result = {};
+        result.count = stream.readU32();
+        result.objects = [];
+        for(var i = 0; i < result.count; ++i){
+            var object = {};
+            object.objectId = stream.readU32();
+            object.elementAtlasIdRef  = stream.readU32();
+            object.type = stream.readU16();
+            result.objects.push(object);
+        }
+        return result;
+    }
 });
 cc.gaf.Tag.DefineAnimationMasks2 = cc.gaf.Tag._base.extend({
-    name : "TagDefineAnimationMasks2"
-
+    name : "TagDefineAnimationMasks2",
+    doParse : function(stream, size) {
+        var result = {};
+        result.count = stream.readU32();
+        result.objects = [];
+        for(var i = 0; i < result.count; ++i){
+            var object = {};
+            object.objectId = stream.readU32();
+            object.elementAtlasIdRef  = stream.readU32();
+            object.type = stream.readU16();
+            result.objects.push(object);
+        }
+        return result;
+    }
 });
 cc.gaf.Tag.DefineAnimationFrames2 = cc.gaf.Tag._base.extend({
     name : "TagDefineAnimationFrames2"
-
 });
 cc.gaf.Tag.DefineTimeline = cc.gaf.Tag._base.extend({
     name : "TagDefineTimeline"
-
 });
 
 cc.gaf.Tags = new cc.gaf.Tag();
