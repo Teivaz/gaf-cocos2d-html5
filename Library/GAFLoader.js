@@ -1,10 +1,18 @@
 
 
-cc.gaf.Loader = {
+cc.gaf.Loader = cc.Class.extend({
     m_stream : null,
     m_object : null,
+
+    ctor : function(stream){
+        m_stream = stream;
+    },
+
     loadData : function(stream){
-        readHeader(stream);
+        if(arguments.length == 1){
+            m_stream = stream;
+        }
+        this.read(m_stream);
 
     },
 
@@ -15,9 +23,10 @@ cc.gaf.Loader = {
     read : function(rawStream) {
         var stream = null;
         var magic = rawStream.readU32();
-        var header = readHeader(rawStream);
+        var header = this.readHeader(rawStream);
         if(magic == 0x00474146) { // GAF
             stream = rawStream;
+            stream.seek(rawStream.tell());
         }
         else if(magic == 0x00474143){ // GAC
             stream = uncompress(rawStream);
@@ -25,7 +34,7 @@ cc.gaf.Loader = {
         else{
             throw new Error("GAF syntax error.");
         }
-        cc.gaf.Tags.read(stream);
+        var tagReader = cc.gaf.LoadTag(stream);
     },
 
     readHeader : function(stream){
@@ -36,7 +45,7 @@ cc.gaf.Loader = {
         if(header.versionMajor < 4){
             header.framesCount = stream.readU16();
             header.bounds = stream.readRect();
-            header.point = stream.readVec();
+            header.point = stream.readVec2();
         }
         else{
             header.scaleCount = stream.readU32();
@@ -52,4 +61,4 @@ cc.gaf.Loader = {
         }
         return header;
     }
-};
+});

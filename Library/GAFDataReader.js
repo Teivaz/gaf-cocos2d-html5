@@ -49,3 +49,27 @@ cc.gaf.DataReader.prototype.endNestedBuffer = function() {
     if (this.offset.length == 1) throw new Error('No nested buffer available');
     this.offset.pop();
 };
+
+cc.gaf.DataReader.prototype.readVec2 = function(){
+    return new cc.kmVec2(
+        this.readFloat(),
+        this.readFloat()
+    )
+};
+
+cc.gaf.DataReader.prototype.readRect = function(){
+    return new cc.Rect(
+        this.readFloat(),
+        this.readFloat(),
+        this.readFloat(),
+        this.readFloat()
+    )
+};
+
+cc.gaf.DataReader.prototype.seek = function(pos){
+    this.offset[this.offset.length-1] = pos;
+};
+
+cc.gaf.DataReader.prototype.tell = function(){
+    return this.offset[this.offset.length-1];
+};
