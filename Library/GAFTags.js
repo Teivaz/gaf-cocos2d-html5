@@ -4,23 +4,22 @@
 
 
 
-cc.gaf.LoadTag = function(stream){
+cc.gaf.LoadTag = function(stream, header){
     var tagId = stream.readU16();
     var tag = cc.gaf.Tags[tagId];
     var result = {};
     if(typeof tag === "undefined"){
         cc.log("GAF. Non implemented tag detected.");
-        cc.gaf.Tags.default.parse(stream, tagId);
+        cc.gaf.Tags.default.parse(stream, tagId, header);
     }
     else{
-        result = tag.parse(stream, tagId);
+        result = tag.parse(stream, tagId, header);
     }
     return result;
 };
 
 
 cc.gaf.Tag = cc.Class.extend({
-
     ctor : function(){
         this.default = new cc.gaf.Tag._base();
         this["0"] = new cc.gaf.Tag.End();
@@ -42,17 +41,17 @@ cc.gaf.Tag = cc.Class.extend({
 
 cc.gaf.Tag._base = cc.Class.extend({
     name : "undefined",
-    parse : function(stream, tagId){
+    header : null,
+    parse : function(stream, tagId, header){
+        this.header = header;
         var size = stream.readU32();
         var result = this.doParse(stream, size);
         result.tagName = this.name;
         result.tagId = tagId;
         return result;
     },
-
     doParse : function(stream, size){
-        stream.startNestedBuffer(size);
-        stream.endNestedBuffer();
+        stream.seek(stream.tell() + size);
         return {};
     }
 });
