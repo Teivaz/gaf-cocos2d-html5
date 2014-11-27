@@ -63,12 +63,12 @@ cc.gaf.Tag.End = cc.gaf.Tag._base.extend({
 });
 cc.gaf.Tag.DefineAtlas = cc.gaf.Tag._base.extend({
     name : "TagDefineAtlas",
-    doParse : function(stream, size){
-        var exec = stream.readSequence(
+    doParse : function(s, size){
+        var exec = s.fields(
             ['scale', 'float'],
-            ['atlases', stream.readArray('Ubyte', stream.readSequence(
+            ['atlases', s.array('Ubyte', s.fields(
                 ['id', 'Uint'],
-                ['sources', stream.readArray('Ubyte', stream.readSequence(
+                ['sources', s.array('Ubyte', s.fields(
                     ['source', 'String'],
                     ['csf', 'float']
                 ))]

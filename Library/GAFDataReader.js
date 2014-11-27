@@ -74,7 +74,7 @@ cc.gaf.DataReader.prototype.tell = function(){
     return this.offset[this.offset.length-1];
 };
 
-cc.gaf.DataReader.prototype.readSequence = function(){
+cc.gaf.DataReader.prototype.fields = function(){
     var self = this;
     var arguments_ = arguments;
     return function(){
@@ -93,7 +93,7 @@ cc.gaf.DataReader.prototype.readSequence = function(){
     }
 };
 
-cc.gaf.DataReader.prototype.readArray = function(){
+cc.gaf.DataReader.prototype.array = function(){
     var self = this;
     var arguments_ = arguments;
     return function() {
