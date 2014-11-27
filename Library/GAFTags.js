@@ -5,7 +5,7 @@
 
 
 cc.gaf.LoadTag = function(stream, header){
-    var tagId = stream.readU16();
+    var tagId = stream.Ushort();
     var tag = cc.gaf.Tags[tagId];
     var result = {};
     if(typeof tag === "undefined"){
@@ -44,7 +44,7 @@ cc.gaf.Tag._base = cc.Class.extend({
     header : null,
     parse : function(stream, tagId, header){
         this.header = header;
-        var size = stream.readU32();
+        var size = stream.Uint();
 
         stream.startNestedBuffer(size);
         var result = this.doParse(stream, size);
@@ -64,24 +64,27 @@ cc.gaf.Tag.End = cc.gaf.Tag._base.extend({
 cc.gaf.Tag.DefineAtlas = cc.gaf.Tag._base.extend({
     name : "TagDefineAtlas",
     doParse : function(stream, size){
-        var result = {};
-        result.scale = stream.readFloat();
-        result.atlasCount = stream.readU8();
-        result.atlases = [];
-        for(var atlas = 0; atlas < result.atlasCount; ++atlas){
-            result.atlases.push(this.readAtlas(stream));
-        }
+        var exec = stream.readSequence(
+            ['scale', 'float'],
+            ['atlases', stream.readArray('Ubyte', stream.readSequence(
+                ['id', stream.readArray('Ubyte', stream.readSequence(
+                    ['source', 'String'],
+                    ['csf', 'float']
+                ))]
+            ))]
+        );
+        var result = exec();
         return result;
     },
     readAtlas : function(stream){
         var atlas = {};
-        atlas.id = stream.readU32();
-        atlas.sourceCount = stream.readU8();
+        atlas.id = stream.Uint();
+        atlas.sourceCount = stream.Ubyte();
         atlas.sources = [];
         for(var i = 0; i < atlas.sourceCount; ++i){
             var atlasSource = {};
-            atlasSource.source = stream.readString();
-            atlasSource.csf = stream.readFloat();
+            atlasSource.source = stream.String();
+            atlasSource.csf = stream.float();
             atlas.sources.push(atlasSource);
         }
         return atlas;
@@ -91,12 +94,12 @@ cc.gaf.Tag.DefineAnimationMasks = cc.gaf.Tag._base.extend({
     name : "TagDefineAnimationMasks",
     doParse : function(stream, size) {
         var result = {};
-        result.count = stream.readU32();
+        result.count = stream.Uint();
         result.objects = [];
         for(var i = 0; i < result.count; ++i){
             var object = {};
-            object.objectId = stream.readU32();
-            object.elementAtlasIdRef  = stream.readU32();
+            object.objectId = stream.Uint();
+            object.elementAtlasIdRef  = stream.Uint();
             result.objects.push(object);
         }
         return result;
@@ -106,12 +109,12 @@ cc.gaf.Tag.DefineAnimationObjects = cc.gaf.Tag._base.extend({
     name : "TagDefineAnimationObjects",
     doParse : function(stream, size) {
         var result = {};
-        result.count = stream.readU32();
+        result.count = stream.Uint();
         result.objects = [];
         for(var i = 0; i < result.count; ++i){
             var object = {};
-            object.objectId = stream.readU32();
-            object.elementAtlasIdRef  = stream.readU32();
+            object.objectId = stream.Uint();
+            object.elementAtlasIdRef  = stream.Uint();
             result.objects.push(object);
         }
         return result;
@@ -128,12 +131,12 @@ cc.gaf.Tag.DefineNamedParts = cc.gaf.Tag._base.extend({
     name : "TagDefineNamedParts",
     doParse : function(stream, size) {
         var result = {};
-        result.count = stream.readU32();
+        result.count = stream.Uint();
         result.objects = [];
         for(var i = 0; i < result.count; ++i){
             var object = {};
-            object.objectIdRef = stream.readU32();
-            object.name = stream.readString();
+            object.objectIdRef = stream.Uint();
+            object.name = stream.String();
             result.objects.push(object);
         }
         return result;
@@ -143,13 +146,13 @@ cc.gaf.Tag.DefineSequences = cc.gaf.Tag._base.extend({
     name : "TagDefineSequences",
     doParse : function(stream, size) {
         var result = {};
-        result.count = stream.readU32();
+        result.count = stream.Uint();
         result.objects = [];
         for(var i = 0; i < result.count; ++i){
             var object = {};
-            object.id = stream.readString();
-            object.start = stream.readU16();
-            object.end = stream.readU16();
+            object.id = stream.String();
+            object.start = stream.Ushort();
+            object.end = stream.Ushort();
             result.objects.push(object);
         }
         return result;
@@ -165,10 +168,10 @@ cc.gaf.Tag.DefineStage = cc.gaf.Tag._base.extend({
     name : "TagDefineStage",
     doParse : function(stream, size) {
         var result = {};
-        result.fps = stream.readU8();
-        result.color = stream.readU32();
-        result.width = stream.readU16();
-        result.height = stream.readU16();
+        result.fps = stream.Ubyte();
+        result.color = stream.Uint();
+        result.width = stream.Ushort();
+        result.height = stream.Ushort();
         return result;
     }
 });
@@ -176,13 +179,13 @@ cc.gaf.Tag.DefineAnimationObjects2 = cc.gaf.Tag._base.extend({
     name : "TagDefineAnimationObjects2",
     doParse : function(stream, size) {
         var result = {};
-        result.count = stream.readU32();
+        result.count = stream.Uint();
         result.objects = [];
         for(var i = 0; i < result.count; ++i){
             var object = {};
-            object.objectId = stream.readU32();
-            object.elementAtlasIdRef  = stream.readU32();
-            object.type = stream.readU16();
+            object.objectId = stream.Uint();
+            object.elementAtlasIdRef  = stream.Uint();
+            object.type = stream.Ushort();
             result.objects.push(object);
         }
         return result;
@@ -192,13 +195,13 @@ cc.gaf.Tag.DefineAnimationMasks2 = cc.gaf.Tag._base.extend({
     name : "TagDefineAnimationMasks2",
     doParse : function(stream, size) {
         var result = {};
-        result.count = stream.readU32();
+        result.count = stream.Uint();
         result.objects = [];
         for(var i = 0; i < result.count; ++i){
             var object = {};
-            object.objectId = stream.readU32();
-            object.elementAtlasIdRef  = stream.readU32();
-            object.type = stream.readU16();
+            object.objectId = stream.Uint();
+            object.elementAtlasIdRef  = stream.Uint();
+            object.type = stream.Ushort();
             result.objects.push(object);
         }
         return result;

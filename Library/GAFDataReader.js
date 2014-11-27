@@ -7,32 +7,32 @@ cc.gaf.DataReader = function(data) {
 
 cc.gaf.DataReader.prototype.constructor = cc.gaf.DataReader;
 
-cc.gaf.DataReader.prototype.readU8 = function() {
+cc.gaf.DataReader.prototype.Ubyte = function() {
     this.offset[this.offset.length-1] += 1;
     return this.buf.getUint8(this.offset[this.offset.length-1] - 1);
 };
 
-cc.gaf.DataReader.prototype.readU32 = function() {
+cc.gaf.DataReader.prototype.Uint = function() {
     this.offset[this.offset.length-1] += 4;
     return this.buf.getUint32(this.offset[this.offset.length-1] - 4, true);
 };
 
-cc.gaf.DataReader.prototype.readS32 = function() {
+cc.gaf.DataReader.prototype.int = function() {
     this.offset[this.offset.length-1] += 4;
     return this.buf.getInt32(this.offset[this.offset.length-1] - 4, true);
 };
 
-cc.gaf.DataReader.prototype.readU16 = function() {
+cc.gaf.DataReader.prototype.Ushort = function() {
     this.offset[this.offset.length-1] += 2;
     return this.buf.getUint16(this.offset[this.offset.length-1] - 2, true);
 };
 
-cc.gaf.DataReader.prototype.readFloat = function() {
+cc.gaf.DataReader.prototype.float = function() {
     this.offset[this.offset.length-1] += 4;
     return this.buf.getFloat32(this.offset[this.offset.length-1] - 4, true);
 };
 
-cc.gaf.DataReader.prototype.readString = function() {
+cc.gaf.DataReader.prototype.String = function() {
     this.offset[this.offset.length-1] += 2;
     var strLen = this.buf.getUint16(this.offset[this.offset.length-1] - 2, true);
 
@@ -50,19 +50,19 @@ cc.gaf.DataReader.prototype.endNestedBuffer = function() {
     this.offset.pop();
 };
 
-cc.gaf.DataReader.prototype.readVec2 = function(){
+cc.gaf.DataReader.prototype.Point = function(){
     return new cc.kmVec2(
-        this.readFloat(),
-        this.readFloat()
+        this.float(),
+        this.float()
     )
 };
 
-cc.gaf.DataReader.prototype.readRect = function(){
+cc.gaf.DataReader.prototype.Rect = function(){
     return new cc.Rect(
-        this.readFloat(),
-        this.readFloat(),
-        this.readFloat(),
-        this.readFloat()
+        this.float(),
+        this.float(),
+        this.float(),
+        this.float()
     )
 };
 
@@ -72,4 +72,37 @@ cc.gaf.DataReader.prototype.seek = function(pos){
 
 cc.gaf.DataReader.prototype.tell = function(){
     return this.offset[this.offset.length-1];
+};
+
+cc.gaf.DataReader.prototype.readSequence = function(){
+    var self = this;
+    var arguments_ = arguments;
+    return function(){
+        var result = {};
+        for(var i = 0; i < arguments_.length; ++i){
+            var field = arguments_[i][0];
+            var func = arguments_[i][1];
+            if(typeof func === "function"){
+                result[field] = func();
+            }
+            else{
+                result[field] = self[func].call(self);
+            }
+        }
+        return result;
+    }
+};
+
+cc.gaf.DataReader.prototype.readArray = function(){
+    var self = this;
+    var arguments_ = arguments;
+    return function() {
+        var result = [];
+        var length = self[arguments_[0]].call(self);
+        for (var i = 0; i < length; ++i) {
+            var r = arguments_[1].call();
+            result.push(r);
+        }
+        return result;
+    }
 };

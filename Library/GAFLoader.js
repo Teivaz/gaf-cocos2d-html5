@@ -31,27 +31,27 @@ cc.gaf.Load = function(stream){
 };
 
 cc.gaf.Load.readHeaderBegin = function(stream, header){
-    header.magic = stream.readU32();
-    header.versionMajor = stream.readU8();
-    header.versionMinor = stream.readU8();
-    header.fileLength = stream.readU32();
+    header.magic = stream.Uint();
+    header.versionMajor = stream.Ubyte();
+    header.versionMinor = stream.Ubyte();
+    header.fileLength = stream.Uint();
 };
 
 cc.gaf.Load.readHeaderEndV3 = function(stream, header) {
-    header.framesCount = stream.readU16();
-    header.bounds = stream.readRect();
-    header.point = stream.readVec2();
+    header.framesCount = stream.Ushort();
+    header.bounds = stream.Rect();
+    header.point = stream.Point();
 };
 
 cc.gaf.Load.readHeaderEndV4 = function(stream, header){
-    header.scaleCount = stream.readU32();
+    header.scaleCount = stream.Uint();
     header.scales = [];
     for(var i = 0; i < header.scaleCount; ++i){
-        header.scales.push(stream.readFloat());
+        header.scales.push(stream.float());
     }
-    header.csfCount = stream.readU32();
+    header.csfCount = stream.Uint();
     header.csfs = [];
     for(var i = 0; i < header.scaleCount; ++i){
-        header.csfs.push(stream.readFloat());
+        header.csfs.push(stream.float());
     }
 };
