@@ -67,7 +67,8 @@ cc.gaf.Tag.DefineAtlas = cc.gaf.Tag._base.extend({
         var exec = stream.readSequence(
             ['scale', 'float'],
             ['atlases', stream.readArray('Ubyte', stream.readSequence(
-                ['id', stream.readArray('Ubyte', stream.readSequence(
+                ['id', 'Uint'],
+                ['sources', stream.readArray('Ubyte', stream.readSequence(
                     ['source', 'String'],
                     ['csf', 'float']
                 ))]
