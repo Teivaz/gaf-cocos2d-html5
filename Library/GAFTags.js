@@ -99,7 +99,7 @@ cc.gaf.Tag.DefineAnimationFrames = cc.gaf.Tag.base.extend({
                 'depth', 'int',
                 'alpha', 'float',
                 'matrix', 'Matrix',
-                'colorTransform', s.condition('hasColorTransform', 0, s.fields(
+                'colorTransform', s.condition('hasColorTransform', 1, s.fields(
                     'alphaOffset', 'float',
                     'redMultiplier', 'float',
                     'redOffset', 'float',

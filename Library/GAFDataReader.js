@@ -84,31 +84,58 @@ cc.gaf.DataReader.prototype.tell = function(){
     return this.offset[this.offset.length-1];
 };
 
+/* Creates a fields parsing function
+* @ returns a function that will read from DataReader `field` of type `type`
+* @`key` - key for read data to be stored
+* @`data` - data to store. Can be DataReader function name or a function that will return a value
+* Note. Parameters pair `key` and `data` can be repeated any number of times*/
+
 cc.gaf.DataReader.prototype.fields = function(){
     var self = this;
     var arguments_ = arguments;
     return function(){
         arguments.callee.result = {};
         var i = 0;
+        if(!(i % 2)){
+            throw new Error('Number of arguments is not even');
+        }
         while(i < arguments_.length){
             var field = arguments_[i++];
             var func = arguments_[i++];
-            if(typeof func === "function"){
+            if(typeof func === 'function'){
                 arguments.callee.result[field] = func();
             }
-            else{
+            else if (func in self && typeof self[func] === 'function'){
                 arguments.callee.result[field] = self[func].call(self);
+            }
+            else{
+                throw new Error('Object DataReader has no function `' + func + '`');
             }
         }
         return arguments.callee.result;
     }
 };
 
-cc.gaf.DataReader.prototype.condition = function(){
+/*
+* Creates a parsing function
+* @ returns function that will execute expression if caller's `result` field has `key` equal to `value` parameter
+* @ `key` - key in caller's `result` element
+* @ `value` - expected value of the `key`
+* @ `func` - function to execute if condition is true
+* */
+
+cc.gaf.DataReader.prototype.condition = function(key, value, func){
     var self = this;
     var arguments_ = arguments;
     return function() {
-        var container = arguments.callee.caller.result;
+        if(arguments_.length != 3){
+            throw new Error('Condition function');
+        }
+        var parent = arguments.callee.caller;
+        if(!result in parent){
+            throw new Error('Condition function caller has no key `result`');
+        }
+        var container = parent.result;
         var field = arguments_[0];
         var value = arguments_[1];
         var exec = arguments_[2];
@@ -120,6 +147,13 @@ cc.gaf.DataReader.prototype.condition = function(){
         }
     }
 };
+
+/*
+* Creates an array parsing function
+* @ returns function that will execute `func` number of times read from DataReader
+* @ `type` - type of count number
+* @ `func` - function to be executed
+* */
 
 cc.gaf.DataReader.prototype.array = function(){
     var self = this;
