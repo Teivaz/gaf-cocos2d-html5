@@ -55,30 +55,30 @@ cc.gaf.DataReader.prototype.endNestedBuffer = function() {
 };
 
 cc.gaf.DataReader.prototype.Point = function(){
-    return new cc.kmVec2(
-        this.float(),
-        this.float()
-    )
+    return {
+        x: this.float(),
+        y: this.float()
+    };
 };
 
 cc.gaf.DataReader.prototype.Rect = function(){
-    return new cc.Rect(
-        this.float(),
-        this.float(),
-        this.float(),
-        this.float()
-    )
+    return {
+        x: this.float(),
+        y: this.float(),
+        width: this.float(),
+        height: this.float()
+    };
 };
 
 cc.gaf.DataReader.prototype.Matrix = function(){
-    return new cc.AffineTransform(
-        this.float(),
-        this.float(),
-        this.float(),
-        this.float(),
-        this.float(),
-        this.float()
-    );
+    return {
+        a: this.float(),
+        b: this.float(),
+        c: this.float(),
+        d: this.float(),
+        tx: this.float(),
+        ty: this.float()
+    };
 };
 
 cc.gaf.DataReader.prototype.seek = function(pos){
@@ -101,7 +101,7 @@ cc.gaf.DataReader.prototype.fields = function(){
     return function(){
         arguments.callee.result = {};
         var i = 0;
-        if(i % 2){
+        if(arguments_.length % 2){
             throw new Error('Number of arguments is not even');
         }
         while(i < arguments_.length){

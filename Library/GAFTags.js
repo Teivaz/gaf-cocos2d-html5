@@ -19,6 +19,7 @@ cc.gaf.ReadTags = function(stream){
         var tag = cc.gaf.ReadSingleTag(stream);
         tags.push(tag);
     }while(tag.tagName != "TagEnd");
+    return tags;
 };
 
 cc.gaf.Tag = cc.Class.extend({
@@ -50,7 +51,12 @@ cc.gaf.Tag.base = cc.Class.extend({
         var result = this.doParse(stream);
         stream.endNestedBuffer();
 
-        result.tagName = this.name;
+        try {
+            result.tagName = this.name;
+        }
+        catch (e){
+            e;
+        }
         result.tagId = tagId;
         return result;
     },
@@ -201,7 +207,7 @@ cc.gaf.Tag.DefineTextFields = cc.gaf.Tag.base.extend({
 cc.gaf.Tag.DefineAtlas2 = cc.gaf.Tag.base.extend({
     name : "TagDefineAtlas2",
     doParse : function(s) {
-        var exec = s.array('Uint', s.fields(
+        var exec = s.fields(
             'scale', 'float',
             'atlases', s.array('Ubyte', s.fields(
                 'id', 'Uint',
@@ -221,7 +227,7 @@ cc.gaf.Tag.DefineAtlas2 = cc.gaf.Tag.base.extend({
                 'hasScale9Grid', 'Boolean',
                 'scale9GridRect', s.condition('hasScale9Grid', 1, function(){return s.Rect();})
             ))
-        ));
+        );
         var result = exec();
         debugger;
         return result;
@@ -232,7 +238,7 @@ cc.gaf.Tag.DefineStage = cc.gaf.Tag.base.extend({
     doParse : function(s) {
         var exec = s.fields(
             'fps', 'Ubyte',
-            'color', 'Int',
+            'color', 'int',
             'width', 'Ushort',
             'height', 'Ushort'
         );
@@ -310,7 +316,17 @@ cc.gaf.Tag.DefineAnimationFrames2 = cc.gaf.Tag.base.extend({
 cc.gaf.Tag.DefineTimeline = cc.gaf.Tag.base.extend({
     name : "TagDefineTimeline",
     doParse : function(s) {
-        return cc.gaf.ReadTags(s);
+        var exec = s.fields(
+            'smth1', 'Uint',
+            'smth2', 'Uint',
+            'aabb', 'Rect',
+            'pivot', 'Point',
+            'hasLinkage', 'Boolean',
+            'linkage', s.condition('hasLinkage', 1, function(){return s.String();})
+        );
+        var result = exec();
+        result.tags = cc.gaf.ReadTags(s);
+        return result;
     }
 });
 

@@ -47,7 +47,7 @@ cc.gaf.Load.readHeaderEndV4 = function(stream, header){
     }
     header.csfCount = stream.Uint();
     header.csfs = [];
-    for(var i = 0; i < header.scaleCount; ++i){
+    for(var i = 0; i < header.csfCount; ++i){
         header.csfs.push(stream.float());
     }
 };
