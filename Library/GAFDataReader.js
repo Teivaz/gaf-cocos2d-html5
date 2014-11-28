@@ -65,6 +65,17 @@ cc.gaf.DataReader.prototype.Rect = function(){
     )
 };
 
+cc.gaf.DataReader.prototype.Matrix = function(){
+    return [
+        this.float(),
+        this.float(),
+        this.float(),
+        this.float(),
+        this.float(),
+        this.float()
+    ];
+};
+
 cc.gaf.DataReader.prototype.seek = function(pos){
     this.offset[this.offset.length-1] = pos;
 };
@@ -97,7 +108,7 @@ cc.gaf.DataReader.prototype.condition = function(){
     var self = this;
     var arguments_ = arguments;
     return function() {
-        var container = arguments_.caller.result;
+        var container = arguments.callee.caller.result;
         var field = arguments_[0];
         var value = arguments_[1];
         var exec = arguments_[2];

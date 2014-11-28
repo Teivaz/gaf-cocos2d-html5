@@ -64,7 +64,21 @@ cc.gaf.Tag.End = cc.gaf.Tag.base.extend({
     name : "TagEnd"
 });
 cc.gaf.Tag.DefineAtlas = cc.gaf.Tag.base.extend({
-    name : "TagDefineAtlas"
+    name: "TagDefineAtlas",
+    doParse: function (s, size) {
+        var exec = s.fields(
+            'scale', 'float',
+            'atlases', s.array('Ubyte', s.fields(
+                'id', 'Uint',
+                'sources', s.array('Ubyte', s.fields(
+                    'source', 'String',
+                    'csf', 'float'
+                ))
+            ))
+        );
+        var result = exec();
+        return result;
+    }
 });
 cc.gaf.Tag.DefineAnimationMasks = cc.gaf.Tag.base.extend({
     name : "TagDefineAnimationMasks"
@@ -73,7 +87,40 @@ cc.gaf.Tag.DefineAnimationObjects = cc.gaf.Tag.base.extend({
     name : "TagDefineAnimationObjects"
 });
 cc.gaf.Tag.DefineAnimationFrames = cc.gaf.Tag.base.extend({
-    name : "TagDefineAnimationFrames"
+    name : "TagDefineAnimationFrames",
+    doParse : function(s, size){
+        var exec = s.array('Uint', s.fields(
+            'frame', 'Uint',
+            'state', s.array('Uint', s.fields(
+                'hasColorTransform', 'Ubyte',
+                'hasMask', 'Ubyte',
+                'hasEffect', 'Ubyte',
+                'objectIdRef', 'Uint',
+                'depth', 'int',
+                'alpha', 'float',
+                'matrix', 'Matrix',
+                'colorTransform', s.condition('hasColorTransform', 1, s.fields(
+                    'alphaOffset', 'float',
+                    'redMultiplier', 'float',
+                    'redOffset', 'float',
+                    'greenMultiplier', 'float',
+                    'greenOffset', 'float',
+                    'blueMultiplier', 'float',
+                    'blueOffset', 'float'
+                )),
+                'effect', s.condition('hasEffect', 1, s.array('Ubyte', s.fields(
+                    'type', 'Ubyte',
+                    'filterData', s.condition('type', 0, s.fields(
+                        'color', 'Uint'
+                    ))
+                ))),
+                'maskObjectIdRef', s.condition('hasMask', 1, s.fields(
+                    'maskObjectIdRef', 'Uint'
+                ))
+            ))
+        ));
+        return exec();
+    }
 });
 cc.gaf.Tag.DefineNamedParts = cc.gaf.Tag.base.extend({
     name : "TagDefineNamedParts",
