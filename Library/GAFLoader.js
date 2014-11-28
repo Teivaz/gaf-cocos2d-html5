@@ -22,11 +22,7 @@ cc.gaf.Load = function(stream){
         cc.gaf.Load.readHeaderEndV4(stream, header);
     }
 
-    var tags = [];
-    do {
-        var tag = cc.gaf.LoadTag(stream, header);
-        tags.push(tag);
-    }while(tag.tagName != "TagEnd");
+    var tags = cc.gaf.ReadTags(stream, header);
     return new cc.gaf.File(header, tags);
 };
 
