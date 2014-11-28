@@ -115,12 +115,9 @@ cc.gaf.Tag.DefineAnimationFrames = cc.gaf.Tag.base.extend({
                     'blueMultiplier', 'float',
                     'blueOffset', 'float'
                 )),
-                'effect', s.condition('hasEffect', 1, s.array('Ubyte', s.fields(
-                    'type', 'Ubyte',
-                    'filterData', s.condition('type', 0, s.fields(
-                        'color', 'Uint'
-                    ))
-                ))),
+                'effect', s.condition('hasEffect', 1, s.array('Ubyte', function() {
+                    return cc.gaf.Tag._readFilter(s);
+                })),
                 'maskObjectIdRef', s.condition('hasMask', 1, s.fields(
                     'maskObjectIdRef', 'Uint'
                 ))
@@ -294,12 +291,15 @@ cc.gaf.Tag.DefineAnimationFrames2 = cc.gaf.Tag.base.extend({
                     'blueMultiplier', 'float',
                     'blueOffset', 'float'
                 )),
-                'effect', s.condition('hasEffect', 1, s.array('Ubyte', s.fields(
-                    'type', 'Uint'
-                )))
+                'effect', s.condition('hasEffect', 1, s.array('Ubyte', function() {
+                    return cc.gaf.Tag._readFilter(s);
+                }))
             ))),
             'actions',  s.condition('hasActions', 1, s.array('Uint', s.fields(
-                'type', 'Uint'
+                'type', 'Uint',
+                'params', s.condition('type', function(a){return a > 1;}, s.array('Uint', s.fields(
+                    'value', 'String'
+                )))
             )))
         ));
         var result = exec();
@@ -313,5 +313,39 @@ cc.gaf.Tag.DefineTimeline = cc.gaf.Tag.base.extend({
         return cc.gaf.ReadTags(s);
     }
 });
+
+cc.gaf.Tag._readFilter = function(s){
+    return s.fields(
+        'type', 'Uint',
+        'dropShadow', s.condition('type', 0, s.fields( // DropShadow
+            'color', 'Uint',
+            'blurX', 'float',
+            'blurY', 'float',
+            'angle', 'float',
+            'distance', 'float',
+            'strength', 'float',
+            'inner', 'Boolean',
+            'knockout', 'Boolean'
+        )),
+        'blur', s.condition('type', 0, s.fields( // Blur
+            'blurX', 'float',
+            'blurY', 'float'
+        )),
+        'glow', s.condition('type', 0, s.fields( // Glow
+            'color', 'Uint',
+            'blurX', 'float',
+            'blurY', 'float',
+            'strength', 'float',
+            'inner', 'Boolean',
+            'knockout', 'Boolean'
+        )),
+        'colorMatrix', s.condition('type', 0, s.fields( // ColorMatrix
+            'rr', 'float', 'gr', 'float', 'br', 'float', 'ar', 'float', 'r', 'float',
+            'rg', 'float', 'gg', 'float', 'bg', 'float', 'ag', 'float', 'g', 'float',
+            'rb', 'float', 'gb', 'float', 'bb', 'float', 'ab', 'float', 'b', 'float',
+            'ra', 'float', 'ga', 'float', 'ba', 'float', 'aa', 'float', 'a', 'float'
+        ))
+    )
+};
 
 cc.gaf.Tags = new cc.gaf.Tag();

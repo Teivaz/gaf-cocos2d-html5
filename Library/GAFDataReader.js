@@ -125,7 +125,7 @@ cc.gaf.DataReader.prototype.fields = function(){
 * Creates a parsing function
 * @ returns function that will execute expression if caller's `result` field has `key` equal to `value` parameter
 * @ `key` - key in caller's `result` element
-* @ `value` - expected value of the `key`
+* @ `value` - expected value of the `key` or a comparator function
 * @ `func` - function to execute if condition is true
 * */
 
@@ -144,7 +144,15 @@ cc.gaf.DataReader.prototype.condition = function(key, value, func){
         var field = arguments_[0];
         var value = arguments_[1];
         var exec = arguments_[2];
-        if(container[field] == value){
+
+        var evaluate = null;
+        if(typeof value === 'function'){
+            evaluate = function(){return value(container[field]);};
+        }
+        else{
+            evaluate = function(){return value == container[field];};
+        }
+        if(evaluate()){
             return exec();
         }
         else{
