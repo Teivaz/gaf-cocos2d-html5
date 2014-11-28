@@ -113,10 +113,10 @@ cc.gaf.DataReader.prototype.condition = function(){
         var value = arguments_[1];
         var exec = arguments_[2];
         if(container[field] == value){
-            return exec;
+            return exec();
         }
         else{
-            return function(){};
+            return null;
         }
     }
 };
