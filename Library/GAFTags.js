@@ -1,22 +1,22 @@
 
-cc.gaf.ReadSingleTag = function(stream, header){
+cc.gaf.ReadSingleTag = function(stream){
     var tagId = stream.Ushort();
     var tag = cc.gaf.Tags[tagId];
     var result = {};
     if(typeof tag === "undefined"){
         cc.log("GAF. Non implemented tag detected.");
-        cc.gaf.Tags.default.parse(stream, tagId, header);
+        cc.gaf.Tags.default.parse(stream, tagId);
     }
     else{
-        result = tag.parse(stream, tagId, header);
+        result = tag.parse(stream, tagId);
     }
     return result;
 };
 
-cc.gaf.ReadTags = function(stream, header){
+cc.gaf.ReadTags = function(stream){
     var tags = [];
     do {
-        var tag = cc.gaf.ReadSingleTag(stream, header);
+        var tag = cc.gaf.ReadSingleTag(stream);
         tags.push(tag);
     }while(tag.tagName != "TagEnd");
 };
@@ -43,20 +43,18 @@ cc.gaf.Tag = cc.Class.extend({
 
 cc.gaf.Tag.base = cc.Class.extend({
     name : "undefined",
-    header : null,
-    parse : function(stream, tagId, header){
-        this.header = header;
+    parse : function(stream, tagId){
         var size = stream.Uint();
 
         stream.startNestedBuffer(size);
-        var result = this.doParse(stream, size);
+        var result = this.doParse(stream);
         stream.endNestedBuffer();
 
         result.tagName = this.name;
         result.tagId = tagId;
         return result;
     },
-    doParse : function(stream, size){
+    doParse : function(stream){
         return {};
     }
 });
@@ -65,7 +63,7 @@ cc.gaf.Tag.End = cc.gaf.Tag.base.extend({
 });
 cc.gaf.Tag.DefineAtlas = cc.gaf.Tag.base.extend({
     name: "TagDefineAtlas",
-    doParse: function (s, size) {
+    doParse: function (s) {
         var exec = s.fields(
             'scale', 'float',
             'atlases', s.array('Ubyte', s.fields(
@@ -81,14 +79,23 @@ cc.gaf.Tag.DefineAtlas = cc.gaf.Tag.base.extend({
     }
 });
 cc.gaf.Tag.DefineAnimationMasks = cc.gaf.Tag.base.extend({
-    name : "TagDefineAnimationMasks"
+    name : "TagDefineAnimationMasks",
+    doParse: function (s) {
+        var exec = s.array('Uint', s.fields(
+                'objectId', 'Uint',
+                'elementAtlasIdRef', 'Uint'
+            ));
+        var result = exec();
+        debugger;
+        return result;
+    }
 });
 cc.gaf.Tag.DefineAnimationObjects = cc.gaf.Tag.base.extend({
     name : "TagDefineAnimationObjects"
 });
 cc.gaf.Tag.DefineAnimationFrames = cc.gaf.Tag.base.extend({
     name : "TagDefineAnimationFrames",
-    doParse : function(s, size){
+    doParse : function(s){
         var exec = s.array('Uint', s.fields(
             'frame', 'Uint',
             'state', s.array('Uint', s.fields(
@@ -119,94 +126,192 @@ cc.gaf.Tag.DefineAnimationFrames = cc.gaf.Tag.base.extend({
                 ))
             ))
         ));
-        return exec();
+        var result = exec();
+        debugger;
+        return result;
     }
 });
 cc.gaf.Tag.DefineNamedParts = cc.gaf.Tag.base.extend({
     name : "TagDefineNamedParts",
-    doParse : function(stream, size) {
-        var result = {};
-        result.count = stream.Uint();
-        result.objects = [];
-        for(var i = 0; i < result.count; ++i){
-            var object = {};
-            object.objectIdRef = stream.Uint();
-            object.name = stream.String();
-            result.objects.push(object);
-        }
+    doParse : function(s) {
+        var exec = s.array('Uint', s.fields(
+            'objectId', 'Uint',
+            'name', 'String'
+        ));
+        var result = exec();
+        debugger;
         return result;
     }
 });
 cc.gaf.Tag.DefineSequences = cc.gaf.Tag.base.extend({
     name : "TagDefineSequences",
-    doParse : function(stream, size) {
-        var result = {};
-        result.count = stream.Uint();
-        result.objects = [];
-        for(var i = 0; i < result.count; ++i){
-            var object = {};
-            object.id = stream.String();
-            object.start = stream.Ushort();
-            object.end = stream.Ushort();
-            result.objects.push(object);
-        }
+    doParse : function(s) {
+        var exec = s.array('Uint', s.fields(
+            'id', 'String',
+            'start', 'Ushort',
+            'end', 'Ushort'
+        ));
+        var result = exec();
+        debugger;
         return result;
     }
 });
 cc.gaf.Tag.DefineTextFields = cc.gaf.Tag.base.extend({
-    name : "TagDefineTextFields"
+    name : "TagDefineTextFields",
+    doParse : function(s) {
+        var exec = s.array('Uint', s.fields(
+            'id', 'Uint',
+            'pivot', 'Point',
+            'end', 'Ushort',
+            'width', 'float',
+            'height', 'float',
+            'text', 'String',
+            'embedFonts', 'Boolean',
+            'multiline', 'Boolean',
+            'wordWrap', 'Boolean',
+            'hasRestrict', 'Boolean',
+            'restrict', s.condition('hasRestrict', 1, function (){return s['String'];}),
+            'editable', 'Boolean',
+            'selectable', 'Boolean',
+            'displayAsPassword', 'Boolean',
+            'maxChars', 'Uint',
+            'align', 'Uint',
+            'blockIndent', 'Uint',
+            'bold', 'Boolean',
+            'bullet', 'Boolean',
+            'color', 'Uint',
+            'font', 'String',
+            'indent', 'Uint',
+            'italic', 'Boolean',
+            'kerning', 'Boolean',
+            'leading', 'Uint',
+            'leftMargin', 'Uint',
+            'letterSpacing', 'float',
+            'rightMargin', 'Uint',
+            'size', 'Uint',
+            'tabStops', s.array('Uint', s.fields(
+                'value', 'Uint'
+            )),
+            'target', 'string',
+            'underline', 'Boolean',
+            'url', 'String'
+        ));
+        var result = exec();
+        debugger;
+        return result;
+    }
 });
 cc.gaf.Tag.DefineAtlas2 = cc.gaf.Tag.base.extend({
-    name : "TagDefineAtlas2"
+    name : "TagDefineAtlas2",
+    doParse : function(s) {
+        var exec = s.array('Uint', s.fields(
+            'scale', 'float',
+            'atlases', s.array('Ubyte', s.fields(
+                'id', 'Uint',
+                'sources', s.array('Ubyte', s.fields(
+                    'source', 'String',
+                    'csf', 'float'
+                ))
+            )),
+            'elements', s.array('Uint', s.fields(
+                'pivot', 'Point',
+                'xy', 'Point',
+                'scale', 'float',
+                'width', 'float',
+                'height', 'float',
+                'atlasId', 'Uint',
+                'elementAtlasId', 'Uint',
+                'hasScale9Grid', 'Boolean',
+                'scale9GridRect', s.condition('hasScale9Grid', 1, function(){return s.Rect();})
+            ))
+        ));
+        var result = exec();
+        debugger;
+        return result;
+    }
 });
 cc.gaf.Tag.DefineStage = cc.gaf.Tag.base.extend({
     name : "TagDefineStage",
-    doParse : function(stream, size) {
-        var result = {};
-        result.fps = stream.Ubyte();
-        result.color = stream.Uint();
-        result.width = stream.Ushort();
-        result.height = stream.Ushort();
+    doParse : function(s) {
+        var exec = s.fields(
+            'fps', 'Ubyte',
+            'color', 'Int',
+            'width', 'Ushort',
+            'height', 'Ushort'
+        );
+        var result = exec();
+        debugger;
         return result;
     }
 });
 cc.gaf.Tag.DefineAnimationObjects2 = cc.gaf.Tag.base.extend({
     name : "TagDefineAnimationObjects2",
-    doParse : function(stream, size) {
-        var result = {};
-        result.count = stream.Uint();
-        result.objects = [];
-        for(var i = 0; i < result.count; ++i){
-            var object = {};
-            object.objectId = stream.Uint();
-            object.elementAtlasIdRef  = stream.Uint();
-            object.type = stream.Ushort();
-            result.objects.push(object);
-        }
+    doParse : function(s) {
+        var exec = s.array('Uint', s.fields(
+            'objectId', 'Uint',
+            'elementAtlasIdRef', 'Uint',
+            'type', 'Ushort'
+        ));
+        var result = exec();
+        debugger;
         return result;
     }
 });
 cc.gaf.Tag.DefineAnimationMasks2 = cc.gaf.Tag.base.extend({
     name : "TagDefineAnimationMasks2",
-    doParse : function(stream, size) {
-        var result = {};
-        result.count = stream.Uint();
-        result.objects = [];
-        for(var i = 0; i < result.count; ++i){
-            var object = {};
-            object.objectId = stream.Uint();
-            object.elementAtlasIdRef  = stream.Uint();
-            object.type = stream.Ushort();
-            result.objects.push(object);
-        }
+    doParse : function(s) {
+        var exec = s.array('Uint', s.fields(
+            'objectId', 'Uint',
+            'elementAtlasIdRef', 'Uint',
+            'type', 'Ushort'
+        ));
+        var result = exec();
+        debugger;
         return result;
     }
 });
 cc.gaf.Tag.DefineAnimationFrames2 = cc.gaf.Tag.base.extend({
-    name : "TagDefineAnimationFrames2"
+    name : "TagDefineAnimationFrames2",
+    doParse : function(s) {
+        var exec = s.array('Uint', s.fields(
+            'frame', 'Uint',
+            'hasChangesInDisplayList', 'Boolean',
+            'hasActions', 'Boolean',
+            'states', s.condition('hasChangesInDisplayList', 1, s.array('Uint', s.fields(
+                'hasColorTransform', 'Boolean',
+                'hasMask', 'Boolean',
+                'hasEffect', 'Boolean',
+                'objectIdRef', 'Uint',
+                'depth', 'int',
+                'alpha', 'float',
+                'matrix', 'Matrix',
+                'colorTransform', s.condition('hasColorTransform', 1, s.fields(
+                    'alphaOffset', 'float',
+                    'redMultiplier', 'float',
+                    'redOffset', 'float',
+                    'greenMultiplier', 'float',
+                    'greenOffset', 'float',
+                    'blueMultiplier', 'float',
+                    'blueOffset', 'float'
+                )),
+                'effect', s.condition('hasEffect', 1, s.array('Ubyte', s.fields(
+                    'type', 'Uint'
+                )))
+            ))),
+            'actions',  s.condition('hasActions', 1, s.array('Uint', s.fields(
+                'type', 'Uint'
+            )))
+        ));
+        var result = exec();
+        debugger;
+        return result;
+    }
 });
 cc.gaf.Tag.DefineTimeline = cc.gaf.Tag.base.extend({
-    name : "TagDefineTimeline"
+    name : "TagDefineTimeline",
+    doParse : function(s) {
+        return cc.gaf.ReadTags(s);
+    }
 });
 
 cc.gaf.Tags = new cc.gaf.Tag();

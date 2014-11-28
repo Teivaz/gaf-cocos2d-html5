@@ -11,6 +11,11 @@ cc.gaf.DataReader.prototype.Ubyte = function() {
     return this.buf.getUint8(this.offset[this.offset.length-1] - 1);
 };
 
+cc.gaf.DataReader.prototype.Boolean = function() {
+    this.offset[this.offset.length-1] += 1;
+    return this.buf.getUint8(this.offset[this.offset.length-1] - 1);
+};
+
 cc.gaf.DataReader.prototype.Uint = function() {
     this.offset[this.offset.length-1] += 4;
     return this.buf.getUint32(this.offset[this.offset.length-1] - 4, true);
@@ -66,14 +71,14 @@ cc.gaf.DataReader.prototype.Rect = function(){
 };
 
 cc.gaf.DataReader.prototype.Matrix = function(){
-    return [
+    return new cc.AffineTransform(
         this.float(),
         this.float(),
         this.float(),
         this.float(),
         this.float(),
         this.float()
-    ];
+    );
 };
 
 cc.gaf.DataReader.prototype.seek = function(pos){
@@ -96,7 +101,7 @@ cc.gaf.DataReader.prototype.fields = function(){
     return function(){
         arguments.callee.result = {};
         var i = 0;
-        if(!(i % 2)){
+        if(i % 2){
             throw new Error('Number of arguments is not even');
         }
         while(i < arguments_.length){
@@ -132,7 +137,7 @@ cc.gaf.DataReader.prototype.condition = function(key, value, func){
             throw new Error('Condition function');
         }
         var parent = arguments.callee.caller;
-        if(!result in parent){
+        if(!('result' in parent)){
             throw new Error('Condition function caller has no key `result`');
         }
         var container = parent.result;
