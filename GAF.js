@@ -1,4 +1,2 @@
-
-var cc = cc || {};
-cc.gaf = cc.gaf || {};
+var gaf = gaf || {};
 

@@ -17,8 +17,8 @@ function handleFileSelect(evt) {
             var reader = new FileReader();
             reader.onload = (function(theFile){
                 return function(req) {
-                    var arrayBuffer = new cc.gaf.DataReader(req.target.result);
-                    var data = cc.gaf.Load(arrayBuffer);
+                    var arrayBuffer = new gaf.DataReader(req.target.result);
+                    var data = gaf.Load(arrayBuffer);
                     document.getElementById('list').appendChild(renderjson(data));
                 };
             })(f);
@@ -58,9 +58,9 @@ var module;
     var prepend = function(el, child) {
         el.insertBefore(child, el.firstChild);
         return el;
-    }
+    };
     var isempty = function(obj) { for (var k in obj) if (obj.hasOwnProperty(k)) return false;
-                                  return true; }
+                                  return true; };
     var text = function(txt) { return document.createTextNode(txt) };
     var div = function() { return document.createElement("div") };
     var span = function(classname) { var s = document.createElement("span");
@@ -145,7 +145,7 @@ var module;
         var pre = append(document.createElement("pre"), _renderjson(json, "", false, renderjson.show_to_level, renderjson.sort_objects));
         pre.className = "renderjson";
         return pre;
-    }
+    };
     renderjson.set_icons = function(show, hide) { renderjson.show = show;
                                                   renderjson.hide = hide;
                                                   return renderjson; };
