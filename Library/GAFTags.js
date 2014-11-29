@@ -8,7 +8,7 @@ gaf.ReadSingleTag = function(stream){
         gaf.Tags.default.parse(stream, tagId);
     }
     else{
-        console.log("tag " + tag.tagName);
+        //console.log("tag " + tag.tagName);
         result = tag.parse(stream, tagId);
     }
     return result;
@@ -24,7 +24,8 @@ gaf.ReadTags = function(stream){
     }
     catch (e){
         if (e instanceof Error && e.message == "GAF out of bounds"){
-            ;
+            console.log("GAF out of bounds.");
+            // Tag will be closed and parser will continue from where it should.
         }
         else{
             throw e;
@@ -84,7 +85,7 @@ gaf.Tag.DefineAtlas.doParse = function (s) {
             ))
         ))
     );
-    var result = exec();
+    var result = {'content': exec()};
     debugger;
     return result;
 };
@@ -96,7 +97,7 @@ gaf.Tag.DefineAnimationMasks.doParse = function (s) {
             'objectId', 'Uint',
             'elementAtlasIdRef', 'Uint'
         ));
-    var result = exec();
+    var result = {'content': exec()};
     debugger;
     return result;
 };
@@ -108,7 +109,7 @@ gaf.Tag.DefineAnimationObjects.doParse = function (s) {
         'objectId', 'Uint',
         'elementAtlasIdRef', 'Uint'
     ));
-    var result = exec();
+    var result = {'content': exec()};
     debugger;
     return result;
 };
@@ -143,7 +144,7 @@ gaf.Tag.DefineAnimationFrames.doParse = function(s){
             ))
         ))
     ));
-    var result = exec();
+    var result = {'content': exec()};
     debugger;
     return result;
 };
@@ -155,7 +156,7 @@ gaf.Tag.DefineNamedParts.doParse = function(s) {
         'objectId', 'Uint',
         'tagName', 'String'
     ));
-    var result = exec();
+    var result = {'content': exec()};
     debugger;
     return result;
 };
@@ -168,7 +169,7 @@ gaf.Tag.DefineSequences.doParse = function(s) {
         'start', 'Ushort',
         'end', 'Ushort'
     ));
-    var result = exec();
+    var result = {'content': exec()};
     debugger;
     return result;
 };
@@ -213,7 +214,7 @@ gaf.Tag.DefineTextFields.doParse = function(s) {
         'underline', 'Boolean',
         'url', 'String'
     ));
-    var result = exec();
+    var result = {'content': exec()};
     debugger;
     return result;
 };
@@ -242,7 +243,7 @@ gaf.Tag.DefineAtlas2.doParse = function(s) {
             'scale9GridRect', s.condition('hasScale9Grid', 1, function(){return s.Rect();})
         ))
     );
-    var result = exec();
+    var result = {'content': exec()};
 //    debugger;
     return result;
 };
@@ -256,7 +257,7 @@ gaf.Tag.DefineStage.doParse = function(s) {
         'width', 'Ushort',
         'height', 'Ushort'
     );
-    var result = exec();
+    var result = {'content': exec()};
 //    debugger;
     return result;
 };
@@ -269,7 +270,7 @@ gaf.Tag.DefineAnimationObjects2.doParse = function(s) {
         'elementAtlasIdRef', 'Uint',
         'type', 'Ushort'
     ));
-    var result = exec();
+    var result = {'content': exec()};
 //    debugger;
     return result;
 };
@@ -282,7 +283,7 @@ gaf.Tag.DefineAnimationMasks2.doParse  = function(s) {
         'elementAtlasIdRef', 'Uint',
         'type', 'Ushort'
     ));
-    var result = exec();
+    var result = {'content': exec()};
     debugger;
     return result;
 };
@@ -320,8 +321,8 @@ gaf.Tag.DefineAnimationFrames2.doParse = function(s) {
             )))
         )))
     ));
-    var result = exec();
-    debugger;
+    var result = {'content': exec()};
+//    debugger;
     return result;
 };
 
@@ -338,7 +339,7 @@ gaf.Tag.DefineTimeline.doParse = function(s) {
             return s.String();
         })
     );
-    var result = exec();
+    var result = {'content': exec()};
 //    debugger;
     result.tags = gaf.ReadTags(s);
     return result;
