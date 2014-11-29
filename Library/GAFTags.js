@@ -8,6 +8,7 @@ gaf.ReadSingleTag = function(stream){
         gaf.Tags.default.parse(stream, tagId);
     }
     else{
+        console.log("tag " + tag.tagName);
         result = tag.parse(stream, tagId);
     }
     return result;
@@ -242,7 +243,7 @@ gaf.Tag.DefineAtlas2.doParse = function(s) {
         ))
     );
     var result = exec();
-    debugger;
+//    debugger;
     return result;
 };
 
@@ -256,7 +257,7 @@ gaf.Tag.DefineStage.doParse = function(s) {
         'height', 'Ushort'
     );
     var result = exec();
-    debugger;
+//    debugger;
     return result;
 };
 
@@ -269,7 +270,7 @@ gaf.Tag.DefineAnimationObjects2.doParse = function(s) {
         'type', 'Ushort'
     ));
     var result = exec();
-    debugger;
+//    debugger;
     return result;
 };
 
@@ -310,9 +311,7 @@ gaf.Tag.DefineAnimationFrames2.doParse = function(s) {
                 'blueMultiplier', 'float',
                 'blueOffset', 'float'
             )),
-            'effect', s.condition('hasEffect', 1, s.array('Ubyte', function() {
-                return gaf.Tag._readFilter(s);
-            }))
+            'effect', s.condition('hasEffect', 1, s.array('Ubyte', gaf.Tag._readFilter(s)))
         ))),
         'actions',  s.condition('hasActions', 1, s.array('Uint', s.fields(
             'type', 'Uint',
@@ -340,7 +339,7 @@ gaf.Tag.DefineTimeline.doParse = function(s) {
         })
     );
     var result = exec();
-    debugger;
+//    debugger;
     result.tags = gaf.ReadTags(s);
     return result;
 };
@@ -358,11 +357,11 @@ gaf.Tag._readFilter = function(s){
             'inner', 'Boolean',
             'knockout', 'Boolean'
         )),
-        'blur', s.condition('type', 0, s.fields( // Blur
+        'blur', s.condition('type', 1, s.fields( // Blur
             'blurX', 'float',
             'blurY', 'float'
         )),
-        'glow', s.condition('type', 0, s.fields( // Glow
+        'glow', s.condition('type', 2, s.fields( // Glow
             'color', 'Uint',
             'blurX', 'float',
             'blurY', 'float',
@@ -370,7 +369,7 @@ gaf.Tag._readFilter = function(s){
             'inner', 'Boolean',
             'knockout', 'Boolean'
         )),
-        'colorMatrix', s.condition('type', 0, s.fields( // ColorMatrix
+        'colorMatrix', s.condition('type', 6, s.fields( // ColorMatrix
             'rr', 'float', 'gr', 'float', 'br', 'float', 'ar', 'float', 'r', 'float',
             'rg', 'float', 'gg', 'float', 'bg', 'float', 'ag', 'float', 'g', 'float',
             'rb', 'float', 'gb', 'float', 'bb', 'float', 'ab', 'float', 'b', 'float',
