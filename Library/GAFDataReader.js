@@ -1,67 +1,80 @@
-cc.gaf.DataReader = function(data) {
+gaf.DataReader = function(data) {
     this.dataRaw = data;
     this.buf = new DataView(data);
     this.offset = [0];
 };
 
-cc.gaf.DataReader.prototype.constructor = cc.gaf.DataReader;
+gaf.DataReader.prototype.constructor = gaf.DataReader;
 
-cc.gaf.DataReader.prototype.Ubyte = function() {
-    this.offset[this.offset.length-1] += 1;
-    return this.buf.getUint8(this.offset[this.offset.length-1] - 1);
+gaf.DataReader.prototype.newOffset = function(size){
+    this.offset[this.offset.length - 1] += size;
+    if(this.getOffset() > this.maxOffset()){
+        throw new Error("GAF out of bounds");
+    }
+    return this.offset[this.offset.length - 1] - size;
 };
 
-cc.gaf.DataReader.prototype.Boolean = function() {
-    this.offset[this.offset.length-1] += 1;
-    return this.buf.getUint8(this.offset[this.offset.length-1] - 1);
+gaf.DataReader.prototype.maxOffset = function(){
+    if(this.offset.length == 1){
+        return this.buf.byteLength;
+    }
+    else{
+        return this.offset[this.offset.length - 2];
+    }
 };
 
-cc.gaf.DataReader.prototype.Uint = function() {
-    this.offset[this.offset.length-1] += 4;
-    return this.buf.getUint32(this.offset[this.offset.length-1] - 4, true);
+gaf.DataReader.prototype.getOffset = function(size){
+    return this.offset[this.offset.length - 1];
 };
 
-cc.gaf.DataReader.prototype.int = function() {
-    this.offset[this.offset.length-1] += 4;
-    return this.buf.getInt32(this.offset[this.offset.length-1] - 4, true);
+gaf.DataReader.prototype.Ubyte = function() {
+    return this.buf.getUint8(this.newOffset(1));
 };
 
-cc.gaf.DataReader.prototype.Ushort = function() {
-    this.offset[this.offset.length-1] += 2;
-    return this.buf.getUint16(this.offset[this.offset.length-1] - 2, true);
+gaf.DataReader.prototype.Boolean = function() {
+    return this.buf.getUint8(this.newOffset(1));
 };
 
-cc.gaf.DataReader.prototype.float = function() {
-    this.offset[this.offset.length-1] += 4;
-    return this.buf.getFloat32(this.offset[this.offset.length-1] - 4, true);
+gaf.DataReader.prototype.Uint = function() {
+    return this.buf.getUint32(this.newOffset(4), true);
 };
 
-cc.gaf.DataReader.prototype.String = function() {
-    this.offset[this.offset.length-1] += 2;
-    var strLen = this.buf.getUint16(this.offset[this.offset.length-1] - 2, true);
-
-    this.offset[this.offset.length-1] += strLen;
-    return decodeURIComponent(escape(String.fromCharCode.apply(null, new Uint8Array(this.dataRaw.slice(this.offset[this.offset.length-1] - strLen, this.offset[this.offset.length-1])))));
+gaf.DataReader.prototype.int = function() {
+    return this.buf.getInt32(this.newOffset(4), true);
 };
 
-cc.gaf.DataReader.prototype.startNestedBuffer = function(length) {
+gaf.DataReader.prototype.Ushort = function() {
+    return this.buf.getUint16(this.newOffset(2), true);
+};
+
+gaf.DataReader.prototype.float = function() {
+    return this.buf.getFloat32(this.newOffset(4), true);
+};
+
+gaf.DataReader.prototype.String = function() {
+    var strLen = this.Ushort();
+
+    return decodeURIComponent(escape(String.fromCharCode.apply(null, new Uint8Array(this.dataRaw.slice(this.newOffset(strLen), this.getOffset())))));
+};
+
+gaf.DataReader.prototype.startNestedBuffer = function(length) {
     this.offset.push(this.offset[this.offset.length-1]);
     this.offset[this.offset.length-2] += length;
 };
 
-cc.gaf.DataReader.prototype.endNestedBuffer = function() {
+gaf.DataReader.prototype.endNestedBuffer = function() {
     if (this.offset.length == 1) throw new Error('No nested buffer available');
     this.offset.pop();
 };
 
-cc.gaf.DataReader.prototype.Point = function(){
+gaf.DataReader.prototype.Point = function(){
     return {
         x: this.float(),
         y: this.float()
     };
 };
 
-cc.gaf.DataReader.prototype.Rect = function(){
+gaf.DataReader.prototype.Rect = function(){
     return {
         x: this.float(),
         y: this.float(),
@@ -70,7 +83,7 @@ cc.gaf.DataReader.prototype.Rect = function(){
     };
 };
 
-cc.gaf.DataReader.prototype.Matrix = function(){
+gaf.DataReader.prototype.Matrix = function(){
     return {
         a: this.float(),
         b: this.float(),
@@ -81,11 +94,11 @@ cc.gaf.DataReader.prototype.Matrix = function(){
     };
 };
 
-cc.gaf.DataReader.prototype.seek = function(pos){
+gaf.DataReader.prototype.seek = function(pos){
     this.offset[this.offset.length-1] = pos;
 };
 
-cc.gaf.DataReader.prototype.tell = function(){
+gaf.DataReader.prototype.tell = function(){
     return this.offset[this.offset.length-1];
 };
 
@@ -95,7 +108,7 @@ cc.gaf.DataReader.prototype.tell = function(){
 * @`data` - data to store. Can be DataReader function name or a function that will return a value
 * Note. Parameters pair `key` and `data` can be repeated any number of times*/
 
-cc.gaf.DataReader.prototype.fields = function(){
+gaf.DataReader.prototype.fields = function(){
     var self = this;
     var arguments_ = arguments;
     return function(){
@@ -129,7 +142,7 @@ cc.gaf.DataReader.prototype.fields = function(){
 * @ `func` - function to execute if condition is true
 * */
 
-cc.gaf.DataReader.prototype.condition = function(key, value, func){
+gaf.DataReader.prototype.condition = function(key, value, func){
     var self = this;
     var arguments_ = arguments;
     return function() {
@@ -168,7 +181,7 @@ cc.gaf.DataReader.prototype.condition = function(key, value, func){
 * @ `func` - function to be executed
 * */
 
-cc.gaf.DataReader.prototype.array = function(){
+gaf.DataReader.prototype.array = function(){
     var self = this;
     var arguments_ = arguments;
     return function() {

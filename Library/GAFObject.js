@@ -1,4 +1,4 @@
 
-cc.gaf.Object = cc.Sprite.extend({
+gaf.Object = cc.Sprite.extend({
 
 });

@@ -1,5 +1,5 @@
 
-cc.gaf.Asset = cc.Node.extend({
+gaf.Asset = cc.Node.extend({
 
     /*
     * */
