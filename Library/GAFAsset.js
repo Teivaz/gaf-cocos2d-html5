@@ -196,10 +196,9 @@ gaf.GAFAsset = cc.Class.extend({
 
     /**
      * @method getHeader
-     * @return {gaf::GAFHeader}
+     * @return {gaf.GAFHeader}
      */
-    getHeader : function ()
-    {
+    getHeader : function (){
         debugger;
     }
 });

@@ -330,18 +330,18 @@ gaf.Tag.DefineTimeline = Object.create(gaf.Tag.base);
 gaf.Tag.DefineTimeline.tagName = "TagDefineTimeline";
 gaf.Tag.DefineTimeline.doParse = function(s) {
     var exec = s.fields(
-        'smth1', 'Uint',
-        'smth2', 'Uint',
-        'aabb', 'Rect',
-        'pivot', 'Point',
+        'id', 'Uint',
+        'animationFrameCount', 'Uint',
+        'boundingBox', 'Rect',
+        'pivotPoint', 'Point',
         'hasLinkage', 'Boolean',
-        'linkage', s.condition('hasLinkage', 1, function () {
+        'linkageName', s.condition('hasLinkage', 1, function () {
             return s.String();
         })
     );
     var result = {'content': exec()};
 //    debugger;
-    result.tags = gaf.ReadTags(s);
+    result.content.tags = gaf.ReadTags(s);
     return result;
 };
 
