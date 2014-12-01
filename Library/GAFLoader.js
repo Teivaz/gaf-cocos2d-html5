@@ -1,56 +1,72 @@
+var gaf = gaf || {};
 
-gaf.Load = function(stream){
-    var header = {};
-    gaf.Load.readHeaderBegin(stream, header);
-    if(header.magic == 0x00474146) { // GAF
-    }
-    else if(header.magic == 0x00474143){ // GAC
-        var compressed = stream.dataRaw.slice(stream.tell());
+gaf.Loader = function(){
 
-        var inflate = new window.Zlib.Inflate(new Uint8Array(compressed));
-        var decompressed = inflate.decompress();
-        stream = new gaf.DataReader(decompressed.buffer);
-    }
-    else{
-        throw new Error("GAF syntax error.");
-    }
-
-    if(header.versionMajor < 4){
-        gaf.Load.readHeaderEndV3(stream, header);
-    }
-    else{
-        gaf.Load.readHeaderEndV4(stream, header);
-    }
-
-    var tags = gaf.ReadTags(stream);
-    return {
-        header: header,
-        tags: tags
+    var readHeaderBegin = function(stream, header){
+        header.magic = stream.Uint();
+        header.versionMajor = stream.Ubyte();
+        header.versionMinor = stream.Ubyte();
+        header.fileLength = stream.Uint();
     };
-};
 
-gaf.Load.readHeaderBegin = function(stream, header){
-    header.magic = stream.Uint();
-    header.versionMajor = stream.Ubyte();
-    header.versionMinor = stream.Ubyte();
-    header.fileLength = stream.Uint();
-};
+    var readHeaderEndV3 = function(stream, header) {
+        header.framesCount = stream.Ushort();
+        header.bounds = stream.Rect();
+        header.point = stream.Point();
+    };
 
-gaf.Load.readHeaderEndV3 = function(stream, header) {
-    header.framesCount = stream.Ushort();
-    header.bounds = stream.Rect();
-    header.point = stream.Point();
-};
+    var readHeaderEndV4 = function(stream, header){
+        header.scaleCount = stream.Uint();
+        header.scales = [];
+        for(var i = 0; i < header.scaleCount; ++i){
+            header.scales.push(stream.float());
+        }
+        header.csfCount = stream.Uint();
+        header.csfs = [];
+        for(var i = 0; i < header.csfCount; ++i){
+            header.csfs.push(stream.float());
+        }
+    };
 
-gaf.Load.readHeaderEndV4 = function(stream, header){
-    header.scaleCount = stream.Uint();
-    header.scales = [];
-    for(var i = 0; i < header.scaleCount; ++i){
-        header.scales.push(stream.float());
-    }
-    header.csfCount = stream.Uint();
-    header.csfs = [];
-    for(var i = 0; i < header.csfCount; ++i){
-        header.csfs.push(stream.float());
-    }
+    this.LoadFile = function(filePath, async, onLoaded){
+        var oReq = new XMLHttpRequest();
+        oReq.open("GET", filePath, async);
+        oReq.responseType = "arraybuffer";
+        oReq.onload = function(oEvent) {
+            var gaf_data = new gaf.DataReader(oReq.response);
+            var gafFile = gaf.Loader.LoadStream(gaf_data);
+            onLoaded(gafFile);
+        };
+        oReq.send();
+    };
+
+    this.LoadStream = function(stream){
+        var header = {};
+        readHeaderBegin(stream, header);
+        if(header.magic == 0x00474146) { // GAF
+        }
+        else if(header.magic == 0x00474143){ // GAC
+            var compressed = stream.dataRaw.slice(stream.tell());
+
+            var inflate = new window.Zlib.Inflate(new Uint8Array(compressed));
+            var decompressed = inflate.decompress();
+            stream = new gaf.DataReader(decompressed.buffer);
+        }
+        else{
+            throw new Error("GAF syntax error.");
+        }
+
+        if(header.versionMajor < 4){
+            readHeaderEndV3(stream, header);
+        }
+        else{
+            readHeaderEndV4(stream, header);
+        }
+
+        var tags = gaf.ReadTags(stream);
+        return {
+            header: header,
+            tags: tags
+        };
+    };
 };

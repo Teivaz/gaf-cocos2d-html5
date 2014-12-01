@@ -86,7 +86,7 @@ gaf.Tag.DefineAtlas.doParse = function (s) {
         ))
     );
     var result = {'content': exec()};
-    debugger;
+//    debugger;
     return result;
 };
 
@@ -110,7 +110,7 @@ gaf.Tag.DefineAnimationObjects.doParse = function (s) {
         'elementAtlasIdRef', 'Uint'
     ));
     var result = {'content': exec()};
-    debugger;
+//    debugger;
     return result;
 };
 
@@ -145,7 +145,7 @@ gaf.Tag.DefineAnimationFrames.doParse = function(s){
         ))
     ));
     var result = {'content': exec()};
-    debugger;
+//    debugger;
     return result;
 };
 
