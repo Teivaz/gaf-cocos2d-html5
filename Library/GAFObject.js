@@ -14,31 +14,31 @@ gaf.CGAffineTransformCocosFormatFromFlashFormat = function(transform){
 gaf.GAFObject = cc.Sprite.extend({
 
     // Private
-    _animationStartedNextLoopDelegate: null, // function(GAFObject)
-    _animationFinishedPlayDelegate: null,    // function(GAFObject)
-    _framePlayedDelegate: null,              // function(GAFObject, frame)
-    _sequenceDelegate: null,                 // function(GAFObject, sequenceName)
-    _displayList: [],
-    _fps: 60,
-    _currentSequenceStart: gaf.FIRST_FRAME_INDEX,
-    _currentSequenceEnd: gaf.FIRST_FRAME_INDEX,
-    _totalFrameCount: 0,
-    _isRunning: false,
-    _isLooped: false,
-    _isReversed: false,
-    _timeDelta: 0,
-    _asset: null,
-    _timelineParentObject: null,
-    _container: null,
-    _timeline: null,
-    _currentFrame: gaf.FIRST_FRAME_INDEX,
-    _showingFrame: gaf.FIRST_FRAME_INDEX,
-    _lastVisibleInFrame: gaf.FIRST_FRAME_INDEX,
-    _objectType: 0,
-    _animationsSelectorScheduled: false,
-    _parentColorTransforms: [new cc.kmVec4(), new cc.kmVec4()],
+    _animationStartedNextLoopDelegate : null, // function(GAFObject)
+    _animationFinishedPlayDelegate : null,    // function(GAFObject)
+    _framePlayedDelegate : null,              // function(GAFObject, frame)
+    _sequenceDelegate : null,                 // function(GAFObject, sequenceName)
+    _fps : 60,
+    _currentSequenceStart : gaf.FIRST_FRAME_INDEX,
+    _currentSequenceEnd : gaf.FIRST_FRAME_INDEX,
+    _totalFrameCount : 0,
+    _isRunning : false,
+    _isLooped : false,
+    _isReversed : false,
+    _timeDelta : 0,
+    _asset : null,
+    _timelineParentObject : null,
+    _container : null,
+    _timeline : null,
+    _currentFrame : gaf.FIRST_FRAME_INDEX,
+    _showingFrame : gaf.FIRST_FRAME_INDEX,
+    _lastVisibleInFrame : gaf.FIRST_FRAME_INDEX,
+    _objectType : 0,
+    _animationsSelectorScheduled : false,
+    _parentColorTransforms : [new cc.kmVec4(), new cc.kmVec4()],
     _parentFilters : [],
     _masks : [],
+    _displayList : [],
 
     // Public methods
 
@@ -46,7 +46,7 @@ gaf.GAFObject = cc.Sprite.extend({
      * @method setAnimationStartedNextLoopDelegate
      * @param {function(GAFObject)} delegate
      */
-    setAnimationStartedNextLoopDelegate: function (delegate) {
+    setAnimationStartedNextLoopDelegate : function (delegate) {
         this._animationStartedNextLoopDelegate = delegate;
     },
 
@@ -54,7 +54,7 @@ gaf.GAFObject = cc.Sprite.extend({
      * @method setAnimationFinishedPlayDelegate
      * @param {function(GAFObject)} delegate
      */
-    setAnimationFinishedPlayDelegate: function (delegate) {
+    setAnimationFinishedPlayDelegate : function (delegate) {
         this._animationFinishedPlayDelegate = delegate;
     },
 
@@ -62,7 +62,7 @@ gaf.GAFObject = cc.Sprite.extend({
      * @method setLooped
      * @param {bool} looped
      */
-    setLooped: function (looped) {
+    setLooped : function (looped) {
         this._looped = looped;
         this._displayList.forEach(function(item){
             if(item){
@@ -75,14 +75,14 @@ gaf.GAFObject = cc.Sprite.extend({
      * @method getBoundingBoxForCurrentFrame
      * @return {cc.Rect}
      */
-    getBoundingBoxForCurrentFrame: function () {
+    getBoundingBoxForCurrentFrame : function () {
     },
 
     /**
      * @method setFps
      * @param {uint} fps
      */
-    setFps: function (fps) {
+    setFps : function (fps) {
         cc.assert(fps !== 0, 'Error! Fps is set to zero.');
         this._fps = fps;
     },
@@ -92,7 +92,7 @@ gaf.GAFObject = cc.Sprite.extend({
      * @param {String} name - name of the object to find
      * @return {gaf.GAFObject}
      */
-    getObjectByName: function (name) {
+    getObjectByName : function (name) {
         var elements = name.split('.');
         var result = null;
         var retId = -1;
@@ -115,7 +115,7 @@ gaf.GAFObject = cc.Sprite.extend({
     /**
      * @method clearSequence
      */
-    clearSequence: function () {
+    clearSequence : function () {
         this._currentSequenceStart = gaf.FIRST_FRAME_INDEX;
         this._currentSequenceEnd = this._totalFrameCount;
     },
@@ -124,7 +124,7 @@ gaf.GAFObject = cc.Sprite.extend({
      * @method getIsAnimationRunning
      * @return {bool}
      */
-    getIsAnimationRunning: function () {
+    getIsAnimationRunning : function () {
         return this._isRunning;
     },
 
@@ -133,7 +133,7 @@ gaf.GAFObject = cc.Sprite.extend({
      * @param {uint|String} value - label ot frame number
      * @return {bool}
      */
-    gotoAndStop: function (value) {
+    gotoAndStop : function (value) {
         var frame = 0;
         if (typeof value === 'string') {
             frame = this.getStartFrame(value);
@@ -153,7 +153,7 @@ gaf.GAFObject = cc.Sprite.extend({
      * @param {String} frameLabel
      * @return {uint}
      */
-    getStartFrame: function (frameLabel) {
+    getStartFrame : function (frameLabel) {
         if (!this._asset) {
             return gaf.IDNONE;
         }
@@ -168,7 +168,7 @@ gaf.GAFObject = cc.Sprite.extend({
      * @method setFramePlayedDelegate
      * @param {function(GAFObject, frame)} delegate
      */
-    setFramePlayedDelegate: function (delegate) {
+    setFramePlayedDelegate : function (delegate) {
         this._framePlayedDelegate = delegate;
     },
 
@@ -176,7 +176,7 @@ gaf.GAFObject = cc.Sprite.extend({
      * @method getCurrentFrameIndex
      * @return {uint}
      */
-    getCurrentFrameIndex: function () {
+    getCurrentFrameIndex : function () {
         return this._showingFrame;
     },
 
@@ -184,14 +184,14 @@ gaf.GAFObject = cc.Sprite.extend({
      * @method getTotalFrameCount
      * @return {uint}
      */
-    getTotalFrameCount: function () {
+    getTotalFrameCount : function () {
         return this._totalFrameCount;
     },
 
     /**
      * @method start
      */
-    start: function () {
+    start : function () {
         this.schedule(_processAnimations);
         this._animationsSelectorScheduled = true;
         if (!this._isRunning) {
@@ -203,7 +203,7 @@ gaf.GAFObject = cc.Sprite.extend({
     /**
      * @method stop
      */
-    stop: function () {
+    stop : function () {
         this.unschedule(_processAnimations);
         this._animationsSelectorScheduled = false;
         if (this._isRunning) {
@@ -218,7 +218,7 @@ gaf.GAFObject = cc.Sprite.extend({
      * @param {gaf.GAFTimeline} gafTimeline
      * @return {bool}
      */
-    init: function (gafAsset, gafTimeline) {
+    init : function (gafAsset, gafTimeline) {
         cc.assert(gafAsset, "anAssetData data should not be nil");
         cc.assert(gafTimeline, "Timeline data should not be nil");
         if (!gafAsset || !gafTimeline) {
@@ -241,7 +241,7 @@ gaf.GAFObject = cc.Sprite.extend({
      * @method isVisibleInCurrentFrame
      * @return {bool}
      */
-    isVisibleInCurrentFrame: function () {
+    isVisibleInCurrentFrame : function () {
         if (this._timelineParentObject &&
             (this._timelineParentObject.getCurrentFrameIndex() + 1 != this._lastVisibleInFrame)) {
             return false;
@@ -255,7 +255,7 @@ gaf.GAFObject = cc.Sprite.extend({
      * @method isDone
      * @return {bool}
      */
-    isDone: function () {
+    isDone : function () {
         if (this._isLooped) {
             return false;
         }
@@ -276,7 +276,7 @@ gaf.GAFObject = cc.Sprite.extend({
      * @param {bool} resume - whether to resume animation if stopped. True by default
      * @return {bool}
      */
-    playSequence: function (name, looped, resume) {
+    playSequence : function (name, looped, resume) {
         looped = looped || false;
         resume = resume || true;
         if (!this._asset || !this._timeline) {
@@ -309,7 +309,7 @@ gaf.GAFObject = cc.Sprite.extend({
      * @method isReversed
      * @return {bool}
      */
-    isReversed: function () {
+    isReversed : function () {
         return this._isReversed;
     },
 
@@ -317,7 +317,7 @@ gaf.GAFObject = cc.Sprite.extend({
      * @method setSequenceDelegate
      * @param {function(GAFObject, sequenceName)} delegate
      */
-    setSequenceDelegate: function (delegate) {
+    setSequenceDelegate : function (delegate) {
         this._sequenceDelegate = delegate;
     },
 
@@ -326,7 +326,7 @@ gaf.GAFObject = cc.Sprite.extend({
      * @param {uint} index
      * @return {bool}
      */
-    setFrame: function (index) {
+    setFrame : function (index) {
         if (index < this._totalFrameCount) {
             this._showingFrame = index;
             this._currentFrame = index;
@@ -340,7 +340,7 @@ gaf.GAFObject = cc.Sprite.extend({
      * @method setControlDelegate
      * @param {function} func
      */
-    setControlDelegate: function (func) {
+    setControlDelegate : function (func) {
     },
 
     /**
@@ -348,7 +348,7 @@ gaf.GAFObject = cc.Sprite.extend({
      * @param {String} frameLabel
      * @return {uint}
      */
-    getEndFrame: function (frameLabel) {
+    getEndFrame : function (frameLabel) {
         if (!this._asset) {
             return gaf.IDNONE;
         }
@@ -362,7 +362,7 @@ gaf.GAFObject = cc.Sprite.extend({
     /**
      * @method pauseAnimation
      */
-    pauseAnimation: function () {
+    pauseAnimation : function () {
         if (this._isRunning) {
             this._setAnimationRunning(false);
         }
@@ -373,7 +373,7 @@ gaf.GAFObject = cc.Sprite.extend({
      * @param {uint|String} value - label ot frame number
      * @return {bool}
      */
-    gotoAndPlay: function (value) {
+    gotoAndPlay : function (value) {
         var frame = 0;
         if (typeof value === 'String') {
             frame = this.getStartFrame(value);
@@ -392,14 +392,14 @@ gaf.GAFObject = cc.Sprite.extend({
      * @method isLooped
      * @return {bool}
      */
-    isLooped: function () {
+    isLooped : function () {
         return this._isLooped;
     },
 
     /**
      * @method resumeAnimation
      */
-    resumeAnimation: function () {
+    resumeAnimation : function () {
         if (!this._isRunning) {
             this._setAnimationRunning(true);
         }
@@ -409,7 +409,7 @@ gaf.GAFObject = cc.Sprite.extend({
      * @method setReversed
      * @param {bool} reversed
      */
-    setReversed: function (reversed) {
+    setReversed : function (reversed) {
         this._isReversed = reversed;
         this._displayList.forEach(function(obj){
             if(obj){
@@ -422,7 +422,7 @@ gaf.GAFObject = cc.Sprite.extend({
      * @method hasSequences
      * @return {bool}
      */
-    hasSequences: function () {
+    hasSequences : function () {
         return !this._timeline.getAnimationSequences().empty();
     },
 
@@ -430,7 +430,7 @@ gaf.GAFObject = cc.Sprite.extend({
      * @method getFps
      * @return {uint}
      */
-    getFps: function () {
+    getFps : function () {
         return this._fps;
     },
 
@@ -440,7 +440,7 @@ gaf.GAFObject = cc.Sprite.extend({
      * @param {gaf.GAFTimeline} gafTimeline
      * @return {gaf.GAFObject}
      */
-    create: function (gafAsset, gafTimeline) {
+    create : function (gafAsset, gafTimeline) {
         var ret = new gaf.GAFAsset();
         if (ret.init(gafAsset, gafTimeline)) {
             return ret;
@@ -450,7 +450,7 @@ gaf.GAFObject = cc.Sprite.extend({
     },
 
     // Private methods
-    _setAnimationRunning: function (value) {
+    _setAnimationRunning : function (value) {
         this._isRunning = value;
         this._displayList.forEach(function(obj){
             if (obj) {
@@ -459,7 +459,7 @@ gaf.GAFObject = cc.Sprite.extend({
         });
     },
 
-    _processAnimations: function (dt) {
+    _processAnimations : function (dt) {
         this._timeDelta += dt;
         var frameTime = 1.0 / this._fps;
         while (this._timeDelta >= frameTime) {
@@ -471,7 +471,7 @@ gaf.GAFObject = cc.Sprite.extend({
         }
     },
 
-    _constructObject: function () {
+    _constructObject : function () {
         var size = this._asset.getHeader().frameSize;
         this.setContentSize(new cc.Size(size.width + size.x * 2, size.height + size.y * 2));
         this._displayList = null;
@@ -481,11 +481,11 @@ gaf.GAFObject = cc.Sprite.extend({
 
     },
 
-    _instantiateObject: function (animationObjects, animationMasks) {
+    _instantiateObject : function (animationObjects, animationMasks) {
 
     },
 
-    _step: function () {
+    _step : function () {
         this._showingFrame = this._currentFrame;
         if (!this._isReversed) {
             if (this._currentFrame < this._currentSequenceStart) {
@@ -642,17 +642,17 @@ gaf.GAFObject = cc.Sprite.extend({
                         if (filter){
                             filter.apply(mc);
                         }
-                        if (!filter || filter.getType() != GAFFilterType::GFT_Blur){
+                        if (!filter || filter.getType() != GAFFilterType : :GFT_Blur){
                             mc.setBlurFilterData(nullptr);
                         }
-                        if (!filter || filter.getType() != GAFFilterType::GFT_ColorMatrix){
+                        if (!filter || filter.getType() != GAFFilterType : :GFT_ColorMatrix){
                             mc.setColorMarixFilterData(nullptr);
                         }
-                        if (!filter || filter.getType() != GAFFilterType::GFT_Glow){
+                        if (!filter || filter.getType() != GAFFilterType : :GFT_Glow){
                             mc.setGlowFilterData(nullptr);
                         }
-                        if (!filter || filter.getType() != GAFFilterType::GFT_DropShadow){
-                            GAFDropShadowFilterData::reset(mc);
+                        if (!filter || filter.getType() != GAFFilterType : :GFT_DropShadow){
+                            GAFDropShadowFilterData : :reset(mc);
                         }*/
                     }
                     var newCS = subObject.getContentSize();
@@ -718,22 +718,22 @@ gaf.GAFObject = cc.Sprite.extend({
             timelineActions.forEach(function(action){
                 switch (action.getType())
                 {
-                    case gaf.ACTION_STOP:
+                    case gaf.ACTION_STOP :
                         t.pauseAnimation();
                         break;
-                    case gaf.ACTION_PLAY:
+                    case gaf.ACTION_PLAY :
                         t.resumeAnimation();
                         break;
-                    case gaf.ACTION_GO_TO_AND_STOP:
+                    case gaf.ACTION_GO_TO_AND_STOP :
                         t.gotoAndStop(action.getParam(gaf.PI_FRAME));
                         break;
-                    case gaf.ACTION_GO_TO_AND_PLAY:
+                    case gaf.ACTION_GO_TO_AND_PLAY :
                         t.gotoAndPlay(action.getParam(gaf.PI_FRAME));
                         break;
-                    case gaf.ACTION_DISPATCH_EVENT:
+                    case gaf.ACTION_DISPATCH_EVENT :
                         t._eventDispatcher.dispatchCustomEvent(action.getParam(gaf.PI_EVENT_TYPE), action);
                         break;
-                    default:
+                    default :
                         break;
                 }
             });
