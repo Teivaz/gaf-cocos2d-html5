@@ -619,7 +619,7 @@ gaf.GAFObject = cc.Sprite.extend({
                     var  prevCS = subObject.getContentSize();
                     if (subObject._isMask()){
                         // Validate sprite type (w/ or w/o filter)
-                        var filters = state.getFilters();
+                        filters = state.getFilters();
                         var filter = null;
                         /*
                          var mc = static_cast<GAFMovieClip*>(subObject);
@@ -675,15 +675,15 @@ gaf.GAFObject = cc.Sprite.extend({
                         {
                             // If the state has a mask, then attach it
                             // to the clipping node. Clipping node will be attached on its state
-                            var mask = this._masks[state.maskObjectIdRef];
+                            mask = this._masks[state.maskObjectIdRef];
                             cc.assert(mask, "Error. No mask found for this ID");
                             if (mask)
                                 t._rearrangeSubobject(mask, subObject, state.zIndex, frameIndex, 1);
                         }
                     }
 
-                    var stateTransform = state.affineTransform;
-                    var csf = t._timeline.usedAtlasContentScaleFactor();
+                    stateTransform = state.affineTransform;
+                    csf = t._timeline.usedAtlasContentScaleFactor();
                     stateTransform.tx *= csf;
                     stateTransform.ty *= csf;
                     var transform = gaf.CGAffineTransformCocosFormatFromFlashFormat(state.affineTransform);
