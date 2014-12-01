@@ -1,5 +1,6 @@
 var gaf = gaf || {};
 
+//@Private class
 gaf.Loader = function(){
 
     var readHeaderBegin = function(stream, header){
@@ -28,15 +29,17 @@ gaf.Loader = function(){
         }
     };
 
-    this.LoadFile = function(filePath, async, onLoaded){
+    this.LoadFile = function(filePath, onLoaded){
         var oReq = new XMLHttpRequest();
-        oReq.open("GET", filePath, async);
+        var self = this;
         oReq.responseType = "arraybuffer";
         oReq.onload = function(oEvent) {
             var gaf_data = new gaf.DataReader(oReq.response);
-            var gafFile = gaf.Loader.LoadStream(gaf_data);
-            onLoaded(gafFile);
+            var gafFile = self.LoadStream(gaf_data);
+            if(onLoaded)
+                onLoaded(gafFile);
         };
+        oReq.open("GET", filePath, true);
         oReq.send();
     };
 

@@ -18,7 +18,8 @@ function handleFileSelect(evt) {
             reader.onload = (function(theFile){
                 return function(req) {
                     var arrayBuffer = new gaf.DataReader(req.target.result);
-                    var data = gaf.Load(arrayBuffer);
+                    var loader = new gaf.Loader();
+                    var data = loader.LoadStream(arrayBuffer);
                     document.getElementById('list').appendChild(renderjson(data));
                 };
             })(f);
