@@ -2,6 +2,16 @@ var gaf = gaf || {};
 
 gaf.GAFAsset = cc.Class.extend({
 
+    // Private members
+    _header : null,
+    _timelines : [],
+    _rootTimeline : null,
+    _textureLoadDelegate : null,
+    _sceneFps : 60,
+    _sceneWidth : 0,
+    _sceneHeight : 0,
+    _sceneColor : 0,
+
     /**
      * @method initWithGAFFile
      * @param {String} filePath - path to .gaf file
@@ -9,6 +19,10 @@ gaf.GAFAsset = cc.Class.extend({
      * @return {bool}
      */
     initWithGAFFile : function(filePath, delegate){
+        var data = cc.getRes(filePath);
+        cc.assert(data, "File `" + filePath + "` not found.");
+        this._instantiateJsGaf(gafData);
+
         debugger;
     },
 
@@ -200,5 +214,18 @@ gaf.GAFAsset = cc.Class.extend({
      */
     getHeader : function (){
         debugger;
+    },
+
+    // Private
+
+    _instantiateJsGaf : function(gafData){
+        this._setHeader(gafData.header);
+        gafData.tags;
+
+    },
+
+    _setHeader : function(gafHeader){
+
     }
+
 });
