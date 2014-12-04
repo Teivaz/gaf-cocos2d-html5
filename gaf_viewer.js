@@ -92,10 +92,24 @@ var module;
                                                                                           empty.style.display="inline"; } )));
                                     content.style.display="inline";
                                     empty.style.display="none"; };
+            if(json.hasOwnProperty("tagName"))
+              var placeholder = json.tagName;
+            else if(json.hasOwnProperty("header"))
+              placeholder = " GAF v" + json.header.versionMajor + "." + json.header.versionMinor + " ";
+            else if(json.constructor == Array)
+              placeholder = " " + json.length + " ";
+            else if(json.hasOwnProperty("id"))
+              placeholder = " id:" + json.id + " ... ";
+            else if(json.hasOwnProperty("objectId"))
+              placeholder = " id:" + json.objectId + " ... ";
+            else if(json.hasOwnProperty("frame"))
+              placeholder = " frame:" + json.frame + " ... ";
+            else
+              placeholder = ' ... '      
             append(empty,
                    A(renderjson.show, "disclosure", show),
                    themetext(type+ " syntax", open),
-                   A(" ... ", null, show),
+                   A(placeholder, null, show),
                    themetext(type+ " syntax", close));
 
             var el = append(span(), text(my_indent.slice(0,-1)), empty);
@@ -123,6 +137,7 @@ var module;
         if (isempty(json))
             return themetext(null, my_indent, "object syntax", "{}");
 
+        
         return disclosure("{", "}", "object", function () {
             var os = append(span("object"), themetext("object syntax", "{", null, "\n"));
             for (var k in json) var last = k;

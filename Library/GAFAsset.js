@@ -220,12 +220,46 @@ gaf.GAFAsset = cc.Class.extend({
 
     _instantiateJsGaf : function(gafData){
         this._setHeader(gafData.header);
-        gafData.tags;
+        this._constructTags(gafData.tags);
+
+    },
+
+    _constructTags : function (tags){
+        var self = this;
+        tags.forEach(function(tag) {
+            self._constructSingleTag(tag, null);
+        });
+    },
+
+    _constructSingleTag : function (tag, parent){
+        var self = this;
+        switch (tag.tagName){
+            case "TagDefineStage":
+                self._setStage(tag.content);
+                break;
+            case "TagDefineTimeline":
+                self._constructTimeline(tag.content, parent);
+                break;
+        }
+    },
+
+    _linkTags : function(){
 
     },
 
     _setHeader : function(gafHeader){
         this._header = gafHeader;
+    },
+
+    _setStage : function(content){
+        this._sceneFps = content.fps;
+        this._sceneColor = content.color;
+        this._sceneWidth = content.width;
+        this._sceneHeight = content.height;
+    },
+
+    _constructTimeline : function(content, parent){
+        
     }
 
 });

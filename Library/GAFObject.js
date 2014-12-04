@@ -741,7 +741,7 @@ gaf.GAFObject = cc.Sprite.extend({
     },
 
     _isTimeline : function(){
-        return false;
+        return true;
     },
 
     _isTexture : function(){
