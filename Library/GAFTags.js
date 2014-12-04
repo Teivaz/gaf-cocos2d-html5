@@ -23,11 +23,12 @@ gaf.ReadTags = function(stream){
         } while (tag.tagId != 0);
     }
     catch (e){
-        if (e instanceof Error && e.message == "GAF out of bounds"){
-            console.log("GAF out of bounds.");
+        if (e instanceof Error && e.message == "GAF format error"){
+            console.log("GAF format error:\n" + e.stack);
             // Tag will be closed and parser will continue from where it should.
         }
         else{
+            console.log(e.stack);
             throw e;
         }
     }
@@ -136,7 +137,7 @@ gaf.Tag.DefineAnimationFrames.doParse = function(s){
                 'blueMultiplier', 'float',
                 'blueOffset', 'float'
             )),
-                'effect', s.condition('hasEffect', 1, s.array('Ubyte', gaf.Tag._readFilter(s))),
+            'effect', s.condition('hasEffect', 1, s.array('Ubyte', gaf.Tag._readFilter(s))),
             'maskObjectIdRef', s.condition('hasMask', 1, s.fields(
                 'maskObjectIdRef', 'Uint'
             ))
@@ -282,7 +283,7 @@ gaf.Tag.DefineAnimationMasks2.doParse  = function(s) {
         'type', 'Ushort'
     ));
     var result = {'content': exec()};
-    debugger;
+//    debugger;
     return result;
 };
 
@@ -310,7 +311,8 @@ gaf.Tag.DefineAnimationFrames2.doParse = function(s) {
                 'blueMultiplier', 'float',
                 'blueOffset', 'float'
             )),
-            'effect', s.condition('hasEffect', 1, s.array('Ubyte', gaf.Tag._readFilter(s)))
+            'effect', s.condition('hasEffect', 1, s.array('Ubyte', gaf.Tag._readFilter(s))),
+            'maskObjectIdRef', s.condition('hasMask', 1, function(){return s.Uint()})
         ))),
         'actions',  s.condition('hasActions', 1, s.array('Uint', s.fields(
             'type', 'Uint',
@@ -351,6 +353,7 @@ gaf.Tag._readActionArguments = function(s){
             ret.push(s.String());
         }
         s.endNestedBuffer();
+        return ret;
     };
 };
 

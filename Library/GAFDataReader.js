@@ -9,7 +9,7 @@ gaf.DataReader.prototype.constructor = gaf.DataReader;
 gaf.DataReader.prototype.newOffset = function(size){
     this.offset[this.offset.length - 1] += size;
     if(this.getOffset() > this.maxOffset()){
-        throw new Error("GAF out of bounds");
+        throw new Error("GAF format error");
     }
     return this.offset[this.offset.length - 1] - size;
 };
@@ -32,7 +32,11 @@ gaf.DataReader.prototype.Ubyte = function() {
 };
 
 gaf.DataReader.prototype.Boolean = function() {
-    return this.buf.getUint8(this.newOffset(1));
+    var result = this.buf.getUint8(this.newOffset(1));
+    if(result > 1){
+        throw new Error("GAF format error");
+    }
+    return result;
 };
 
 gaf.DataReader.prototype.Uint = function() {
