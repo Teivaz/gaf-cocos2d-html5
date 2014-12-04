@@ -213,7 +213,7 @@ gaf.GAFAsset = cc.Class.extend({
      * @return {gaf.GAFHeader}
      */
     getHeader : function (){
-        debugger;
+        return this._header;
     },
 
     // Private
@@ -225,7 +225,7 @@ gaf.GAFAsset = cc.Class.extend({
     },
 
     _setHeader : function(gafHeader){
-
+        this._header = gafHeader;
     }
 
 });

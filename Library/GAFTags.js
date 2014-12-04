@@ -136,9 +136,7 @@ gaf.Tag.DefineAnimationFrames.doParse = function(s){
                 'blueMultiplier', 'float',
                 'blueOffset', 'float'
             )),
-            'effect', s.condition('hasEffect', 1, s.array('Ubyte', function() {
-                return gaf.Tag._readFilter(s);
-            })),
+                'effect', s.condition('hasEffect', 1, s.array('Ubyte', gaf.Tag._readFilter(s))),
             'maskObjectIdRef', s.condition('hasMask', 1, s.fields(
                 'maskObjectIdRef', 'Uint'
             ))
@@ -316,9 +314,8 @@ gaf.Tag.DefineAnimationFrames2.doParse = function(s) {
         ))),
         'actions',  s.condition('hasActions', 1, s.array('Uint', s.fields(
             'type', 'Uint',
-            'params', s.condition('type', function(a){return a > 1;}, s.array('Uint', s.fields(
-                'value', 'String'
-            )))
+            'scope', 'String',
+            'params', gaf.Tag._readActionArguments(s)
         )))
     ));
     var result = {'content': exec()};
@@ -343,6 +340,18 @@ gaf.Tag.DefineTimeline.doParse = function(s) {
 //    debugger;
     result.content.tags = gaf.ReadTags(s);
     return result;
+};
+
+gaf.Tag._readActionArguments = function(s){
+    return function(){
+        var size = s.Uint();
+        var ret = [];
+        s.startNestedBuffer(size);
+        while(s.maxOffset() < s.tell()){
+            ret.push(s.String());
+        }
+        s.endNestedBuffer();
+    };
 };
 
 gaf.Tag._readFilter = function(s){
