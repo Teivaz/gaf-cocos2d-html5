@@ -156,7 +156,7 @@ gaf.Tag.DefineNamedParts.doParse = function(s) {
         'tagName', 'String'
     ));
     var result = {'content': exec()};
-    debugger;
+//    debugger;
     return result;
 };
 
@@ -196,7 +196,7 @@ gaf.Tag.DefineTextFields.doParse = function(s) {
         'blockIndent', 'Uint',
         'bold', 'Boolean',
         'bullet', 'Boolean',
-        'color', 'Uint',
+        'color', 'color',
         'font', 'String',
         'indent', 'Uint',
         'italic', 'Boolean',
@@ -252,7 +252,7 @@ gaf.Tag.DefineStage.tagName = "TagDefineStage";
 gaf.Tag.DefineStage.doParse = function(s) {
     var exec = s.fields(
         'fps', 'Ubyte',
-        'color', 'int',
+        'color', 'color',
         'width', 'Ushort',
         'height', 'Ushort'
     );
@@ -361,7 +361,7 @@ gaf.Tag._readFilter = function(s){
     return s.fields(
         'type', 'Uint',
         'dropShadow', s.condition('type', 0, s.fields( // DropShadow
-            'color', 'Uint',
+            'color', 'color',
             'blurX', 'float',
             'blurY', 'float',
             'angle', 'float',
@@ -375,7 +375,7 @@ gaf.Tag._readFilter = function(s){
             'blurY', 'float'
         )),
         'glow', s.condition('type', 2, s.fields( // Glow
-            'color', 'Uint',
+            'color', 'color',
             'blurX', 'float',
             'blurY', 'float',
             'strength', 'float',
@@ -389,6 +389,7 @@ gaf.Tag._readFilter = function(s){
             'ra', 'float', 'ga', 'float', 'ba', 'float', 'aa', 'float', 'a', 'float'
         ))
     )
+    cc.color
 };
 
 gaf.Tags = new gaf.Tag();

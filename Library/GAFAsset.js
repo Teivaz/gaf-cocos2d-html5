@@ -259,7 +259,7 @@ gaf.GAFAsset = cc.Class.extend({
     },
 
     _constructTimeline : function(content, parent){
-        
+
     }
 
 });

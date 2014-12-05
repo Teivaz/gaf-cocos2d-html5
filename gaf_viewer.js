@@ -71,7 +71,7 @@ var module;
         return document.createElement("div")
     };
     var span = function(classname) {
-        var s = document.createElement("span");
+            var s = document.createElement("span");
         if (classname) s.className = classname;
         return s;
     };
@@ -109,6 +109,12 @@ var module;
                 content.style.display = "inline";
                 empty.style.display = "none";
             };
+
+            function isColor(a){
+                return a.hasOwnProperty('a') && a.hasOwnProperty('r') && a.hasOwnProperty('g') && a.hasOwnProperty('b');
+            }
+
+            var color_rect = span();
             if (json.hasOwnProperty("tagName"))
                 var placeholder = json.tagName;
             else if (json.hasOwnProperty("header"))
@@ -121,10 +127,19 @@ var module;
                 placeholder = " id:" + json.objectId + " ... ";
             else if (json.hasOwnProperty("frame"))
                 placeholder = " frame:" + json.frame + " ... ";
-            else
-                placeholder = ' ... '
+            else if(isColor(json)){
+                color_rect.style.backgroundColor = "rgba("+json.r+","+json.g+","+json.b+","+json.a / 255.0+")";// parseInt(json.r).toString(16) + parseInt(json.g).toString(16) + parseInt(json.b).toString(16);
+                color_rect.style.height = '10px';
+                color_rect.style.width = '10px';
+                color_rect.style.display = 'inline-block';
+                color_rect.style.margin = '0 4px';
+                color_rect.style.border = '1px solid #7f7f7f';
+            }
+
+            placeholder = placeholder || ' ... ';
             append(empty,
                 A(renderjson.show, "disclosure", show),
+                color_rect,
                 themetext(type + " syntax", open),
                 A(placeholder, null, show),
                 themetext(type + " syntax", close));

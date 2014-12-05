@@ -47,6 +47,15 @@ gaf.DataReader.prototype.int = function() {
     return this.buf.getInt32(this.newOffset(4), true);
 };
 
+gaf.DataReader.prototype.color = function() {
+    return {
+        b: this.Ubyte(),
+        g: this.Ubyte(),
+        r: this.Ubyte(),
+        a: this.Ubyte()
+    };
+};
+
 gaf.DataReader.prototype.Ushort = function() {
     return this.buf.getUint16(this.newOffset(2), true);
 };
