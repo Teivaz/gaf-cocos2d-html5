@@ -236,7 +236,7 @@ gaf.GAFAsset = cc.Class.extend({
                 self._constructAnimationObjects(tag.content, parent);
                 break;
             case "TagDefineAtlas":
-                self._constructAtlases(tag.content, parent);
+                gaf._GAFConstruct.Atlases(tag.content, parent);
                 break;
         }
     },
@@ -256,20 +256,6 @@ gaf.GAFAsset = cc.Class.extend({
 
     },
 
-    _constructAtlases : function(content, parent){
-        parent.atlases = {};
-        var csf = cc.Director._getInstance().getContentScaleFactor();
-        content.atlases.forEach(function(item){
-            var atlasPath = "";
-            item.sources.forEach(function(atlasSource){
-                if(atlasSource.csf === csf)
-                    atlasPath = atlasSource.source;
-            });
-
-            var atlas = new cc.TextureAtlas(atlasPath);
-
-        });
-    },
 
     _constructAnimationObjects : function(content, parent){
         parent.animationObjects = [];
