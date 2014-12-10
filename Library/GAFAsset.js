@@ -13,6 +13,7 @@ gaf.GAFAsset = cc.Class.extend({
     _sceneWidth: 0,
     _sceneHeight: 0,
     _sceneColor: 0,
+    _gafData: null,
 
     /**
      * @method initWithGAFFile
@@ -21,11 +22,8 @@ gaf.GAFAsset = cc.Class.extend({
      * @return {bool}
      */
     initWithGAFFile: function (filePath, delegate) {
-        var data = cc.loader.getRes(filePath);
-        cc.assert(data, "File `" + filePath + "` not found.");
-        this._instantiateJsGaf(data);
-
-        debugger;
+        this._gafData = cc.loader.getRes(filePath);
+        cc.assert(this._gafData, "File `" + filePath + "` not found.");
     },
 
     /**
@@ -92,15 +90,17 @@ gaf.GAFAsset = cc.Class.extend({
     /**
      * @method createObjectAndRun
      * [@param {boolean} arg0 - run looped. False by default]
-     * @return {gaf::GAFObject}
+     * @return {gaf.GAFObject}
      */
     createObjectAndRun: function () {
         var looped = false;
         if (arguments.length == 1) {
             looped = arguments[0];
         }
-
-        debugger;
+        var object = this._instantiateJsGaf(this._gafData);
+        object.setLooped(looped);
+        object.start();
+        return object;
     },
 
     /**
@@ -211,16 +211,19 @@ gaf.GAFAsset = cc.Class.extend({
 
     _instantiateJsGaf: function (gafData) {
         this._setHeader(gafData.header);
-        this._constructTags(gafData.tags);
-
+        var result = this._constructTags(gafData.tags);
+        return result;
     },
 
     _constructTags: function (tags) {
         var self = this;
-        var root = {};
+        var root = new gaf.GAFObject();
         tags.forEach(function (tag) {
-            self._constructSingleTag(tag, root);
+            self._constructSingleTag(tag, root._timeline);
         });
+        root._totalFrameCount = 40;
+
+        return root;
     },
 
     _constructSingleTag: function (tag, parent) {
@@ -233,10 +236,13 @@ gaf.GAFAsset = cc.Class.extend({
                 self._constructTimeline(tag.content, parent);
                 break;
             case "TagDefineAnimationObjects":
-                self._constructAnimationObjects(tag.content, parent);
+                gaf._GAFConstruct.AnimationObjects(tag.content, parent);
                 break;
             case "TagDefineAtlas":
                 gaf._GAFConstruct.Atlases(tag.content, parent);
+                break;
+            case "TagDefineAnimationFrames":
+                gaf._GAFConstruct.AnimationFrames(tag.content, parent);
                 break;
         }
     },
@@ -254,16 +260,9 @@ gaf.GAFAsset = cc.Class.extend({
 
     _constructTimeline: function (content, parent) {
 
-    },
-
-
-    _constructAnimationObjects : function(content, parent){
-        parent.animationObjects = [];
-        var elements = parent.atlases.elements;
-        content.forEach(function(item){
-            parent.animationObjects[+item.objectId] = elements[+item.elementAtlasIdRef];
-        });
     }
+
+
 
 
 });

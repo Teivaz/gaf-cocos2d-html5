@@ -29,13 +29,13 @@ gaf.GAFObject = cc.Sprite.extend({
     _asset : null,
     _timelineParentObject : null,
     _container : null,
-    _timeline : null,
+    _timeline : {},
     _currentFrame : gaf.FIRST_FRAME_INDEX,
     _showingFrame : gaf.FIRST_FRAME_INDEX,
     _lastVisibleInFrame : gaf.FIRST_FRAME_INDEX,
     _objectType : 0,
     _animationsSelectorScheduled : false,
-    _parentColorTransforms : [new cc.kmVec4(), new cc.kmVec4()],
+    _parentColorTransforms : [new cc.kmVec4(1, 1, 1, 1), new cc.kmVec4(0, 0, 0, 0)],
     _parentFilters : [],
     _masks : [],
     _displayList : [],
@@ -192,7 +192,7 @@ gaf.GAFObject = cc.Sprite.extend({
      * @method start
      */
     start : function () {
-        this.schedule(_processAnimations);
+        this.schedule("_processAnimations");
         this._animationsSelectorScheduled = true;
         if (!this._isRunning) {
             this._currentFrame = gaf.FIRST_FRAME_INDEX;
@@ -560,30 +560,30 @@ gaf.GAFObject = cc.Sprite.extend({
             return;
         }
 
-        if (animationFrames.size() > frameIndex){
-            var currentFrame = animationFrames[frameIndex];
+        if (animationFrames.length > frameIndex){
+            var currentFrame = animationFrames[frameIndex + 1];
             var states = currentFrame.getObjectStates();
 
             states.forEach(function(state){
-                var subObject = this._displayList[state.objectIdRef];
+                var subObject = t._displayList[state.objectIdRef];
 
                 cc.assert(subObject, "Error. SubObject with current ID not found");
                 if (!subObject)
                     return;
 
-                if (!state.isVisible())
+                if (state.alpha < cc.FLT_EPSILON)
                     return;
 
                 if (subObject._isTimeline())
                 {
-                    var stateTransform = state.affineTransform;
+                    var stateTransform = state.matrix;
                     var csf = t._timeline.usedAtlasContentScaleFactor();
                     stateTransform.tx *= csf;
                     stateTransform.ty *= csf;
                     var t = gaf.CGAffineTransformCocosFormatFromFlashFormat(state.affineTransform);
                     subObject.setAdditionalTransform(t);
                     subObject._parentFilters = [];
-                    var filters = state.getFilters();
+                    var filters = state.effect;
                     subObject._parentFilters.insert(subObject._parentFilters.end(), filters.begin(), filters.end());
 
                     var cm = state.colorMults();
@@ -594,7 +594,7 @@ gaf.GAFObject = cc.Sprite.extend({
                     t._parentColorTransforms[0].w * cm[3]);
                     cc.kmVec4Add(subObject._parentColorTransforms[1], t._parentColorTransforms[1], state.colorOffsets());
 
-                    if (this._masks[state.objectIdRef]){
+                    if (t._masks[state.objectIdRef]){
                         t._rearrangeSubobject(out, t._masks[state.objectIdRef], state.zIndex, frameIndex, 1);
                     }
                     else{
@@ -624,7 +624,7 @@ gaf.GAFObject = cc.Sprite.extend({
                         /*
                          var mc = static_cast<GAFMovieClip*>(subObject);
                          Filters_t filtersUnion;
-                         filtersUnion.insert(filtersUnion.end(), this._parentFilters.begin(), this._parentFilters.end());
+                         filtersUnion.insert(filtersUnion.end(), t._parentFilters.begin(), t._parentFilters.end());
                          filtersUnion.insert(filtersUnion.end(), filters.begin(), filters.end());
 
                          if (!filtersUnion.empty()){
@@ -675,7 +675,7 @@ gaf.GAFObject = cc.Sprite.extend({
                         {
                             // If the state has a mask, then attach it
                             // to the clipping node. Clipping node will be attached on its state
-                            mask = this._masks[state.maskObjectIdRef];
+                            mask = t._masks[state.maskObjectIdRef];
                             cc.assert(mask, "Error. No mask found for this ID");
                             if (mask)
                                 t._rearrangeSubobject(mask, subObject, state.zIndex, frameIndex, 1);
