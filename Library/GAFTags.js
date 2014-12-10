@@ -84,6 +84,15 @@ gaf.Tag.DefineAtlas.doParse = function (s) {
                 'source', 'String',
                 'csf', 'float'
             ))
+        )),
+        'elements', s.array('Uint', s.fields(
+            'pivot', 'Point',
+            'XY', 'Point',
+            'scale', 'float',
+            'width', 'float',
+            'height', 'float',
+            'atlasId', 'Uint',
+            'elementAtlasId', 'Uint'
         ))
     );
     var result = {'content': exec()};
