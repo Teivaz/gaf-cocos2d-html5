@@ -243,29 +243,8 @@ gaf.GAFAsset = cc.Class.extend({
         var self = this;
         parent = parent || gaf.GAFObject._createNullObject();
         tags.forEach(function (tag) {
-            self._constructSingleTag(tag, parent);
+            gaf._GAFConstruct.Tag(self, tag, parent);
         });
-    },
-
-    _constructSingleTag: function (tag, parent) {
-        var self = this;
-        switch (tag.tagName) {
-            case "TagDefineStage":
-                self._setStage(tag.content);
-                break;
-            case "TagDefineTimeline":
-                self._constructTimeline(self, tag.content);
-                break;
-            case "TagDefineAnimationObjects":
-                gaf._GAFConstruct.AnimationObjects(self, tag.content, parent);
-                break;
-            case "TagDefineAtlas":
-                gaf._GAFConstruct.Atlases(self, tag.content);
-                break;
-            case "TagDefineAnimationFrames":
-                gaf._GAFConstruct.AnimationFrames(self, tag.content, parent);
-                break;
-        }
     },
 
     _setHeader: function (gafHeader) {
@@ -273,13 +252,6 @@ gaf.GAFAsset = cc.Class.extend({
             if(gafHeader.hasOwnProperty(prop))
                 this._header[prop] = gafHeader[prop];
         }
-    },
-
-    _setStage: function (content) {
-        this._sceneFps = content.fps;
-        this._sceneColor = content.color;
-        this._sceneWidth = content.width;
-        this._sceneHeight = content.height;
     }
 
 });
