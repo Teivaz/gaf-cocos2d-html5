@@ -5,9 +5,10 @@ var gaf = gaf || {};
 gaf.GAFAsset = cc.Class.extend({
 
     // Private members
-    _header: null,
-    _timelines: [],
-    _rootTimeline: null,
+    _header: {},
+    _objects: [],
+    _timeLines: [],
+    _rootTimeLine: null,
     _textureLoadDelegate: null,
     _sceneFps: 60,
     _sceneWidth: 0,
@@ -42,23 +43,40 @@ gaf.GAFAsset = cc.Class.extend({
      * @param {String} arg0
      */
     setRootTimelineWithName: function (name) {
-        debugger;
+        if (this._rootTimeLine &&
+            this._rootTimeLine.getLinkageName() === name) {
+            return;
+        }
+
+        var BreakException= {};
+        var self = this;
+        try {
+            self._timeLines.forEach(function (object) {
+                if (object.getLinkageName() === name) {
+                    self._setRootTimeline(object);
+                    throw BreakException;
+                }
+            });
+        }
+        catch(e){
+            if (e!==BreakException) throw e;
+        }
     },
 
     /**
      * @method getRootTimeline
-     * @return {gaf::GAFTimeline}
+     * @return {gaf.GAFTimeLine}
      */
     getRootTimeline: function () {
-        debugger;
+        return this._rootTimeLine;
     },
 
     /**
      * @method getTimelines
-     * @return {[gaf::GAFTimeline]}
+     * @return {[gaf.GAFTimeLine]}
      */
     getTimelines: function () {
-        debugger;
+        return this._timeLines;
     },
 
     /**
@@ -66,7 +84,7 @@ gaf.GAFAsset = cc.Class.extend({
      * @param {String} zipFilePath - path to the archive with .gaf and its textures
      * @param {String} entryFile - name of the .gaf file in archive
      * @param {function({path:String})} delegate - is used to change atlas path, e.g. to load `atlas.tga` instead of `atlas.png`
-     * @return {gaf::GAFAsset}
+     * @return {gaf.GAFAsset}
      */
     createWithBundle: function (zipFilePath, entryFile, delegate) {
         var asset = new gaf.GAFAsset();
@@ -81,7 +99,7 @@ gaf.GAFAsset = cc.Class.extend({
 
     /**
      * @method createObject
-     * @return {gaf::GAFObject}
+     * @return {gaf.GAFObject}
      */
     createObject: function () {
         debugger;
@@ -209,21 +227,24 @@ gaf.GAFAsset = cc.Class.extend({
 
     // Private
 
+    _setRootTimeline : function(timeLine){
+        this._rootTimeLine = timeLine;
+        this._header.pivot = timeLine.getPivot();
+        this._header.frameSize = timeLine.getRect();
+    },
+
     _instantiateJsGaf: function (gafData) {
         this._setHeader(gafData.header);
         var result = this._constructTags(gafData.tags);
         return result;
     },
 
-    _constructTags: function (tags) {
+    _constructTags: function (tags, parent) {
         var self = this;
-        var root = new gaf.GAFObject();
+        parent = parent || gaf.GAFObject._createNullObject();
         tags.forEach(function (tag) {
-            self._constructSingleTag(tag, root._timeline);
+            self._constructSingleTag(tag, parent);
         });
-        root._totalFrameCount = 40;
-
-        return root;
     },
 
     _constructSingleTag: function (tag, parent) {
@@ -233,22 +254,25 @@ gaf.GAFAsset = cc.Class.extend({
                 self._setStage(tag.content);
                 break;
             case "TagDefineTimeline":
-                self._constructTimeline(tag.content, parent);
+                self._constructTimeline(self, tag.content);
                 break;
             case "TagDefineAnimationObjects":
-                gaf._GAFConstruct.AnimationObjects(tag.content, parent);
+                gaf._GAFConstruct.AnimationObjects(self, tag.content, parent);
                 break;
             case "TagDefineAtlas":
-                gaf._GAFConstruct.Atlases(tag.content, parent);
+                gaf._GAFConstruct.Atlases(self, tag.content);
                 break;
             case "TagDefineAnimationFrames":
-                gaf._GAFConstruct.AnimationFrames(tag.content, parent);
+                gaf._GAFConstruct.AnimationFrames(self, tag.content, parent);
                 break;
         }
     },
 
     _setHeader: function (gafHeader) {
-        this._header = gafHeader;
+        for(var prop in gafHeader){
+            if(gafHeader.hasOwnProperty(prop))
+                this._header[prop] = gafHeader[prop];
+        }
     },
 
     _setStage: function (content) {
@@ -256,14 +280,7 @@ gaf.GAFAsset = cc.Class.extend({
         this._sceneColor = content.color;
         this._sceneWidth = content.width;
         this._sceneHeight = content.height;
-    },
-
-    _constructTimeline: function (content, parent) {
-
     }
-
-
-
 
 });
 

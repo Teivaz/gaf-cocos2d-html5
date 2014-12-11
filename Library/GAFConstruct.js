@@ -3,7 +3,7 @@ gaf._GAFConstruct = function(){
 
 };
 
-gaf._GAFConstruct.Atlases = function(content, parent){
+gaf._GAFConstruct.Atlases = function(asset, content, parent){
     var atlases = {};
     var csf = cc.Director._getInstance().getContentScaleFactor();
     content.atlases.forEach(function(item){
@@ -30,7 +30,7 @@ gaf._GAFConstruct.Atlases = function(content, parent){
     });
 };
 
-gaf._GAFConstruct.AnimationObjects = function(content, parent) {
+gaf._GAFConstruct.AnimationObjects = function(asset, content, parent) {
     parent.animationObjects = {};
 
     content.forEach(function(item){
@@ -38,7 +38,7 @@ gaf._GAFConstruct.AnimationObjects = function(content, parent) {
     });
 };
 
-gaf._GAFConstruct.AnimationFrames = function(content, parent) {
+gaf._GAFConstruct.AnimationFrames = function(asset, content, parent) {
     var frames = [];
     content.forEach(function(item){
         var frame = {};
@@ -48,5 +48,16 @@ gaf._GAFConstruct.AnimationFrames = function(content, parent) {
 
     });
     parent.getAnimationFrames = function(){return frames};
+};
+
+gaf._GAFConstruct.TimeLine = function(asset, content) {
+    var result = new gaf.GAFTimeLine();
+    result._tag = content;
+
+    if(content.id === 0 || !content.hasLinkage){
+        asset._rootTimeLine = result;
+    }
+    asset._timeLines.push(result);
+    asset._objects[content.id] = result;
 };
 
