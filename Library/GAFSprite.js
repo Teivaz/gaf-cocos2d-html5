@@ -1,7 +1,16 @@
 
-gaf.GAFSprite = cc.Sprite.extend({
-    _className: "GAFSprite"
+gaf.SpriteProto = function(){
 
+};
+
+
+
+gaf.Sprite = cc.Sprite.extend({
+    _className: "GAFSprite",
+
+    ctor : function(spriteProto){
+        this.implement(spriteProto);
+    }
 
 
 });

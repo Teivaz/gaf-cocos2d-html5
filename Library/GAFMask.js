@@ -1,4 +1,4 @@
 
-gaf.GAFMask = gaf.GAFObject.extend({
+gaf.GAFMask = gaf.Object.extend({
 
 });

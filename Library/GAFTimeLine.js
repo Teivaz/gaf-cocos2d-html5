@@ -1,6 +1,5 @@
 
-gaf.GAFTimeLine = gaf.GAFObject.extend({
-    _tag : null,
+gaf.GAFTimeLine = gaf.GAFTimeLineData.extend({
     _className : "GAFTimeLine",
     _container : null,
 
@@ -8,16 +7,6 @@ gaf.GAFTimeLine = gaf.GAFObject.extend({
         this._container = new cc.Node();
     },
 
-    getLinkageName : function() {
-        return this._tag.linkageName;
-    },
 
-    getPivot : function(){
-        return this._tag.pivotPoint;
-    },
-
-    getRect : function(){
-        return this._tag.boundingBox;
-    }
 
 });

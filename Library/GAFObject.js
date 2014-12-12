@@ -11,10 +11,10 @@ gaf.CGAffineTransformCocosFormatFromFlashFormat = function(transform){
     return t;
 };
 
-gaf.GAFObject = cc.Node.extend({
+gaf.Object = cc.Node.extend({
     _externalTransform : cc.affineTransformMake(),
     _asset : null,
-    _className : "GAFObject",
+    _className : "Object",
     _id : gaf.IDNONE,
 
 
@@ -22,13 +22,13 @@ gaf.GAFObject = cc.Node.extend({
 
     /**
      * @method setAnimationStartedNextLoopDelegate
-     * @param {function(GAFObject)} delegate
+     * @param {function(Object)} delegate
      */
     setAnimationStartedNextLoopDelegate : function (delegate) {},
 
     /**
      * @method setAnimationFinishedPlayDelegate
-     * @param {function(GAFObject)} delegate
+     * @param {function(Object)} delegate
      */
     setAnimationFinishedPlayDelegate : function (delegate) {},
 
@@ -53,7 +53,7 @@ gaf.GAFObject = cc.Node.extend({
     /**
      * @method getObjectByName
      * @param {String} name - name of the object to find
-     * @return {gaf.GAFObject}
+     * @return {gaf.Object}
      */
     getObjectByName : function (name) {return null;},
 
@@ -84,7 +84,7 @@ gaf.GAFObject = cc.Node.extend({
 
     /**
      * @method setFramePlayedDelegate
-     * @param {function(GAFObject, frame)} delegate
+     * @param {function(Object, frame)} delegate
      */
     setFramePlayedDelegate : function (delegate) {},
 
@@ -139,7 +139,7 @@ gaf.GAFObject = cc.Node.extend({
 
     /**
      * @method setSequenceDelegate
-     * @param {function(GAFObject, sequenceName)} delegate
+     * @param {function(Object, sequenceName)} delegate
      */
     setSequenceDelegate : function (delegate) {},
 
@@ -283,8 +283,8 @@ gaf.GAFObject = cc.Node.extend({
 
 });
 
-gaf.GAFObject._createNullObject = function() {
-    var ret = new gaf.GAFObject();
+gaf.Object._createNullObject = function() {
+    var ret = new gaf.Object();
     ret.isVisible = function(){return true};
     ret._updateVisibility = function(){};
     return ret;

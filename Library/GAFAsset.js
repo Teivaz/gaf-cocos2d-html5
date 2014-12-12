@@ -99,7 +99,7 @@ gaf.GAFAsset = cc.Class.extend({
 
     /**
      * @method createObject
-     * @return {gaf.GAFObject}
+     * @return {gaf.Object}
      */
     createObject: function () {
         debugger;
@@ -108,7 +108,7 @@ gaf.GAFAsset = cc.Class.extend({
     /**
      * @method createObjectAndRun
      * [@param {boolean} arg0 - run looped. False by default]
-     * @return {gaf.GAFObject}
+     * @return {gaf.Object}
      */
     createObjectAndRun: function () {
         var looped = false;
@@ -241,7 +241,7 @@ gaf.GAFAsset = cc.Class.extend({
 
     _constructTags: function (tags, parent) {
         var self = this;
-        parent = parent || gaf.GAFObject._createNullObject();
+        parent = parent || gaf.Object._createNullObject();
         tags.forEach(function (tag) {
             gaf._GAFConstruct.Tag(self, tag, parent);
         });

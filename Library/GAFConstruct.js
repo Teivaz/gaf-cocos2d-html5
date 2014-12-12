@@ -5,8 +5,8 @@ gaf._GAFConstruct = function(){
     //this["2"] = gaf._GAFConstruct.AnimationMasks;
     this["3"] = gaf._GAFConstruct.AnimationObjects;
     this["4"] = gaf._GAFConstruct.AnimationFrames;
-    //this["5"] = gaf._GAFConstruct.NamedParts;
-    //this["6"] = gaf._GAFConstruct.Sequences;
+    this["5"] = gaf._GAFConstruct.NamedParts;
+    this["6"] = gaf._GAFConstruct.Sequences;
     //this["7"] = gaf._GAFConstruct.TextFields;
     //this["8"] = gaf._GAFConstruct.Atlases2;
     this["9"] = gaf._GAFConstruct.Stage;
@@ -23,30 +23,7 @@ gaf._GAFConstruct = function(){
 
 gaf._GAFConstruct.End = function(){};
 gaf._GAFConstruct.Atlases = function(asset, content, parent){
-    var atlases = {};
-    var csf = cc.Director._getInstance().getContentScaleFactor();
-    content.atlases.forEach(function(item){
-        var atlasPath = "";
-        item.sources.forEach(function(atlasSource){
-            if(atlasSource.csf === csf)
-                atlasPath = atlasSource.source;
-        });
-
-        atlases[item.id] = new cc.TextureAtlas(atlasPath);
-    });
-
-    parent.elements = {};
-    content.elements.forEach(function(item){
-        var texture = atlases[item.atlasId];
-        var rect = cc.rect(item.pivot.x, item.pivot.y, item.width, item.height);
-        var rotated = false;
-        var offset = item.XY;
-        var originalSize = cc.rect(0, 0, item.width / item.scale, item.height / item.scale);
-        var element = new cc.SpriteFrame();
-        element.initWithTexture(texture, rect, rotated, offset, originalSize);
-
-        parent.elements[item.elementAtlasId] = element;
-    });
+    // Preloaded
 };
 //gaf._GAFConstruct.AnimationMasks = function(asset, content, parent){};
 gaf._GAFConstruct.AnimationObjects = function(asset, content, parent) {
@@ -67,15 +44,18 @@ gaf._GAFConstruct.AnimationFrames = function(asset, content, parent) {
     });
     parent.getAnimationFrames = function(){return frames};
 };
-//gaf._GAFConstruct.NamedParts = function(asset, content, parent){};
-//gaf._GAFConstruct.Sequences = function(asset, content, parent){};
+gaf._GAFConstruct.NamedParts = function(asset, content, parent){
+    // Preloaded
+};
+gaf._GAFConstruct.Sequences = function(asset, content, parent){
+    // Preloaded
+};
 //gaf._GAFConstruct.TextFields = function(asset, content, parent){};
-//gaf._GAFConstruct.Atlases2 = function(asset, content, parent){};
+gaf._GAFConstruct.Atlases2 = function(asset, content, parent){
+    // Preloaded
+};
 gaf._GAFConstruct.Stage = function(asset, content) {
-    asset._sceneFps = content.fps;
-    asset._sceneColor = content.color;
-    asset._sceneWidth = content.width;
-    asset._sceneHeight = content.height;
+    // Preloaded
 };
 //gaf._GAFConstruct.AnimationObjects2 = function(asset, content, parent){};
 //gaf._GAFConstruct.AnimationMasks2 = function(asset, content, parent){};
