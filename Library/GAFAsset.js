@@ -1,8 +1,7 @@
 var gaf = gaf || {};
 
-
-
-gaf.GAFAsset = cc.Class.extend({
+gaf.Asset = cc.Class.extend({
+    _className: "GAFAsset",
 
     // Private members
     _header: {},
@@ -40,7 +39,7 @@ gaf.GAFAsset = cc.Class.extend({
 
     /**
      * @method setRootTimelineWithName
-     * @param {String} arg0
+     * @param {String} name
      */
     setRootTimelineWithName: function (name) {
         if (this._rootTimeLine &&
@@ -65,7 +64,7 @@ gaf.GAFAsset = cc.Class.extend({
 
     /**
      * @method getRootTimeline
-     * @return {gaf.GAFTimeLine}
+     * @return {gaf.TimeLine}
      */
     getRootTimeline: function () {
         return this._rootTimeLine;
@@ -73,7 +72,7 @@ gaf.GAFAsset = cc.Class.extend({
 
     /**
      * @method getTimelines
-     * @return {[gaf.GAFTimeLine]}
+     * @return {[gaf.TimeLine]}
      */
     getTimelines: function () {
         return this._timeLines;
@@ -84,10 +83,10 @@ gaf.GAFAsset = cc.Class.extend({
      * @param {String} zipFilePath - path to the archive with .gaf and its textures
      * @param {String} entryFile - name of the .gaf file in archive
      * @param {function({path:String})} delegate - is used to change atlas path, e.g. to load `atlas.tga` instead of `atlas.png`
-     * @return {gaf.GAFAsset}
+     * @return {gaf.Asset}
      */
     createWithBundle: function (zipFilePath, entryFile, delegate) {
-        var asset = new gaf.GAFAsset();
+        var asset = new gaf.Asset();
         asset.initWithGAFBundle(zipFilePath, entryFile, delegate);
         return asset;
     },
@@ -131,7 +130,7 @@ gaf.GAFAsset = cc.Class.extend({
 
     /**
      * @method setDesiredCsf
-     * @param {float} arg0
+     * @param {float} csf
      */
     setDesiredCsf: function (csf) {
         debugger;
@@ -139,7 +138,7 @@ gaf.GAFAsset = cc.Class.extend({
 
     /**
      * @method setTextureLoadDelegate
-     * @param {function} arg0
+     * @param {function} delegate
      */
     setTextureLoadDelegate: function (delegate) {
         debugger;
@@ -155,7 +154,7 @@ gaf.GAFAsset = cc.Class.extend({
 
     /**
      * @method getSceneFps
-     * @return {unsigned int}
+     * @return {uint}
      */
     getSceneFps: function () {
         debugger;
@@ -163,7 +162,7 @@ gaf.GAFAsset = cc.Class.extend({
 
     /**
      * @method getSceneWidth
-     * @return {unsigned int}
+     * @return {uint}
      */
     getSceneWidth: function () {
         debugger;
@@ -171,7 +170,7 @@ gaf.GAFAsset = cc.Class.extend({
 
     /**
      * @method getSceneHeight
-     * @return {unsigned int}
+     * @return {uint}
      */
     getSceneHeight: function () {
         debugger;
@@ -179,7 +178,7 @@ gaf.GAFAsset = cc.Class.extend({
 
     /**
      * @method getSceneColor
-     * @return {color4b_object}
+     * @return {cc.color4b}
      */
     getSceneColor: function () {
         debugger;
@@ -187,7 +186,7 @@ gaf.GAFAsset = cc.Class.extend({
 
     /**
      * @method setSceneFps
-     * @param {unsigned int} arg0
+     * @param {uint} fps
      */
     setSceneFps: function (fps) {
         debugger;
@@ -195,7 +194,7 @@ gaf.GAFAsset = cc.Class.extend({
 
     /**
      * @method setSceneWidth
-     * @param {unsigned int} arg0
+     * @param {uint} width
      */
     setSceneWidth: function (width) {
         debugger;
@@ -203,7 +202,7 @@ gaf.GAFAsset = cc.Class.extend({
 
     /**
      * @method setSceneHeight
-     * @param {unsigned int} arg0
+     * @param {uint} height
      */
     setSceneHeight: function (height) {
         debugger;
@@ -219,7 +218,7 @@ gaf.GAFAsset = cc.Class.extend({
 
     /**
      * @method getHeader
-     * @return {gaf.GAFHeader}
+     * @return {GAFHeader}
      */
     getHeader: function () {
         return this._header;
@@ -243,7 +242,7 @@ gaf.GAFAsset = cc.Class.extend({
         var self = this;
         parent = parent || gaf.Object._createNullObject();
         tags.forEach(function (tag) {
-            gaf._GAFConstruct.Tag(self, tag, parent);
+            //gaf._GAFConstruct.Tag(self, tag, parent);
         });
     },
 
@@ -261,10 +260,10 @@ gaf.GAFAsset = cc.Class.extend({
  * @method initWithGAFFile
  * @param {String} gafFilePath - path to .gaf file
  * @param {function({path:String})} delegate - is used to change atlas path, e.g. to load `atlas.tga` instead of `atlas.png`
- * @return {gaf.GAFAsset}
+ * @return {gaf.Asset}
  */
-gaf.GAFAsset.create = function (gafFilePath, delegate) {
-    var asset = new gaf.GAFAsset();
+gaf.Asset.create = function (gafFilePath, delegate) {
+    var asset = new gaf.Asset();
     asset.initWithGAFFile(gafFilePath, delegate);
     return asset;
 };
