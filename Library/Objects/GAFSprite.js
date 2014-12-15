@@ -2,7 +2,13 @@
 gaf.Sprite = gaf.Object.extend({
     _className: "GAFSprite",
 
-    ctor : function(){
+    ctor : function(gafSpriteProto){
+        cc.assert(gafSpriteProto,  "Error! Missing mandatory parameter.");
+        this._proto = gafSpriteProto;
+
+        var frame = this._proto.getObjects()[this._proto.getIdRef()]
+        var sprite = cc.Sprite.createWithSpriteFrame(frame);
+        this.addChild(sprite);
     }
 
 

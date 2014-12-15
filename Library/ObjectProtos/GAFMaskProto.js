@@ -8,9 +8,7 @@ gaf._MaskProto = function(objects, elementAtlasIdRef, type) {
      * Will construct GAFMask
      */
     this._gafConstruct = function(sharedObjects){
-        var ret = new gaf.Mask();
-        ret.implement(this);
-        delete ret._gafConstruct;
+        var ret = new gaf.Mask(this);
 
         return ret;
     };

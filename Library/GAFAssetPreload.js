@@ -75,7 +75,11 @@ gaf._AssetPreload.AnimationFrames = function(asset, content, timeLine) {
 };
 
 gaf._AssetPreload.NamedParts = function(asset, content, timeLine){
-    timeLine.getNamedParts = function(){return content};
+    var parts = {};
+    content.forEach(function(item){
+        parts[item.name] = item.objectIdRef;
+    });
+    timeLine.getNamedParts = function(){return parts};
 };
 
 gaf._AssetPreload.Sequences = function(asset, content, timeLine){

@@ -16,6 +16,8 @@ gaf.Object = cc.Node.extend({
     _asset : null,
     _className : "GAFObject",
     _id : gaf.IDNONE,
+    _proto : {},
+    _parentTimeLine : null,
 
 
     // Public methods
@@ -114,7 +116,15 @@ gaf.Object = cc.Node.extend({
      * @method isVisibleInCurrentFrame
      * @return {bool}
      */
-    isVisibleInCurrentFrame : function () {return false;},
+    isVisibleInCurrentFrame : function () {
+        if (this._parentTimeLine &&
+            (this._parentTimeLine.getCurrentFrameIndex() + 1 != this._lastVisibleInFrame)) {
+            return false;
+        }
+        else {
+            return true;
+        }
+    },
 
     /**
      * @method isDone
@@ -278,7 +288,13 @@ gaf.Object = cc.Node.extend({
 
     _getFilters : function(){return null},
 
-    _processAnimation : function(){}
+    _processAnimation : function(){},
+
+    _setAnimationRunning: function () {},
+
+    _applyState : function(state, parent){
+        this._parentTimeLine = parent;
+    }
 
 
 });
