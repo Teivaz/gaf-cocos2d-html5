@@ -37,8 +37,8 @@ gaf._AssetPreload.Atlases = function(asset, content, timeLine){
             if(atlasSource.csf === csf)
                 atlasPath = atlasSource.source;
         });
-
-        asset._objects[item.id] = new cc.TextureAtlas(atlasPath);
+        var texture = cc.textureCache.getTextureForKey(atlasPath);
+        asset._objects[item.id] = new cc.TextureAtlas(texture);
     });
 
     content.elements.forEach(function(item){

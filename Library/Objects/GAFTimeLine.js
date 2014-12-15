@@ -134,7 +134,8 @@ gaf.TimeLine = gaf.Object.extend({
         return this._proto.getTotalFrames();
     },
     start: function () {
-        this.schedule("_processAnimation");
+        this._running = true;
+        this.schedule("_processAnimations");
         this._animationsSelectorScheduled = true;
         if (!this._isRunning) {
             this._currentFrame = gaf.FIRST_FRAME_INDEX;
@@ -142,7 +143,7 @@ gaf.TimeLine = gaf.Object.extend({
         }
     },
     stop: function () {
-        this.unschedule("_processAnimation");
+        this.unschedule("_processAnimations");
         this._animationsSelectorScheduled = false;
         if (this._isRunning) {
             this._currentFrame = gaf.FIRST_FRAME_INDEX;
@@ -245,7 +246,7 @@ gaf.TimeLine = gaf.Object.extend({
 
     // Private
 
-    _processAnimation: function (dt) {
+    _processAnimations: function (dt) {
         this._timeDelta += dt;
         var frameTime = 1.0 / this._fps;
         while (this._timeDelta >= frameTime) {
