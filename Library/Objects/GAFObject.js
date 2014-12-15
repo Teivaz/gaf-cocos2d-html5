@@ -12,7 +12,7 @@ gaf.CGAffineTransformCocosFormatFromFlashFormat = function(transform){
 };
 
 gaf.Object = cc.Node.extend({
-    _externalTransform : cc.affineTransformMake(),
+    _externalTransform : cc.affineTransformMakeIdentity(),
     _asset : null,
     _className : "GAFObject",
     _id : gaf.IDNONE,

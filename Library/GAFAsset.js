@@ -22,8 +22,9 @@ gaf.Asset = cc.Class.extend({
      * @return {bool}
      */
     initWithGAFFile: function (filePath, delegate) {
-        this._gafData = cc.loader.getRes(filePath);
-        cc.assert(this._gafData, "File `" + filePath + "` not found.");
+        var _gafData = cc.loader.getRes(filePath);
+        cc.assert(_gafData, "File `" + filePath + "` not found.");
+        return this._init(_gafData);
     },
 
     /**
@@ -114,7 +115,7 @@ gaf.Asset = cc.Class.extend({
         if (arguments.length == 1) {
             looped = arguments[0];
         }
-        var object = this._instantiateJsGaf(this._gafData);
+        var object = this._instantiateGaf(this._gafData);
         object.setLooped(looped);
         object.start();
         return object;
@@ -232,25 +233,57 @@ gaf.Asset = cc.Class.extend({
         this._header.frameSize = timeLine.getRect();
     },
 
-    _instantiateJsGaf: function (gafData) {
-        this._setHeader(gafData.header);
-        var result = this._constructTags(gafData.tags);
-        return result;
-    },
-
-    _constructTags: function (tags, parent) {
-        var self = this;
-        parent = parent || gaf.Object._createNullObject();
-        tags.forEach(function (tag) {
-            //gaf._GAFConstruct.Tag(self, tag, parent);
-        });
-    },
-
-    _setHeader: function (gafHeader) {
+    _setHeader : function (gafHeader) {
         for(var prop in gafHeader){
             if(gafHeader.hasOwnProperty(prop))
                 this._header[prop] = gafHeader[prop];
         }
+    },
+
+    _getMajorVerison : function(){
+        return this._header.versionMajor;
+    },
+
+    _init : function(gafData){
+        this._gafData = gafData;
+        this._setHeader(gafData.header);
+        if(this._getMajorVerison() < 4){
+            this._pushTimeLine(new gaf._TimeLineProto(this._header.framesCount, this._header.bounds, this._header.pivot));
+        }
+        gaf._AssetPreload.Tags(this, gafData.tags, this._rootTimeLine);
+    },
+
+    _pushTimeLine : function(timeLine){
+        this._timeLines.push(timeLine);
+        if(timeLine.getId() != gaf.IDNONE) {
+            this._objects[timeLine.getId()] = timeLine;
+        }
+        if(!timeLine.getLinkageName() || timeLine.getId() === 0){
+            this._setRootTimeline(timeLine);
+        }
+    },
+
+    _instantiateGaf : function(){
+        var root = null;
+        var sharedObjects = [];
+        for(var i = 0, end = this._objects.length; i < end; i++){
+            var object = this._objects[i];
+            if(object){
+                if(object.hasOwnProperty("_gafConstruct")) {
+                    sharedObjects[i] = object._gafConstruct(sharedObjects);
+                }
+                else {
+                    sharedObjects[i] = object;
+                }
+                if(object === this._rootTimeLine){
+                    root = sharedObjects[i];
+                }
+            }
+        }
+        if(!root){
+            root = this._rootTimeLine._gafConstruct(sharedObjects);
+        }
+        return root;
     }
 
 });

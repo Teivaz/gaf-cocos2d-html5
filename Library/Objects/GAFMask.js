@@ -1,5 +1,9 @@
 
 gaf.Mask = gaf.Object.extend({
-    _className: "GAFMask"
+    _className: "GAFMask",
+
+    ctor : function(){
+
+    }
 
 });

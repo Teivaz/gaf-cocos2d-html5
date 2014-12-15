@@ -1,5 +1,5 @@
 
-gaf.Sprite = cc.Sprite.extend({
+gaf.Sprite = gaf.Object.extend({
     _className: "GAFSprite",
 
     ctor : function(){

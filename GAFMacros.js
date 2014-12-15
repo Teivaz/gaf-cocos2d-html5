@@ -15,3 +15,7 @@ gaf.ACTION_DISPATCH_EVENT = 4;
 gaf.PI_FRAME = 0;
 gaf.PI_EVENT_TYPE = 0;
 
+gaf.TYPE_TEXTURE = 0;
+gaf.TYPE_TEXT_FIELD = 1;
+gaf.TYPE_TIME_LINE = 2;
+
