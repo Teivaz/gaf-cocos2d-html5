@@ -110,8 +110,8 @@ gaf.Asset = cc.Class.extend({
      * [@param {boolean} arg0 - run looped. False by default]
      * @return {gaf.Object}
      */
-    createObjectAndRun: function () {
-        var looped = false;
+    createObjectAndRun: function (looped) {
+        looped = looped || false;
         if (arguments.length == 1) {
             looped = arguments[0];
         }

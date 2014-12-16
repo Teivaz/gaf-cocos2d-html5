@@ -21,6 +21,9 @@ gaf.Object = cc.Node.extend({
 
 
     // Public methods
+    ctor: function(){
+        this._super();
+    },
 
     /**
      * @method setAnimationStartedNextLoopDelegate
@@ -271,7 +274,7 @@ gaf.Object = cc.Node.extend({
     ////////////////
 
     _updateVisibility : function(state, parent){
-        var alphaOffset = state.hasColorTransform ? 0 : state.colorTransform.alphaOffset;
+        var alphaOffset = state.hasColorTransform ? state.colorTransform.alphaOffset : 0;
         alphaOffset += parent ? parent._getDisplayedOpacityOffset() : 0;
         this._getDisplayedOpacityOffset = function(){return alphaOffset};
         this.setOpacity(state.alpha);

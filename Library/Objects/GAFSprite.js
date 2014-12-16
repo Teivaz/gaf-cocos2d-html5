@@ -3,6 +3,7 @@ gaf.Sprite = gaf.Object.extend({
     _className: "GAFSprite",
 
     ctor : function(gafSpriteProto){
+        this._super();
         cc.assert(gafSpriteProto,  "Error! Missing mandatory parameter.");
         this._proto = gafSpriteProto;
 
@@ -16,7 +17,7 @@ gaf.Sprite = gaf.Object.extend({
     // Private
 
     _applyState : function(state, parent){
-        _super._applyState(state, parent);
+        this._super(state, parent);
         this.setExternalTransform(state.matrix);
     }
 

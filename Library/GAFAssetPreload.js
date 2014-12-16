@@ -31,24 +31,23 @@ gaf._AssetPreload.End = function(){};
 
 gaf._AssetPreload.Atlases = function(asset, content, timeLine){
     var csf = cc.Director._getInstance().getContentScaleFactor();
+    var atlases = [];
     content.atlases.forEach(function(item){
         var atlasPath = "";
         item.sources.forEach(function(atlasSource){
             if(atlasSource.csf === csf)
                 atlasPath = atlasSource.source;
         });
-        var texture = cc.textureCache.getTextureForKey(atlasPath);
-        asset._objects[item.id] = new cc.TextureAtlas(texture);
+        atlases[item.id] = cc.textureCache.getTextureForKey(atlasPath);
     });
 
     content.elements.forEach(function(item){
-        var texture = asset._objects[item.atlasId];
+        var texture = atlases[item.atlasId];
         var rect = cc.rect(item.pivot.x, item.pivot.y, item.width, item.height);
         var rotated = false;
         var offset = item.XY;
         var originalSize = cc.rect(0, 0, item.width / item.scale, item.height / item.scale);
-        var frame = new cc.SpriteFrame();
-        frame.initWithTexture(texture, rect, rotated, offset, originalSize);
+        var frame = new cc.SpriteFrame(texture, rect, rotated, offset, originalSize);
         asset._objects[item.elementAtlasId] = frame;
     });
 };
