@@ -1,6 +1,6 @@
 
 gaf._TimeLineProto = function(animationFrameCount, boundingBox, pivotPoint, id, linkageName) {
-    id = id || gaf.IDNONE;
+    id = typeof id != 'undefined' ? id : gaf.IDNONE;
     linkageName = linkageName || "";
     this.getTotalFrames = function(){return animationFrameCount};
     this.getBoundingBox = function() {return boundingBox};

@@ -39,6 +39,7 @@ gaf._AssetPreload.Atlases = function(asset, content, timeLine){
                 atlasPath = atlasSource.source;
         });
         atlases[item.id] = cc.textureCache.getTextureForKey(atlasPath);
+        cc.assert(atlases[item.id], "Error loading texture!");
     });
 
     content.elements.forEach(function(item){
@@ -95,26 +96,26 @@ gaf._AssetPreload.TextFields = function(asset, content, timeLine){
 
 gaf._AssetPreload.Atlases2 = function(asset, content, timeLine){
     var csf = cc.Director._getInstance().getContentScaleFactor();
+    var atlases = [];
     content.atlases.forEach(function(item){
         var atlasPath = "";
         item.sources.forEach(function(atlasSource){
             if(atlasSource.csf === csf)
                 atlasPath = atlasSource.source;
         });
-
-        asset._objects[item.id] = new cc.TextureAtlas(atlasPath);
+        atlases[item.id] = cc.textureCache.getTextureForKey(atlasPath);
+        cc.assert(atlases[item.id], "Error loading texture!");
     });
 
     content.elements.forEach(function(item){
-        var texture = asset._objects[item.atlasId];
+        var texture = atlases[item.atlasId];
         var rect = cc.rect(item.pivot.x, item.pivot.y, item.width, item.height);
         var rotated = false;
         var offset = item.XY;
         var originalSize = cc.rect(0, 0, item.width / item.scale, item.height / item.scale);
-        var frame = new cc.SpriteFrame();
-        frame.initWithTexture(texture, rect, rotated, offset, originalSize);
+        var frame = new cc.SpriteFrame(texture, rect, rotated, offset, originalSize);
         asset._objects[item.elementAtlasId] = frame;
-        //scale9GridRect
+        // 9 grid
     });
 };
 
@@ -140,16 +141,28 @@ gaf._AssetPreload.AnimationMasks2 = function(asset, content, timeLine){
 gaf._AssetPreload.AnimationFrames2 = function(asset, content, timeLine){
     cc.assert(timeLine, "Error. Time Line should not be null.");
     var frames = [];
+    var lastState = [];
     content.forEach(function(item){
         frames[item.frame] = {states: item.state, actions: item.actions};
+        lastState = item.state || lastState;
+    });
+    frames.forEach(function(item){
+        if(!item) {
+            return;
+        }
+        if(!item.states){
+            item.states = lastState;
+        }
+        else{
+            lastState = item.states;
+        }
     });
     timeLine.getFrames = function(){return frames};
 };
 
 gaf._AssetPreload.TimeLine = function(asset, content, timeLine) {
     var result = new gaf._TimeLineProto(content.animationFrameCount, content.boundingBox, content.pivotPoint, content.id, content.linkageName);
-    asset._timeLines.push(result);
-    asset._objects[content.id] = result;
+    asset._pushTimeLine(result);
     gaf._AssetPreload.Tags(asset, content.tags, result);
 };
 
