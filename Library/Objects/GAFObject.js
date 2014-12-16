@@ -225,11 +225,14 @@ gaf.Object = cc.Node.extend({
     setLocator : function (locator){},
 
     setExternalTransform : function(affineTransform){
-        if(cc.affineTransformEqualToTransform(this.getExternalTransform(), affineTransform)){
+        this._renderCmd._transform = affineTransform;
+        this._externalTransform = affineTransform;
+        /*
+        if(!cc.affineTransformEqualToTransform(this.getExternalTransform(), affineTransform)){
             this._externalTransform = affineTransform;
             this._transformDirty = true;
             this._inverseDirty = true;
-        }
+        }*/
     },
 
     getExternalTransform : function(){
