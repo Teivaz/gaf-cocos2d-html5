@@ -10,6 +10,7 @@ gaf.Sprite = gaf.Object.extend({
         var frame = this._proto.getObjects()[this._proto.getIdRef()];
         var sprite = cc.Sprite.createWithSpriteFrame(frame);
         this.addChild(sprite);
+        this._sp = sprite;
     },
 
 
@@ -19,8 +20,12 @@ gaf.Sprite = gaf.Object.extend({
     _applyState : function(state, parent){
         this._super(state, parent);
         this.setExternalTransform(state.matrix);
-    }
+    },
 
+    setExternalTransform : function(affineTransform){
+        //_super(affineTransform);
+        this._sp._renderCmd._transform = affineTransform;
+    }
 
 });
 /*

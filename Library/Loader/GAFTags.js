@@ -178,7 +178,7 @@ gaf.Tag.DefineSequences.doParse = function(s) {
         'end', 'Ushort'
     ));
     var result = {'content': exec()};
-    debugger;
+//    debugger;
     return result;
 };
 
@@ -241,7 +241,7 @@ gaf.Tag.DefineAtlas2.doParse = function(s) {
         )),
         'elements', s.array('Uint', s.fields(
             'pivot', 'Point',
-            'xy', 'Point',
+            'XY', 'Point',
             'scale', 'float',
             'width', 'float',
             'height', 'float',

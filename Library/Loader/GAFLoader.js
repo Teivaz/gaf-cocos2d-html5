@@ -46,9 +46,9 @@ gaf.Loader = function(){
     this.LoadStream = function(stream){
         var header = {};
         readHeaderBegin(stream, header);
-        if(header.magic == 0x00474146) { // GAF
+        if(header.magic == gaf.COMPRESSION_NONE) { // GAF
         }
-        else if(header.magic == 0x00474143){ // GAC
+        else if(header.magic == gaf.COMPRESSION_ZIP){ // GAC
             var compressed = stream.dataRaw.slice(stream.tell());
 
             var inflate = new window.Zlib.Inflate(new Uint8Array(compressed));

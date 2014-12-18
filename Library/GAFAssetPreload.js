@@ -27,7 +27,9 @@ gaf._AssetPreload = function(){
     };
 };
 
-gaf._AssetPreload.End = function(){};
+gaf._AssetPreload.End = function(asset, content, timeLine){
+    timeLine.getFps = function(){return asset.getSceneFps()};
+};
 
 gaf._AssetPreload.Atlases = function(asset, content, timeLine){
     var csf = cc.Director._getInstance().getContentScaleFactor();
@@ -44,9 +46,9 @@ gaf._AssetPreload.Atlases = function(asset, content, timeLine){
 
     content.elements.forEach(function(item){
         var texture = atlases[item.atlasId];
-        var rect = cc.rect(item.pivot.x, item.pivot.y, item.width, item.height);
+        var rect = cc.rect(item.XY.x, item.XY.y, item.width, item.height);
         var rotated = false;
-        var offset = item.XY;
+        var offset = item.pivot;
         var originalSize = cc.rect(0, 0, item.width / item.scale, item.height / item.scale);
         var frame = new cc.SpriteFrame(texture, rect, rotated, offset, originalSize);
         asset._objects[item.elementAtlasId] = frame;
@@ -109,9 +111,9 @@ gaf._AssetPreload.Atlases2 = function(asset, content, timeLine){
 
     content.elements.forEach(function(item){
         var texture = atlases[item.atlasId];
-        var rect = cc.rect(item.pivot.x, item.pivot.y, item.width, item.height);
+        var rect = cc.rect(item.XY.x, item.XY.y, item.width, item.height);
         var rotated = false;
-        var offset = item.XY;
+        var offset = item.pivot;
         var originalSize = cc.rect(0, 0, item.width / item.scale, item.height / item.scale);
         var frame = new cc.SpriteFrame(texture, rect, rotated, offset, originalSize);
         asset._objects[item.elementAtlasId] = frame;

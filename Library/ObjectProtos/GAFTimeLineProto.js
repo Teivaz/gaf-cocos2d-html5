@@ -11,6 +11,7 @@ gaf._TimeLineProto = function(animationFrameCount, boundingBox, pivotPoint, id, 
     this.getNamedParts = function() {return {}}; // Map name -> id
     this.getSequences = function() {return {}}; // Map name -> {start, end}
     this.getFrames = function(){return []}; // Array {states, actions}
+    this.getFps = function(){return 60};
 
     /*
      * Will construct GAFTimeLine

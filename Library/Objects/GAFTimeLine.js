@@ -22,6 +22,7 @@ gaf.TimeLine = gaf.Object.extend({
         cc.assert(gafTimeLineProto,  "Error! Missing mandatory parameter.");
         this._proto = gafTimeLineProto;
         this._init();
+        this._fps = gafTimeLineProto.getFps();
 
         this._container = new cc.Node();
         this.addChild(this._container);
@@ -253,7 +254,7 @@ gaf.TimeLine = gaf.Object.extend({
 
     _processAnimations : function (dt) {
         this._timeDelta += dt;
-        var frameTime = 1.0 / this._fps;
+        var frameTime = 1 / this._fps;
         while (this._timeDelta >= frameTime) {
             this._timeDelta -= frameTime;
             this._step();

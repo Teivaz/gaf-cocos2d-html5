@@ -158,7 +158,7 @@ gaf.Asset = cc.Class.extend({
      * @return {uint}
      */
     getSceneFps: function () {
-        debugger;
+        return this._sceneFps;
     },
 
     /**
@@ -190,7 +190,7 @@ gaf.Asset = cc.Class.extend({
      * @param {uint} fps
      */
     setSceneFps: function (fps) {
-        debugger;
+        this._sceneFps = fps;
     },
 
     /**
