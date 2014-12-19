@@ -28,7 +28,8 @@ gaf._AssetPreload = function(){
 };
 
 gaf._AssetPreload.End = function(asset, content, timeLine){
-    timeLine.getFps = function(){return asset.getSceneFps()};
+    if(timeLine)
+        timeLine.getFps = function(){return asset.getSceneFps()};
 };
 
 gaf._AssetPreload.Atlases = function(asset, content, timeLine){
@@ -70,8 +71,21 @@ gaf._AssetPreload.AnimationObjects = function(asset, content, timeLine) {
 gaf._AssetPreload.AnimationFrames = function(asset, content, timeLine) {
     cc.assert(timeLine, "Error. Time Line should not be null.");
     var frames = [];
+    var lastState = [];
     content.forEach(function(item){
-        frames[item.frame] = {states: item.state, actions: null};
+        frames[item.frame - 1] = {states: item.state, actions: null};
+        lastState = item.state || lastState;
+    });
+    frames.forEach(function(item){
+        if(!item) {
+            return;
+        }
+        if(!item.states){
+            item.states = lastState;
+        }
+        else{
+            lastState = item.states;
+        }
     });
     timeLine.getFrames = function(){return frames};
 };
@@ -145,7 +159,7 @@ gaf._AssetPreload.AnimationFrames2 = function(asset, content, timeLine){
     var frames = [];
     var lastState = [];
     content.forEach(function(item){
-        frames[item.frame] = {states: item.state, actions: item.actions};
+        frames[item.frame - 1] = {states: item.state, actions: item.actions};
         lastState = item.state || lastState;
     });
     frames.forEach(function(item){

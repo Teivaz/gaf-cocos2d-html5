@@ -18,6 +18,7 @@ gaf.Object = cc.Node.extend({
     _id : gaf.IDNONE,
     _proto : {},
     _parentTimeLine : null,
+    _lastVisibleInFrame : 0,
 
 
     // Public methods
@@ -97,7 +98,9 @@ gaf.Object = cc.Node.extend({
      * @method getCurrentFrameIndex
      * @return {uint}
      */
-    getCurrentFrameIndex : function () {return gaf.IDNONE;},
+    getCurrentFrameIndex : function () {
+        return gaf.IDNONE;
+    },
 
     /**
      * @method getTotalFrameCount
@@ -225,14 +228,9 @@ gaf.Object = cc.Node.extend({
     setLocator : function (locator){},
 
     setExternalTransform : function(affineTransform){
-        this._renderCmd._transform = affineTransform;
-        this._externalTransform = affineTransform;
-        /*
-        if(!cc.affineTransformEqualToTransform(this.getExternalTransform(), affineTransform)){
-            this._externalTransform = affineTransform;
-            this._transformDirty = true;
-            this._inverseDirty = true;
-        }*/
+        if(!cc.affineTransformEqualToTransform(this._additionalTransform, affineTransform)){
+            this.setAdditionalTransform(affineTransform);
+        }
     },
 
     getExternalTransform : function(){
@@ -290,6 +288,13 @@ gaf.Object = cc.Node.extend({
             || (this._getDisplayedOpacityOffset() > cc.FLT_EPSILON);
     },
 
+    // @Override
+    visit: function(parentCmd) {
+        if(this.isVisibleInCurrentFrame()){
+            this._super(parentCmd);
+        }
+    },
+
     _getDisplayedOpacityOffset : function(){return 0},
 
     _getFilters : function(){return null},
@@ -300,8 +305,19 @@ gaf.Object = cc.Node.extend({
 
     _applyState : function(state, parent){
         this._parentTimeLine = parent;
-    }
+        this.setExternalTransform(gaf.CGAffineTransformCocosFormatFromFlashFormat(state.matrix));
+    },
 
+    _initRendererCmd: function(){
+        this._renderCmd = cc.renderer.getRenderCmd(this);
+        this._renderCmd._visit = this._renderCmd.visit;
+        var self = this;
+        this._renderCmd.visit = function(parentCmd) {
+            if(self.isVisibleInCurrentFrame()){
+                this._visit(parentCmd);
+            }
+        }
+    }
 
 });
 

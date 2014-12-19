@@ -11,21 +11,12 @@ gaf.Sprite = gaf.Object.extend({
         var sprite = cc.Sprite.createWithSpriteFrame(frame);
         this.addChild(sprite);
         this._sp = sprite;
-    },
+        sprite.setAnchorPoint(0, 1);
+    }
 
 
 
     // Private
-
-    _applyState : function(state, parent){
-        this._super(state, parent);
-        this.setExternalTransform(state.matrix);
-    },
-
-    setExternalTransform : function(affineTransform){
-        //_super(affineTransform);
-        this._sp._renderCmd._transform = affineTransform;
-    }
 
 });
 /*

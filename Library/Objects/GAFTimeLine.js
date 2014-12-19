@@ -154,7 +154,7 @@ gaf.TimeLine = gaf.Object.extend({
     },
     isVisibleInCurrentFrame: function () {
         if (this._timelineParentObject &&
-            (this._timelineParentObject.getCurrentFrameIndex() + 1 != this._lastVisibleInFrame)) {
+            (this._timelineParentObject.getCurrentFrameIndex() + 1 !== this._lastVisibleInFrame)) {
             return false;
         }
         else {
@@ -249,7 +249,7 @@ gaf.TimeLine = gaf.Object.extend({
     // Private
 
     _init : function(){
-        this._currentSequenceEnd = this._proto.getTotalFrames();
+        this._currentSequenceEnd = this._proto.getTotalFrames() + 1;
     },
 
     _processAnimations : function (dt) {
@@ -356,8 +356,8 @@ gaf.TimeLine = gaf.Object.extend({
                 parent = objects[state.maskObjectIdRef];
                 cc.assert(parent, "Error! Mask not found.");
             }
+            object._lastVisibleInFrame = 1 + frameIndex;
             gaf.TimeLine.rearrangeSubobject(parent, object, state.depth);
-            object._lastVisibleInFrame = frameIndex;
         });
 
 
@@ -373,10 +373,7 @@ gaf.TimeLine = gaf.Object.extend({
             }
         });
     },
-    _applyState : function(state, parent){
-        _super._applyState(state, parent);
-        this.setExternalTransform(state.matrix);
-    },
+
     _getSharedObjects : function(){return[]}
 
 

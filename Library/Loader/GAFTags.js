@@ -303,7 +303,7 @@ gaf.Tag.DefineAnimationFrames2.doParse = function(s) {
         'frame', 'Uint',
         'hasChangesInDisplayList', 'Boolean',
         'hasActions', 'Boolean',
-        'states', s.condition('hasChangesInDisplayList', 1, s.array('Uint', s.fields(
+        'state', s.condition('hasChangesInDisplayList', 1, s.array('Uint', s.fields(
             'hasColorTransform', 'Boolean',
             'hasMask', 'Boolean',
             'hasEffect', 'Boolean',
