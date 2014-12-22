@@ -8,11 +8,11 @@ gaf._AssetPreload = function(){
     this["5"] = gaf._AssetPreload.NamedParts;
     this["6"] = gaf._AssetPreload.Sequences;
     this["7"] = gaf._AssetPreload.TextFields;
-    this["8"] = gaf._AssetPreload.Atlases2;
+    this["8"] = gaf._AssetPreload.Atlases; // 2
     this["9"] = gaf._AssetPreload.Stage;
     this["10"] = gaf._AssetPreload.AnimationObjects2;
     this["11"] = gaf._AssetPreload.AnimationMasks2;
-    this["12"] = gaf._AssetPreload.AnimationFrames2;
+    this["12"] = gaf._AssetPreload.AnimationFrames; // 2
     this["13"] = gaf._AssetPreload.TimeLine;
 
     this.Tag = function(asset, tag, timeLine){
@@ -58,6 +58,7 @@ gaf._AssetPreload.Atlases = function(asset, content, timeLine){
             y: (0 + (1 - (item.pivot.y / item.size.y)))};
         //frame.setAnchorPoint(frame._gafAnchor);
         asset._objects[item.elementAtlasId] = frame;
+        // 9 grid
     });
 };
 
@@ -75,23 +76,31 @@ gaf._AssetPreload.AnimationObjects = function(asset, content, timeLine) {
 
 gaf._AssetPreload.AnimationFrames = function(asset, content, timeLine) {
     cc.assert(timeLine, "Error. Time Line should not be null.");
+
+    var statesForId = {};
     var frames = [];
-    var lastState = [];
-    content.forEach(function(item){
-        frames[item.frame - 1] = {states: item.state, actions: null};
-        lastState = item.state || lastState;
-    });
-    frames.forEach(function(item){
-        if(!item) {
-            return;
+    var lastFrame = {};
+
+    for(var i = 0, len = content.length; i < len; ++i){
+        var frame = content[i];
+        if(frame.state) {
+            frame.state.forEach(function (state) {
+                if (state.alpha > 0) {
+                    statesForId[state.objectIdRef] = state;
+                }
+                else {
+                    statesForId[state.objectIdRef] = null;
+                }
+            });
         }
-        if(!item.states){
-            item.states = lastState;
-        }
-        else{
-            lastState = item.states;
-        }
-    });
+
+        var stateArray = [];
+        for(var obj in statesForId){ if(statesForId.hasOwnProperty(obj) && statesForId[obj]) {
+            stateArray.push(statesForId[obj]);
+        }}
+        lastFrame = frame;
+        frames[frame.frame - 1] = {states: stateArray, actions: frame.actions || null};
+    }
     timeLine.getFrames = function(){return frames};
 };
 
@@ -115,36 +124,6 @@ gaf._AssetPreload.TextFields = function(asset, content, timeLine){
     debugger;
 };
 
-gaf._AssetPreload.Atlases2 = function(asset, content, timeLine){
-    var csf = cc.Director._getInstance().getContentScaleFactor();
-    var atlases = [];
-    content.atlases.forEach(function(item){
-        var atlasPath = "";
-        item.sources.forEach(function(atlasSource){
-            if(atlasSource.csf === csf)
-                atlasPath = atlasSource.source;
-        });
-        atlases[item.id] = cc.textureCache.getTextureForKey(atlasPath);
-        cc.assert(atlases[item.id], "Error loading texture!");
-    });
-
-    content.elements.forEach(function(item){
-        var texture = atlases[item.atlasId];
-        var rect = cc.rect(item.origin.x, item.origin.y, item.size.x, item.size.y);
-        var rotated = false;
-        //var offset = {x: item.pivot.x, y: item.size.y - item.pivot.y};
-        var offset = {x: 0, y: 0};
-        var originalSize = cc.rect(0, 0, item.size.x / item.scale, item.size.y / item.scale);
-        var frame = new cc.SpriteFrame(texture, rect, rotated, offset, originalSize);
-        frame._gafAnchor = {
-            x: (0 - (0 - (item.pivot.x / item.size.x))),
-            y: (0 + (1 - (item.pivot.y / item.size.y)))};
-        //frame.setAnchorPoint(frame._gafAnchor);
-        asset._objects[item.elementAtlasId] = frame;
-        // 9 grid
-    });
-};
-
 gaf._AssetPreload.Stage = function(asset, content, timeLine) {
     asset._sceneFps = content.fps;
     asset._sceneColor = content.color;
@@ -162,28 +141,6 @@ gaf._AssetPreload.AnimationMasks2 = function(asset, content, timeLine){
     content.forEach(function(item){
         asset._objects[item.objectId] = new gaf._MaskProto(asset._objects, item.elementAtlasIdRef, item.type);
     });
-};
-
-gaf._AssetPreload.AnimationFrames2 = function(asset, content, timeLine){
-    cc.assert(timeLine, "Error. Time Line should not be null.");
-    var frames = [];
-    var lastState = [];
-    content.forEach(function(item){
-        frames[item.frame - 1] = {states: item.state, actions: item.actions};
-        lastState = item.state || lastState;
-    });
-    frames.forEach(function(item){
-        if(!item) {
-            return;
-        }
-        if(!item.states){
-            item.states = lastState;
-        }
-        else{
-            lastState = item.states;
-        }
-    });
-    timeLine.getFrames = function(){return frames};
 };
 
 gaf._AssetPreload.TimeLine = function(asset, content, timeLine) {

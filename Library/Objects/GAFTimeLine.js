@@ -353,7 +353,7 @@ gaf.TimeLine = gaf.Object.extend({
             object._applyState(state, self);
             var parent = out;
             if(state.hasMask){
-                parent = objects[state.maskObjectIdRef];
+                parent = objects[state.maskObjectIdRef]._getNode();
                 cc.assert(parent, "Error! Mask not found.");
             }
             object._lastVisibleInFrame = 1 + frameIndex;

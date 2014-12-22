@@ -317,6 +317,10 @@ gaf.Object = cc.Node.extend({
                 this._visit(parentCmd);
             }
         }
+    },
+
+    _getNode : function(){
+        return this;
     }
 
 });

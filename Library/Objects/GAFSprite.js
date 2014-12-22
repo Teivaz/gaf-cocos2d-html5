@@ -8,15 +8,10 @@ gaf.Sprite = gaf.Object.extend({
         this._proto = gafSpriteProto;
 
         var frame = this._proto.getObjects()[this._proto.getIdRef()];
-        var sprite = cc.Sprite.createWithSpriteFrame(frame);
-        this.addChild(sprite);
-        this._sp = sprite;
+        this._sprite = cc.Sprite.createWithSpriteFrame(frame);
+        this._sprite.setAnchorPoint(frame._gafAnchor);
+        this.addChild(this._sprite);
 
-        sprite.setAnchorPoint(frame._gafAnchor);
-
-        //sprite.setAnchorPoint(0, 0);
-        //this.setContentSize(sprite.getContentSize());
-        //this.setAnchorPoint(0.5, 0.5);
     }
 
 

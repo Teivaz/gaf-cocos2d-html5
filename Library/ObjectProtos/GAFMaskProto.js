@@ -1,8 +1,8 @@
 
 gaf._MaskProto = function(objects, elementAtlasIdRef, type) {
     this.type = type || gaf.TYPE_TEXTURE;
-    this.objects = elementAtlasIdRef;
-    this.idRef = elementAtlasIdRef;
+    this.getObjects = function(){return objects};
+    this.getIdRef = function(){return elementAtlasIdRef};
 
     /*
      * Will construct GAFMask
