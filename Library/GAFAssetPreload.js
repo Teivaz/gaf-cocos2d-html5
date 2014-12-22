@@ -47,11 +47,16 @@ gaf._AssetPreload.Atlases = function(asset, content, timeLine){
 
     content.elements.forEach(function(item){
         var texture = atlases[item.atlasId];
-        var rect = cc.rect(item.XY.x, item.XY.y, item.width, item.height);
+        var rect = cc.rect(item.origin.x, item.origin.y, item.size.x, item.size.y);
         var rotated = false;
-        var offset = item.pivot;
-        var originalSize = cc.rect(0, 0, item.width / item.scale, item.height / item.scale);
+        //var offset = {x: item.pivot.x, y: item.size.y - item.pivot.y};
+        var offset = {x: 0, y: 0};
+        var originalSize = cc.rect(0, 0, item.size.x / item.scale, item.size.y / item.scale);
         var frame = new cc.SpriteFrame(texture, rect, rotated, offset, originalSize);
+        frame._gafAnchor = {
+            x: (0 - (0 - (item.pivot.x / item.size.x))),
+            y: (0 + (1 - (item.pivot.y / item.size.y)))};
+        //frame.setAnchorPoint(frame._gafAnchor);
         asset._objects[item.elementAtlasId] = frame;
     });
 };
@@ -125,11 +130,16 @@ gaf._AssetPreload.Atlases2 = function(asset, content, timeLine){
 
     content.elements.forEach(function(item){
         var texture = atlases[item.atlasId];
-        var rect = cc.rect(item.XY.x, item.XY.y, item.width, item.height);
+        var rect = cc.rect(item.origin.x, item.origin.y, item.size.x, item.size.y);
         var rotated = false;
-        var offset = item.pivot;
-        var originalSize = cc.rect(0, 0, item.width / item.scale, item.height / item.scale);
+        //var offset = {x: item.pivot.x, y: item.size.y - item.pivot.y};
+        var offset = {x: 0, y: 0};
+        var originalSize = cc.rect(0, 0, item.size.x / item.scale, item.size.y / item.scale);
         var frame = new cc.SpriteFrame(texture, rect, rotated, offset, originalSize);
+        frame._gafAnchor = {
+            x: (0 - (0 - (item.pivot.x / item.size.x))),
+            y: (0 + (1 - (item.pivot.y / item.size.y)))};
+        //frame.setAnchorPoint(frame._gafAnchor);
         asset._objects[item.elementAtlasId] = frame;
         // 9 grid
     });

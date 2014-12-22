@@ -87,10 +87,9 @@ gaf.Tag.DefineAtlas.doParse = function (s) {
         )),
         'elements', s.array('Uint', s.fields(
             'pivot', 'Point',
-            'XY', 'Point',
+            'origin', 'Point',
             'scale', 'float',
-            'width', 'float',
-            'height', 'float',
+            'size', 'Point',
             'atlasId', 'Uint',
             'elementAtlasId', 'Uint'
         ))
@@ -241,10 +240,9 @@ gaf.Tag.DefineAtlas2.doParse = function(s) {
         )),
         'elements', s.array('Uint', s.fields(
             'pivot', 'Point',
-            'XY', 'Point',
+            'origin', 'Point',
             'scale', 'float',
-            'width', 'float',
-            'height', 'float',
+            'size', 'Point',
             'atlasId', 'Uint',
             'elementAtlasId', 'Uint',
             'hasScale9Grid', 'Boolean',
