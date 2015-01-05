@@ -19,3 +19,10 @@ gaf.TYPE_TEXTURE = 0;
 gaf.TYPE_TEXT_FIELD = 1;
 gaf.TYPE_TIME_LINE = 2;
 
+gaf.UNIFORM_BLUR_TEXEL_OFFSET = "u_step";
+gaf.UNIFORM_GLOW_TEXEL_OFFSET = "u_step";
+gaf.UNIFORM_GLOW_COLOR = "u_glowColor";
+gaf.UNIFORM_ALPHA_CTX_MULT = "colorTransformMult";
+gaf.UNIFORM_ALPHA_CTX_OFFSET = "colorTransformOffsets";
+gaf.UNIFORM_ALPHA_COLOR_MATRIX_BODY = "ColorMatrixBody";
+gaf.UNIFORM_ALPHA_COLOR_MATRIX_APPENDIX = "ColorMatrixAppendix";
