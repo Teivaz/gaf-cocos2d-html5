@@ -1,4 +1,15 @@
 
+gaf.CGAffineTransformCocosFormatFromFlashFormat = function(transform){
+    var t = {};
+    t.a = transform.a;
+    t.b = -transform.b;
+    t.c = -transform.c;
+    t.d = transform.d;
+    t.tx = transform.tx;
+    t.ty = -transform.ty;
+    return t;
+};
+
 gaf._AssetPreload = function(){
     this["0"] = gaf._AssetPreload.End;
     this["1"] = gaf._AssetPreload.Atlases;
@@ -77,6 +88,43 @@ gaf._AssetPreload.AnimationObjects = function(asset, content, timeLine) {
 gaf._AssetPreload.AnimationFrames = function(asset, content, timeLine) {
     cc.assert(timeLine, "Error. Time Line should not be null.");
 
+    var convertTint = function(mat, alpha){
+        if(!mat)
+            return null;
+        var result = {
+            mult: {
+                r: mat.redMultiplier * 255,
+                g: mat.greenMultiplier * 255,
+                b: mat.blueMultiplier * 255,
+                a: alpha * 255
+            },
+            offset: {
+                r: mat.redOffset * 255,
+                g: mat.greenOffset * 255,
+                b: mat.blueOffset * 255,
+                a: mat.alphaOffset * 255
+            }
+        };
+        return result;
+    };
+
+    var convertState = function(state){
+        var result = {
+            hasColorTransform: state.hasColorTransform,
+            hasMask: state.hasMask,
+            hasEffect: state.hasEffect,
+            objectIdRef: state.objectIdRef,
+            depth: state.depth,
+            alpha: state.alpha * 255,
+            matrix: gaf.CGAffineTransformCocosFormatFromFlashFormat(state.matrix),
+            colorTransform: convertTint(state.colorTransform, state.alpha),
+            effect: state.effect,
+            maskObjectIdRef: state.maskObjectIdRef
+        };
+        return result;
+    };
+
+
     var statesForId = {};
     var frames = [];
     var lastFrame = {};
@@ -86,7 +134,7 @@ gaf._AssetPreload.AnimationFrames = function(asset, content, timeLine) {
         if(frame.state) {
             frame.state.forEach(function (state) {
                 if (state.alpha > 0) {
-                    statesForId[state.objectIdRef] = state;
+                    statesForId[state.objectIdRef] = convertState(state);
                 }
                 else {
                     statesForId[state.objectIdRef] = null;

@@ -367,7 +367,7 @@ gaf.Tag._readActionArguments = function(s){
 gaf.Tag._readFilter = function(s){
     return s.fields(
         'type', 'Uint',
-        'dropShadow', s.condition('type', 0, s.fields( // DropShadow
+        'dropShadow', s.condition('type', gaf.EFFECT_DROP_SHADOW, s.fields( // DropShadow
             'color', 'color',
             'blurX', 'float',
             'blurY', 'float',
@@ -377,11 +377,11 @@ gaf.Tag._readFilter = function(s){
             'inner', 'Boolean',
             'knockout', 'Boolean'
         )),
-        'blur', s.condition('type', 1, s.fields( // Blur
+        'blur', s.condition('type', gaf.EFFECT_BLUR, s.fields( // Blur
             'blurX', 'float',
             'blurY', 'float'
         )),
-        'glow', s.condition('type', 2, s.fields( // Glow
+        'glow', s.condition('type', gaf.EFFECT_GLOW, s.fields( // Glow
             'color', 'color',
             'blurX', 'float',
             'blurY', 'float',
@@ -389,14 +389,13 @@ gaf.Tag._readFilter = function(s){
             'inner', 'Boolean',
             'knockout', 'Boolean'
         )),
-        'colorMatrix', s.condition('type', 6, s.fields( // ColorMatrix
+        'colorMatrix', s.condition('type', gaf.EFFECT_COLOR_MATRIX, s.fields( // ColorMatrix
             'rr', 'float', 'gr', 'float', 'br', 'float', 'ar', 'float', 'r', 'float',
             'rg', 'float', 'gg', 'float', 'bg', 'float', 'ag', 'float', 'g', 'float',
             'rb', 'float', 'gb', 'float', 'bb', 'float', 'ab', 'float', 'b', 'float',
             'ra', 'float', 'ga', 'float', 'ba', 'float', 'aa', 'float', 'a', 'float'
         ))
     )
-    cc.color
 };
 
 gaf.Tags = new gaf.Tag();

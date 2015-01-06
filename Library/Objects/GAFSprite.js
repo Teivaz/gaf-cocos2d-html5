@@ -15,25 +15,49 @@ gaf.Sprite = gaf.Object.extend({
         //this._sprite.setCascadeOpacityEnabled(true);
         this._sprite.setOpacityModifyRGB(true);
 
+        if(cc._renderType === cc._RENDER_TYPE_WEBGL){
+            // WebGL set up
+            this._applyCtxState = this._applyWebGLCtxState;
+        }
+        else{
+            // Canvas
+            this._applyCtxState = this._applyCanvasCtxState;
+        }
+
     },
 
     // Private
 
     _applyState : function(state, parent){
         this._parentTimeLine = parent;
-        this.setExternalTransform(gaf.CGAffineTransformCocosFormatFromFlashFormat(state.matrix));
-        this._sprite.setOpacity(state.alpha * 255);
-        if(state.hasColorTransform){
-            this._sprite.setColor(cc.color(
-                state.colorTransform.redMultiplier * 255,
-                state.colorTransform.greenMultiplier * 255,
-                state.colorTransform.blueMultiplier * 255
-            ));
+        this.setExternalTransform(state.matrix);
+        this._sprite.setOpacity(state.alpha);
+        if(gaf._stateHasCtx(state)){
+            // Set ctx shader
+            this._applyCtxState(state);
         }
         else{
-            this._sprite.setColor(cc.color(255, 255, 255));
+            this._resetCtxState();
+            // Set normal shader
+            if(state.hasColorTransform){
+                this._sprite.setColor(state.colorTransform.mult);
+            }
+            else{
+                if(!cc.colorEqual(this._sprite.getColor(), cc.color.WHITE))
+                    this._sprite.setColor(cc.color.WHITE);
+            }
         }
-    }
+    },
+
+    _resetCtxState: function(){},
+
+    _applyCtxState: function(state){},
+
+    _applyWebGLCtxState: function(state){
+        //var state = this._sprite.getGLProgramState();
+    },
+
+    _applyCanvasCtxState: function(state){}
 
 
 });

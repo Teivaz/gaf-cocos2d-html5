@@ -6,6 +6,11 @@ gaf.COMPRESSION_ZIP = 0x00474143;
 gaf.IDNONE = 0xffffffff;
 gaf.FIRST_FRAME_INDEX = 0;
 
+gaf.EFFECT_DROP_SHADOW = 0;
+gaf.EFFECT_BLUR = 1;
+gaf.EFFECT_GLOW = 2;
+gaf.EFFECT_COLOR_MATRIX = 6;
+
 gaf.ACTION_STOP = 0;
 gaf.ACTION_PLAY = 1;
 gaf.ACTION_GO_TO_AND_STOP = 2;
@@ -22,7 +27,7 @@ gaf.TYPE_TIME_LINE = 2;
 gaf.UNIFORM_BLUR_TEXEL_OFFSET = "u_step";
 gaf.UNIFORM_GLOW_TEXEL_OFFSET = "u_step";
 gaf.UNIFORM_GLOW_COLOR = "u_glowColor";
-gaf.UNIFORM_ALPHA_CTX_MULT = "colorTransformMult";
-gaf.UNIFORM_ALPHA_CTX_OFFSET = "colorTransformOffsets";
+gaf.UNIFORM_ALPHA_TINT_MULT = "colorTransformMult";
+gaf.UNIFORM_ALPHA_TINT_OFFSET = "colorTransformOffsets";
 gaf.UNIFORM_ALPHA_COLOR_MATRIX_BODY = "ColorMatrixBody";
 gaf.UNIFORM_ALPHA_COLOR_MATRIX_APPENDIX = "ColorMatrixAppendix";

@@ -1,14 +1,28 @@
 var gaf = gaf || {};
 
-gaf.CGAffineTransformCocosFormatFromFlashFormat = function(transform){
-    var t = {};
-    t.a = transform.a;
-    t.b = -transform.b;
-    t.c = -transform.c;
-    t.d = transform.d;
-    t.tx = transform.tx;
-    t.ty = -transform.ty;
-    return t;
+gaf._stateHasCtx = function(state){
+    // Check for tint color offset
+    if( state.hasColorTransform &&
+       (state.colorTransform.offset.r > 0 ||
+        state.colorTransform.offset.g > 0 ||
+        state.colorTransform.offset.b > 0 ||
+        state.colorTransform.offset.a > 0)){
+        return true;
+    }
+
+    // Check for color transform filter
+    var BreakException= {};
+    try{if(state.hasEffect){
+        state.effect.forEach(function(effect){
+            if(effect.type === gaf.EFFECT_COLOR_MATRIX) throw BreakException;
+        });
+    }}
+    catch(e){
+        if (e!==BreakException) throw e;
+        return true;
+    }
+
+    return false;
 };
 
 gaf.Object = cc.Node.extend({
@@ -275,17 +289,14 @@ gaf.Object = cc.Node.extend({
     ////////////////
 
     _updateVisibility : function(state, parent){
-        var alphaOffset = state.hasColorTransform ? state.colorTransform.alphaOffset : 0;
-        alphaOffset += parent ? parent._getDisplayedOpacityOffset() : 0;
-        this._getDisplayedOpacityOffset = function(){return alphaOffset};
-        this.setOpacity(state.alpha);
-        return this.isVisible();
+        var alphaOffset = state.hasColorTransform ? state.colorTransform.offset.a : 0;
+        this.setOpacity(state.alpha + alphaOffset);
+        //return this.isVisible();
     },
 
     // @Override
     isVisible : function(){
-        return (this.getDisplayedOpacity() > cc.FLT_EPSILON)
-            || (this._getDisplayedOpacityOffset() > cc.FLT_EPSILON);
+        return this.getDisplayedOpacity() > 0;
     },
 
     // @Override
@@ -295,8 +306,6 @@ gaf.Object = cc.Node.extend({
         }
     },
 
-    _getDisplayedOpacityOffset : function(){return 0},
-
     _getFilters : function(){return null},
 
     _processAnimation : function(){},
@@ -305,7 +314,7 @@ gaf.Object = cc.Node.extend({
 
     _applyState : function(state, parent){
         this._parentTimeLine = parent;
-        this.setExternalTransform(gaf.CGAffineTransformCocosFormatFromFlashFormat(state.matrix));
+        this.setExternalTransform(state.matrix);
     },
 
     _initRendererCmd: function(){
