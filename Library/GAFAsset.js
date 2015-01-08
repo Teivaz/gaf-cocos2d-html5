@@ -285,7 +285,7 @@ gaf.Asset = cc.Class.extend({
                     if(constructedObject._className === "GAFTimeLine"){
                         timeLines.push(constructedObject);
                     }
-                    }
+                }
                 else {
                     sharedObjects[i] = object;
                 }

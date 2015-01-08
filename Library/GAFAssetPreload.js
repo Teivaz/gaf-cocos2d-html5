@@ -87,7 +87,7 @@ gaf._AssetPreload.AnimationObjects = function(asset, content, timeLine) {
 
             case gaf.TYPE_TIME_LINE:
                 // Will be linked to time lines when all time lines are constructed
-                asset._timeLinesToLink.push(content);
+                asset._timeLinesToLink.push(item);
                 break;
 
             case gaf.TYPE_TEXTURE:
