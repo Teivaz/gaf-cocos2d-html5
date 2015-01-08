@@ -14,7 +14,8 @@ gaf.TimeLine = gaf.Object.extend({
     _isReversed: false,
     _timeDelta: 0,
     _animationsSelectorScheduled: false,
-    _currentFrame : gaf.FIRST_FRAME_INDEX,
+    _currentFrame: gaf.FIRST_FRAME_INDEX,
+    _timeLines: [],
 
 
     ctor : function(gafTimeLineProto){
@@ -142,8 +143,13 @@ gaf.TimeLine = gaf.Object.extend({
         if (!this._isRunning) {
             this._currentFrame = gaf.FIRST_FRAME_INDEX;
             this._setAnimationRunning(true);
+            this._timeLines.forEach(function(item){
+                item._setAnimationRunning(true);
+                item.setLooped(true);
+            });
         }
     },
+
     stop: function () {
         this.unschedule("_processAnimations");
         this._animationsSelectorScheduled = false;
@@ -257,13 +263,15 @@ gaf.TimeLine = gaf.Object.extend({
         var frameTime = 1 / this._fps;
         while (this._timeDelta >= frameTime) {
             this._timeDelta -= frameTime;
-            this._step();
-            if (this._framePlayedDelegate) {
-                this._framePlayedDelegate(this, this._currentFrame);
-            }
+            this._timeLines.forEach(function(tl){
+                tl._step()
+            });
         }
     },
     _step: function () {
+        if(!this.getIsAnimationRunning())
+            return;
+
         this._showingFrame = this._currentFrame;
         if (!this._isReversed) {
             if (this._currentFrame < this._currentSequenceStart) {
@@ -290,7 +298,7 @@ gaf.TimeLine = gaf.Object.extend({
                 }
             }
             this._processAnimation();
-            if (this.getIsAnimationRunning()) {
+                if (this.getIsAnimationRunning()) {
                 this._showingFrame = this._currentFrame++;
             }
         }
@@ -328,6 +336,9 @@ gaf.TimeLine = gaf.Object.extend({
     },
     _processAnimation : function () {
         this._realizeFrame(this._container, this._currentFrame);
+        if (this._framePlayedDelegate) {
+            this._framePlayedDelegate(this, this._currentFrame);
+        }
     },
     _realizeFrame : function(out, frameIndex) {
         var self = this;

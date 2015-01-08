@@ -21,7 +21,7 @@ gaf._AssetPreload = function(){
     this["7"] = gaf._AssetPreload.TextFields;
     this["8"] = gaf._AssetPreload.Atlases; // 2
     this["9"] = gaf._AssetPreload.Stage;
-    this["10"] = gaf._AssetPreload.AnimationObjects2;
+    this["10"] = gaf._AssetPreload.AnimationObjects; //2
     this["11"] = gaf._AssetPreload.AnimationMasks2;
     this["12"] = gaf._AssetPreload.AnimationFrames; // 2
     this["13"] = gaf._AssetPreload.TimeLine;
@@ -68,7 +68,7 @@ gaf._AssetPreload.Atlases = function(asset, content, timeLine){
             x: (0 - (0 - (item.pivot.x / item.size.x))),
             y: (0 + (1 - (item.pivot.y / item.size.y)))};
         //frame.setAnchorPoint(frame._gafAnchor);
-        asset._objects[item.elementAtlasId] = frame;
+        asset._atlasFrames[item.elementAtlasId] = frame;
         // 9 grid
     });
 };
@@ -81,7 +81,20 @@ gaf._AssetPreload.AnimationMasks = function(asset, content, timeLine){
 
 gaf._AssetPreload.AnimationObjects = function(asset, content, timeLine) {
     content.forEach(function(item){
-        asset._objects[item.objectId] = new gaf._SpriteProto(asset._objects, item.elementAtlasIdRef);
+        switch (item.type){
+            case gaf.TYPE_TEXT_FIELD:
+                break;
+
+            case gaf.TYPE_TIME_LINE:
+                // Will be linked to time lines when all time lines are constructed
+                asset._timeLinesToLink.push(content);
+                break;
+
+            case gaf.TYPE_TEXTURE:
+            default:
+                asset._objects[item.objectId] = new gaf._SpriteProto(asset._atlasFrames, item.elementAtlasIdRef);
+                break;
+        }
     });
 };
 
@@ -179,15 +192,9 @@ gaf._AssetPreload.Stage = function(asset, content, timeLine) {
     asset._sceneHeight = content.height;
 };
 
-gaf._AssetPreload.AnimationObjects2 = function(asset, content, timeLine){
-    content.forEach(function(item){
-        asset._objects[item.objectId] = new gaf._SpriteProto(asset._objects, item.elementAtlasIdRef, item.type);
-    });
-};
-
 gaf._AssetPreload.AnimationMasks2 = function(asset, content, timeLine){
     content.forEach(function(item){
-        asset._objects[item.objectId] = new gaf._MaskProto(asset._objects, item.elementAtlasIdRef, item.type);
+        asset._objects[item.objectId] = new gaf._MaskProto(asset._atlasFrames, item.elementAtlasIdRef, item.type);
     });
 };
 

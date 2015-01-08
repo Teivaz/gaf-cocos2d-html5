@@ -1,7 +1,6 @@
 
-gaf._SpriteProto = function(objects, elementAtlasIdRef, type) {
-    this.type = type || gaf.TYPE_TEXTURE;
-    this.getObjects = function(){return objects};
+gaf._SpriteProto = function(atlasFrames, elementAtlasIdRef) {
+    this.getAtlasFrames = function(){return atlasFrames};
     this.getIdRef = function(){return elementAtlasIdRef};
 
     /*

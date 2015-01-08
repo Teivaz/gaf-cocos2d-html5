@@ -6,6 +6,7 @@ gaf.Asset = cc.Class.extend({
     // Private members
     _header: {},
     _objects: [],
+    _atlasFrames: [],
     _timeLines: [],
     _rootTimeLine: null,
     _textureLoadDelegate: null,
@@ -245,12 +246,20 @@ gaf.Asset = cc.Class.extend({
     },
 
     _init : function(gafData){
+        var self = this;
         this._gafData = gafData;
         this._setHeader(gafData.header);
+        this._timeLinesToLink = [];
         if(this._getMajorVerison() < 4){
             this._pushTimeLine(new gaf._TimeLineProto(this._header.framesCount, this._header.bounds, this._header.pivot));
         }
         gaf._AssetPreload.Tags(this, gafData.tags, this._rootTimeLine);
+
+        // Link Time Lines
+        this._timeLinesToLink.forEach(function(content){
+            self._objects[content.objectId] = self._objects[content.elementAtlasIdRef];
+        });
+        delete this._timeLinesToLink;
     },
 
     _pushTimeLine : function(timeLine){
@@ -258,20 +267,25 @@ gaf.Asset = cc.Class.extend({
         if(timeLine.getId() != gaf.IDNONE) {
             this._objects[timeLine.getId()] = timeLine;
         }
-        if(!timeLine.getLinkageName() || timeLine.getId() === 0){
+        if(timeLine.getId() === 0){
             this._setRootTimeline(timeLine);
         }
     },
 
     _instantiateGaf : function(){
         var root = null;
+        var timeLines = [];
         var sharedObjects = [];
         for(var i = 0, end = this._objects.length; i < end; i++){
             var object = this._objects[i];
             if(object){
                 if(object.hasOwnProperty("_gafConstruct")) {
-                    sharedObjects[i] = object._gafConstruct(sharedObjects);
-                }
+                    var constructedObject = object._gafConstruct(sharedObjects);
+                    sharedObjects[i] = constructedObject;
+                    if(constructedObject._className === "GAFTimeLine"){
+                        timeLines.push(constructedObject);
+                    }
+                    }
                 else {
                     sharedObjects[i] = object;
                 }
@@ -283,6 +297,7 @@ gaf.Asset = cc.Class.extend({
         if(!root){
             root = this._rootTimeLine._gafConstruct(sharedObjects);
         }
+        root._timeLines = timeLines;
         return root;
     }
 

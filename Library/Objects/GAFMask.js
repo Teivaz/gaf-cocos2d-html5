@@ -6,7 +6,7 @@ gaf.Mask = gaf.Object.extend({
         this._super();
         cc.assert(gafMaskProto, "Error! Missing mandatory parameter.");
         this._proto = gafMaskProto;
-        var frame = this._proto.getObjects()[this._proto.getIdRef()];
+        var frame = this._proto.getAtlasFrames()[this._proto.getIdRef()];
         this._sprite = cc.Sprite.createWithSpriteFrame(frame);
         this._sprite.setAnchorPoint(frame._gafAnchor);
         this._clip = cc.ClippingNode.create(this._sprite);

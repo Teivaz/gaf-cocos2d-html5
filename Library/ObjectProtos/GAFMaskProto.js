@@ -1,7 +1,7 @@
 
-gaf._MaskProto = function(objects, elementAtlasIdRef, type) {
+gaf._MaskProto = function(atlasFrames, elementAtlasIdRef, type) {
     this.type = type || gaf.TYPE_TEXTURE;
-    this.getObjects = function(){return objects};
+    this.getAtlasFrames = function(){return atlasFrames};
     this.getIdRef = function(){return elementAtlasIdRef};
 
     /*
