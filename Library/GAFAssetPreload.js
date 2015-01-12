@@ -64,18 +64,18 @@ gaf._AssetPreload.Atlases = function(asset, content, timeLine){
         //var offset = {x: 0, y: 0};
         //var originalSize = cc.rect(0, 0, item.size.x / item.scale, item.size.y / item.scale);
         var frame = new cc.SpriteFrame(texture, rect/*, rotated, offset, originalSize*/);
-        frame._gafAnchor = {
+        var gafAnchor = {
             x: (0 - (0 - (item.pivot.x / item.size.x))),
             y: (0 + (1 - (item.pivot.y / item.size.y)))};
         //frame.setAnchorPoint(frame._gafAnchor);
-        asset._atlasFrames[item.elementAtlasId] = frame;
+        asset._spriteProtos[item.elementAtlasId] = new gaf._SpriteProto(frame, gafAnchor, item.elementAtlasId);
         // 9 grid
     });
 };
 
 gaf._AssetPreload.AnimationMasks = function(asset, content, timeLine){
     content.forEach(function(item){
-        asset._objects[item.objectId] = new gaf._MaskProto(asset._objects, item.elementAtlasIdRef);
+        asset._objects[item.objectId] = asset._spriteProtos[item.elementAtlasIdRef];
     });
 };
 
@@ -92,7 +92,7 @@ gaf._AssetPreload.AnimationObjects = function(asset, content, timeLine) {
 
             case gaf.TYPE_TEXTURE:
             default:
-                asset._objects[item.objectId] = new gaf._SpriteProto(asset._atlasFrames, item.elementAtlasIdRef);
+                asset._objects[item.objectId] = asset._spriteProtos[item.elementAtlasIdRef];
                 break;
         }
     });
@@ -194,7 +194,20 @@ gaf._AssetPreload.Stage = function(asset, content, timeLine) {
 
 gaf._AssetPreload.AnimationMasks2 = function(asset, content, timeLine){
     content.forEach(function(item){
-        asset._objects[item.objectId] = new gaf._MaskProto(asset._atlasFrames, item.elementAtlasIdRef, item.type);
+        switch (item.type){
+            case gaf.TYPE_TEXT_FIELD:
+                break;
+
+            case gaf.TYPE_TIME_LINE:
+                // Will be linked to time lines when all time lines are constructed
+                asset._timeLinesToLink.push(item);
+                break;
+
+            case gaf.TYPE_TEXTURE:
+            default:
+                asset._objects[item.objectId] = asset._spriteProtos[item.elementAtlasIdRef];
+                break;
+        }
     });
 };
 

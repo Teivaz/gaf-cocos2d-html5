@@ -30,7 +30,7 @@ gaf.Object = cc.Node.extend({
     _asset : null,
     _className : "GAFObject",
     _id : gaf.IDNONE,
-    _proto : {},
+    _gafProto : {},
     _parentTimeLine : null,
     _lastVisibleInFrame : 0,
 

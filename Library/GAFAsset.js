@@ -6,8 +6,9 @@ gaf.Asset = cc.Class.extend({
     // Private members
     _header: {},
     _objects: [],
-    _atlasFrames: [],
-    _timeLines: [],
+    _spriteFrames: [],
+    _spriteProtos: [],
+    _timeLineProtos: [],
     _rootTimeLine: null,
     _textureLoadDelegate: null,
     _sceneFps: 60,
@@ -52,7 +53,7 @@ gaf.Asset = cc.Class.extend({
         var BreakException= {};
         var self = this;
         try {
-            self._timeLines.forEach(function (object) {
+            self._timeLineProtos.forEach(function (object) {
                 if (object.getLinkageName() === name) {
                     self._setRootTimeline(object);
                     throw BreakException;
@@ -77,7 +78,7 @@ gaf.Asset = cc.Class.extend({
      * @return {[gaf.TimeLine]}
      */
     getTimelines: function () {
-        return this._timeLines;
+        return this._timeLineProtos;
     },
 
     /**
@@ -257,16 +258,14 @@ gaf.Asset = cc.Class.extend({
 
         // Link Time Lines
         this._timeLinesToLink.forEach(function(content){
-            self._objects[content.objectId] = self._objects[content.elementAtlasIdRef];
+            self._objects[content.objectId] = self._timeLineProtos[content.elementAtlasIdRef];
         });
         delete this._timeLinesToLink;
     },
 
     _pushTimeLine : function(timeLine){
-        this._timeLines.push(timeLine);
-        if(timeLine.getId() != gaf.IDNONE) {
-            this._objects[timeLine.getId()] = timeLine;
-        }
+        this._timeLineProtos[timeLine.getId()] = timeLine;
+
         if(timeLine.getId() === 0){
             this._setRootTimeline(timeLine);
         }
@@ -297,7 +296,7 @@ gaf.Asset = cc.Class.extend({
         if(!root){
             root = this._rootTimeLine._gafConstruct(sharedObjects);
         }
-        root._timeLines = timeLines;
+        root._timeLineProtos = timeLines;
         return root;
     }
 

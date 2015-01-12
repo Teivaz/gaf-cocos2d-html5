@@ -5,12 +5,12 @@ gaf.Sprite = gaf.Object.extend({
     ctor : function(gafSpriteProto){
         this._super();
         cc.assert(gafSpriteProto, "Error! Missing mandatory parameter.");
-        this._proto = gafSpriteProto;
+        this._gafproto = gafSpriteProto;
 
-        var frame = this._proto.getAtlasFrames()[this._proto.getIdRef()];
+        var frame = this._gafproto.getFrame();
         cc.assert(frame instanceof cc.SpriteFrame, "Error. Wrong object type.");
         this._sprite = cc.Sprite.createWithSpriteFrame(frame);
-        this._sprite.setAnchorPoint(frame._gafAnchor);
+        this._sprite.setAnchorPoint(gafSpriteProto.getAnchor());
         this.addChild(this._sprite);
         //this._sprite.setCascadeColorEnabled(true);
         //this._sprite.setCascadeOpacityEnabled(true);
@@ -24,7 +24,10 @@ gaf.Sprite = gaf.Object.extend({
             // Canvas
             this._applyCtxState = this._applyCanvasCtxState;
         }
-
+        /*var v = this._sprite._renderCmd.visit;
+        this._sprite._renderCmd.visit = function(parentCmd){
+            v(parentCmd);
+        };*/
     },
 
     // Private

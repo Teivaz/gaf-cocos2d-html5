@@ -18,7 +18,7 @@ gaf._TimeLineProto = function(animationFrameCount, boundingBox, pivotPoint, id, 
      */
     this._gafConstruct = function(sharedObjects){
         var ret = new gaf.TimeLine(this);
-        ret.getSharedObjects = function(){return sharedObjects};
+        ret._getSharedObjects = function(){return sharedObjects};
 
         return ret;
     };
