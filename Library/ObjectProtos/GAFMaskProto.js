@@ -1,8 +1,9 @@
 
-gaf._MaskProto = function(atlasFrames, elementAtlasIdRef, type) {
-    this.type = type || gaf.TYPE_TEXTURE;
-    this.getAtlasFrames = function(){return atlasFrames};
+gaf._MaskProto = function(atlasFrame, anchor, elementAtlasIdRef) {
+    this.getFrame = function(){return atlasFrame};
     this.getIdRef = function(){return elementAtlasIdRef};
+    this.getAnchor = function() {return anchor};
+
 
     /*
      * Will construct GAFMask
@@ -13,4 +14,3 @@ gaf._MaskProto = function(atlasFrames, elementAtlasIdRef, type) {
         return ret;
     };
 };
-

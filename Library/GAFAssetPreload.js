@@ -22,7 +22,7 @@ gaf._AssetPreload = function(){
     this["8"] = gaf._AssetPreload.Atlases; // 2
     this["9"] = gaf._AssetPreload.Stage;
     this["10"] = gaf._AssetPreload.AnimationObjects; //2
-    this["11"] = gaf._AssetPreload.AnimationMasks2;
+    this["11"] = gaf._AssetPreload.AnimationMasks; // 2
     this["12"] = gaf._AssetPreload.AnimationFrames; // 2
     this["13"] = gaf._AssetPreload.TimeLine;
 
@@ -70,12 +70,6 @@ gaf._AssetPreload.Atlases = function(asset, content, timeLine){
         //frame.setAnchorPoint(frame._gafAnchor);
         asset._spriteProtos[item.elementAtlasId] = new gaf._SpriteProto(frame, gafAnchor, item.elementAtlasId);
         // 9 grid
-    });
-};
-
-gaf._AssetPreload.AnimationMasks = function(asset, content, timeLine){
-    content.forEach(function(item){
-        asset._objects[item.objectId] = asset._spriteProtos[item.elementAtlasIdRef];
     });
 };
 
@@ -192,7 +186,7 @@ gaf._AssetPreload.Stage = function(asset, content, timeLine) {
     asset._sceneHeight = content.height;
 };
 
-gaf._AssetPreload.AnimationMasks2 = function(asset, content, timeLine){
+gaf._AssetPreload.AnimationMasks = function(asset, content, timeLine){
     content.forEach(function(item){
         switch (item.type){
             case gaf.TYPE_TEXT_FIELD:

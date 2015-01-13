@@ -296,7 +296,7 @@ gaf.Asset = cc.Class.extend({
         if(!root){
             root = this._rootTimeLine._gafConstruct(sharedObjects);
         }
-        root._timeLineProtos = timeLines;
+        root._timeLines = timeLines;
         return root;
     }
 

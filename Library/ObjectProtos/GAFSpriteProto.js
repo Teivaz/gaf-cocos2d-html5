@@ -4,6 +4,7 @@ gaf._SpriteProto = function(atlasFrame, anchor, elementAtlasIdRef) {
     this.getIdRef = function(){return elementAtlasIdRef};
     this.getAnchor = function() {return anchor};
 
+
     /*
      * Will construct GAFSprite
      */
