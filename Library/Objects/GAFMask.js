@@ -1,26 +1,30 @@
 
 gaf.Mask = gaf.Object.extend({
     _className: "GAFMask",
+    _clippingNode: null,
 
     ctor : function(gafSpriteProto){
         this._super();
         cc.assert(gafSpriteProto, "Error! Missing mandatory parameter.");
         this._gafproto = gafSpriteProto;
-        var frame = this._gafproto.getFrame();
-        this._sprite = cc.Sprite.createWithSpriteFrame(frame);
-        this._sprite.setAnchorPoint(gafSpriteProto.getAnchor());
-        this._clip = cc.ClippingNode.create(this._sprite);
-        this._clip.setAlphaThreshold(0.5);
-        this.addChild(this._clip);
+    },
+
+    _init : function(){
+        var maskNodeProto = this._gafproto.getMaskNodeProto();
+        cc.assert(maskNodeProto, "Error. Mask node for id ref " + this._gafproto.getIdRef() + " not found.");
+        this._maskNode = maskNodeProto._gafConstruct();
+        this._clippingNode = cc.ClippingNode.create(this._maskNode);
+        this._clippingNode.setAlphaThreshold(0.5);
+        this.addChild(this._clippingNode);
     },
 
     setExternalTransform : function(affineTransform){
-        if(!cc.affineTransformEqualToTransform(this._sprite._additionalTransform, affineTransform)){
-            this._sprite.setAdditionalTransform(affineTransform);
+        if(!cc.affineTransformEqualToTransform(this._maskNode._additionalTransform, affineTransform)){
+            this._maskNode.setAdditionalTransform(affineTransform);
         }
     },
 
     _getNode : function(){
-        return this._clip;
+        return this._clippingNode;
     }
 });

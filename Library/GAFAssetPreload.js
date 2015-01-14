@@ -76,7 +76,7 @@ gaf._AssetPreload.Atlases = function(asset, content, timeLine){
 gaf._AssetPreload.AnimationObjects = function(asset, content, timeLine) {
     content.forEach(function(item){
         item.type = (item.type === undefined) ? gaf.TYPE_TEXTURE : item.type;
-        timeLine._objects[item.objectId] = item;
+        timeLine._objects.push(item.objectId);
         asset._objects[item.objectId] = item;
     });
 };
@@ -177,20 +177,9 @@ gaf._AssetPreload.Stage = function(asset, content, timeLine) {
 
 gaf._AssetPreload.AnimationMasks = function(asset, content, timeLine){
     content.forEach(function(item){
-        switch (item.type){
-            case gaf.TYPE_TEXT_FIELD:
-                break;
-
-            case gaf.TYPE_TIME_LINE:
-                // Will be linked to time lines when all time lines are constructed
-                asset._timeLinesToLink.push(item);
-                break;
-
-            case gaf.TYPE_TEXTURE:
-            default:
-                asset._objects[item.objectId] = asset._spriteProtos[item.elementAtlasIdRef];
-                break;
-        }
+        item.type = (item.type === undefined) ? gaf.TYPE_TEXTURE : item.type;
+        timeLine._objects.push(item.objectId);
+        asset._masks[item.objectId] = item;
     });
 };
 

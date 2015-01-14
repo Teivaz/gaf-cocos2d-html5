@@ -239,10 +239,7 @@ gaf.Asset = cc.Class.extend({
         this._textFields = [];
         this._objects = [];
         this._masks = [];
-        this._protos = {};
-        this._protos[gaf.TYPE_TEXTURE] = [];
-        this._protos[gaf.TYPE_TEXT_FIELD] = [];
-        this._protos[gaf.TYPE_TIME_LINE] = [];
+        this._protos = [];
     },
 
     _getProtos: function(){
@@ -281,24 +278,46 @@ gaf.Asset = cc.Class.extend({
             switch(item.type){
                 case gaf.TYPE_TEXTURE:
                     // Create gaf sprite proto if it is not yet created
-                    // Create gaf sprite proto if it is not yet created
-                    // Create gaf sprite proto if it is not yet created
-                    if(!self._protos[gaf.TYPE_TEXTURE][item.objectId]) {
-                        self._protos[gaf.TYPE_TEXTURE][item.objectId] = new gaf._SpriteProto(self._spriteFrames[item.elementAtlasIdRef], item.elementAtlasIdRef);
+                    if(!self._protos[item.objectId]) {
+                        self._protos[item.objectId] = new gaf._SpriteProto(self._spriteFrames[item.elementAtlasIdRef], item.elementAtlasIdRef);
+                    }
+                    else{
+                        var a;
                     }
                     break;
                 case gaf.TYPE_TIME_LINE:
                     // All time line protos are already created, just copy reference
-                    self._protos[gaf.TYPE_TIME_LINE][item.objectId] = self._timeLines[item.elementAtlasIdRef];
+                    self._protos[item.objectId] = self._timeLines[item.elementAtlasIdRef];
                     break;
                 case gaf.TYPE_TEXT_FIELD:
                     // All text field protos are already created, just copy reference
-                    self._protos[gaf.TYPE_TEXT_FIELD][item.objectId] = self._textFields[item.elementAtlasIdRef];
+                    self._protos[item.objectId] = self._textFields[item.elementAtlasIdRef];
                     break;
                 default:
                     cc.log("Unknown object type: " + item.type);
                     break;
             }
+        });
+        this._masks.forEach(function(item){
+            if(self._protos[item.objectId]){
+                return; // this is continue
+            }
+            var proto = null;
+            switch(item.type){
+                case gaf.TYPE_TEXTURE:
+                    // Create gaf sprite proto if it is not yet created
+                    proto = new gaf._SpriteProto(self._spriteFrames[item.elementAtlasIdRef], item.elementAtlasIdRef);
+                    break;
+                case gaf.TYPE_TIME_LINE:
+                    // All time line protos are already created, just copy reference
+                    proto = self._timeLines[item.elementAtlasIdRef];
+                    break;
+                case gaf.TYPE_TEXT_FIELD:
+                    // All text field protos are already created, just copy reference
+                    proto = self._textFields[item.elementAtlasIdRef];
+                    break;
+            }
+            self._protos[item.objectId] = new gaf._MaskProto(proto, item.elementAtlasIdRef);
         });
     },
 

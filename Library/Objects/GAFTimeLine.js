@@ -1,5 +1,6 @@
 
-gaf.TimeLine = gaf.Object.extend({
+gaf.TimeLine = gaf.Object.extend
+({
     _className : "GAFTimeLine",
     _objects: null,
     _container : null,
@@ -18,199 +19,257 @@ gaf.TimeLine = gaf.Object.extend({
     _currentFrame: gaf.FIRST_FRAME_INDEX,
 
 
-    ctor : function(gafTimeLineProto){
+    ctor : function(gafTimeLineProto)
+    {
         this._super();
         this._objects = [];
         cc.assert(gafTimeLineProto,  "Error! Missing mandatory parameter.");
         this._gafproto = gafTimeLineProto;
     },
 
-    setAnimationStartedNextLoopDelegate : function (delegate) {
+    setAnimationStartedNextLoopDelegate : function (delegate)
+    {
         this._animationStartedNextLoopDelegate = delegate;
     },
-    setAnimationFinishedPlayDelegate : function (delegate) {
+    setAnimationFinishedPlayDelegate : function (delegate)
+    {
         this._animationFinishedPlayDelegate = delegate;
     },
-    setLooped : function (looped) {
+    setLooped : function (looped)
+    {
         this._isLooped = looped;
     },
-    getBoundingBoxForCurrentFrame : function () {
+    getBoundingBoxForCurrentFrame : function ()
+    {
         debugger;
         return cc.rect();
     },
-    setFps : function (fps) {
+    setFps : function (fps)
+    {
         cc.assert(fps !== 0, 'Error! Fps is set to zero.');
         this._fps = fps;
     },
-    getObjectByName: function (name) {
+    getObjectByName: function (name)
+    {
         debugger;
         var elements = name.split('.');
         var result = null;
         var retId = -1;
         var timeLine = this;
         var objects = this._objects;
-        try{
-        elements.forEach(function(element){
-            var parts = timeLine._gafproto.getNamedParts();
-            if(parts.hasOwnProperty(element)){
-                retId = parts[element];
-            }
-            else{
-                // Sequence is incorrect
-                throw new Error("NamedPartsSequenceError");
-            }
-            result = objects[retId];
-            timeLine = result;
-        });}
-        catch (e){
+        try
+        {
+            elements.forEach(function(element)
+            {
+                var parts = timeLine._gafproto.getNamedParts();
+                if(parts.hasOwnProperty(element))
+                {
+                    retId = parts[element];
+                }
+                else
+                {
+                    // Sequence is incorrect
+                    throw new Error("NamedPartsSequenceError");
+                }
+                result = objects[retId];
+                timeLine = result;
+            });
+        }
+        catch (e)
+        {
             if(typeof e !== "Error" || e.getText() !== "NamedPartsSequenceError")
+            {
                 throw e;
+            }
         }
         return result;
     },
-    clearSequence : function () {
+    clearSequence : function ()
+    {
         this._currentSequenceStart = gaf.FIRST_FRAME_INDEX;
         this._currentSequenceEnd = this._gafproto.getTotalFrames();
     },
-    getIsAnimationRunning: function () {
+    getIsAnimationRunning: function ()
+    {
         return this._isRunning;
     },
-    gotoAndStop: function (value) {
+    gotoAndStop: function (value)
+    {
         var frame = 0;
-        if (typeof value === 'string') {
+        if (typeof value === 'string')
+        {
             frame = this.getStartFrame(value);
         }
-        else {
+        else
+        {
             frame = value;
         }
-        if (this.setFrame(frame)) {
+        if (this.setFrame(frame))
+        {
             this._setAnimationRunning(false);
             return true;
         }
         return false;
     },
-    gotoAndPlay: function (value) {
+    gotoAndPlay: function (value)
+    {
         var frame = 0;
-        if (typeof value === 'String') {
+        if (typeof value === 'String')
+        {
             frame = this.getStartFrame(value);
         }
-        else {
+        else
+        {
             frame = value;
         }
-        if (this.setFrame(frame)) {
+        if (this.setFrame(frame))
+        {
             this._setAnimationRunning(true);
             return true;
         }
         return false;
     },
-    getStartFrame : function (frameLabel) {
-        if (!this._asset) {
+    getStartFrame : function (frameLabel)
+    {
+        if (!this._asset)
+        {
             return gaf.IDNONE;
         }
         var seq = this._gafproto.getSequences()[frameLabel];
-        if (seq) {
+        if (seq)
+        {
             return seq.start;
         }
         return gaf.IDNONE;
     },
-    getEndFrame: function (frameLabel) {
-        if (!this._asset) {
+    getEndFrame: function (frameLabel)
+    {
+        if (!this._asset)
+        {
             return gaf.IDNONE;
         }
         var seq = this._gafproto.getSequences()[frameLabel];
-        if (seq) {
+        if (seq)
+        {
             return seq.end;
         }
         return gaf.IDNONE;
     },
-    setFramePlayedDelegate : function (delegate) {
+    setFramePlayedDelegate : function (delegate)
+    {
         this._framePlayedDelegate = delegate;
     },
-    getCurrentFrameIndex: function () {
+    getCurrentFrameIndex: function ()
+    {
         return this._showingFrame;
     },
-    getTotalFrameCount: function () {
+    getTotalFrameCount: function ()
+    {
         return this._gafproto.getTotalFrames();
     },
-    start: function () {
+    start: function ()
+    {
         this._running = true;
         this.schedule("_processAnimations");
         this._animationsSelectorScheduled = true;
         this.setLooped(true);
-        if (!this._isRunning) {
+        if (!this._isRunning)
+        {
             this._currentFrame = gaf.FIRST_FRAME_INDEX;
             this._setAnimationRunning(true);
-            this._objects.forEach(function(item){
+            this._objects.forEach(function(item)
+            {
                 item.start();
             });
         }
     },
-    stop: function () {
+    stop: function ()
+    {
         this.unschedule("_processAnimations");
         this._animationsSelectorScheduled = false;
-        if (this._isRunning) {
+        if (this._isRunning)
+        {
             this._currentFrame = gaf.FIRST_FRAME_INDEX;
             this._setAnimationRunning(false);
         }
     },
-    isVisibleInCurrentFrame: function () {
+    isVisibleInCurrentFrame: function ()
+    {
         if (this._timelineParentObject &&
-            (this._timelineParentObject.getCurrentFrameIndex() + 1 !== this._lastVisibleInFrame)) {
+            (this._timelineParentObject.getCurrentFrameIndex() + 1 !== this._lastVisibleInFrame))
+        {
             return false;
         }
-        else {
+        else
+        {
             return true;
         }
     },
-    isDone: function () {
-        if (this._isLooped) {
+    isDone: function ()
+    {
+        if (this._isLooped)
+        {
             return false;
         }
-        else {
-            if (!this._isReversed) {
+        else
+        {
+            if (!this._isReversed)
+            {
                 return this._currentFrame > this._totalFrameCount;
             }
-            else {
+            else
+            {
                 return this._currentFrame < gaf.FIRST_FRAME_INDEX - 1;
             }
         }
     },
-    playSequence: function (name, looped, resume) {
+    playSequence: function (name, looped, resume)
+    {
         looped = looped || false;
         resume = resume || true;
-        if (!this._asset || !this._timeline) {
+        if (!this._asset || !this._timeline)
+        {
             return false;
         }
         var s = this.getStartFrame(name);
         var e = this.getEndFrame(name);
-        if (gaf.IDNONE === s || gaf.IDNONE === e) {
+        if (gaf.IDNONE === s || gaf.IDNONE === e)
+        {
             return false;
         }
         this._currentSequenceStart = s;
         this._currentSequenceEnd = e;
-        if (this._currentFrame < this._currentSequenceStart || this._currentFrame > this._currentSequenceEnd) {
+        if (this._currentFrame < this._currentSequenceStart || this._currentFrame > this._currentSequenceEnd)
+        {
             this._currentFrame = this._currentSequenceStart;
         }
-        else {
+        else
+        {
             this._currentFrame = this._currentSequenceStart;
         }
         this.setLooped(looped);
-        if (resume) {
+        if (resume)
+        {
             this.resumeAnimation();
         }
-        else {
+        else
+        {
             this.stop();
         }
         return true;
     },
-    isReversed: function () {
+    isReversed: function ()
+    {
         return this._isReversed;
     },
-    setSequenceDelegate: function (delegate) {
+    setSequenceDelegate: function (delegate)
+    {
         this._sequenceDelegate = delegate;
     },
-    setFrame: function (index) {
-        if (index < this._totalFrameCount) {
+    setFrame: function (index)
+    {
+        if (index < this._totalFrameCount)
+        {
             this._showingFrame = index;
             this._currentFrame = index;
             this._processAnimation();
@@ -218,29 +277,38 @@ gaf.TimeLine = gaf.Object.extend({
         }
         return false;
     },
-    setControlDelegate: function (func) {
+    setControlDelegate: function (func)
+    {
         debugger;
     },
-    pauseAnimation: function () {
-        if (this._isRunning) {
+    pauseAnimation: function ()
+    {
+        if (this._isRunning)
+        {
             this._setAnimationRunning(false);
         }
     },
-    isLooped: function () {
+    isLooped: function ()
+    {
         return this._isLooped;
     },
-    resumeAnimation: function () {
-        if (!this._isRunning) {
+    resumeAnimation: function ()
+    {
+        if (!this._isRunning)
+        {
             this._setAnimationRunning(true);
         }
     },
-    setReversed: function (reversed) {
+    setReversed: function (reversed)
+    {
         this._isReversed = reversed;
     },
-    hasSequences: function () {
+    hasSequences: function ()
+    {
         return this._gafproto.getSequences().length > 0;
     },
-    getFps: function () {
+    getFps: function ()
+    {
         return this._fps;
     },
 
@@ -249,8 +317,10 @@ gaf.TimeLine = gaf.Object.extend({
 
     // Private
 
-    setExternalTransform: function(affineTransform){
-        //if(!cc.affineTransformEqualToTransform(this._container._additionalTransform, affineTransform)){
+    setExternalTransform: function(affineTransform)
+    {
+        //if(!cc.affineTransformEqualToTransform(this._container._additionalTransform, affineTransform))
+        // {
             this._container.setAdditionalTransform(affineTransform);
         //}
     },
@@ -259,7 +329,8 @@ gaf.TimeLine = gaf.Object.extend({
         this._super(s, p);
     },*/
 
-    _init : function(){
+    _init : function()
+    {
         this._currentSequenceEnd = this._gafproto.getTotalFrames() + 1;
         this._fps = this._gafproto.getFps();
 
@@ -271,10 +342,11 @@ gaf.TimeLine = gaf.Object.extend({
 
         //cc.log("starting tl "+ self._gafproto.getId());
         // Construct objects for current time line
-        this._gafproto.getObjects().forEach(function(object){
-            var objectProto = asset._getProtos()[object.type][object.objectId];
-            cc.assert(objectProto, "Error. GAF proto for type: " + object.type + " and reference id: " + object.objectId + " not found.");
-            self._objects[object.objectId] = objectProto._gafConstruct();
+        this._gafproto.getObjects().forEach(function(object)
+        {
+            var objectProto = asset._getProtos()[object];
+            cc.assert(objectProto, "Error. GAF proto for type: " + object.type + " and reference id: " + object + " not found.");
+            self._objects[object] = objectProto._gafConstruct();
         });
         //cc.log("ending tl "+ self._gafproto.getId());
         /*
@@ -289,151 +361,187 @@ gaf.TimeLine = gaf.Object.extend({
 
         var c = this._container._renderCmd;
         var v = c.visit;
-        c.visit = function(parentCmd){
+        c.visit = function(parentCmd)
+        {
             //cc.log("tl " + self._gafproto.getId());
             v.apply(c, parentCmd);
-            if(self._gafproto.getId() === 8) {
+            if(self._gafproto.getId() === 8)
+            {
                 //cc.log("visiting time line " + self._gafproto.getId());
                 //cc.log(JSON.stringify(this.getNodeToParentTransform()));
             }
-
         };
-
     },
 
-    _processAnimations : function (dt) {
+    _processAnimations : function (dt)
+    {
         this._timeDelta += dt;
         var frameTime = 1 / this._fps;
-        while (this._timeDelta >= frameTime) {
+        while (this._timeDelta >= frameTime)
+        {
             this._timeDelta -= frameTime;
 
             this._step();
         }
     },
-    _step: function () {
+    _step: function ()
+    {
         //cc.log("time line "+ this._gafproto.getId() + " stepping frame " + (this._currentFrame + 1) + "" );
         this._showingFrame = this._currentFrame;
-        if (!this._isReversed) {
-            if (this._currentFrame < this._currentSequenceStart) {
+        if (!this._isReversed)
+        {
+            if (this._currentFrame < this._currentSequenceStart)
+            {
                 this._currentFrame = this._currentSequenceStart;
             }
-            if (this._sequenceDelegate && this._timeline) {
+            if (this._sequenceDelegate && this._timeline)
+            {
                 var seq = this._timeline.getSequenceByLastFrame(this._currentFrame);
-                if (seq) {
+                if (seq)
+                {
                     this._sequenceDelegate(this, seq.name);
                 }
             }
-            if (this._currentFrame >= this._currentSequenceEnd - 1) {
-                if (this._isLooped) {
+            if (this._currentFrame >= this._currentSequenceEnd - 1)
+            {
+                if (this._isLooped)
+                {
                     this._currentFrame = this._currentSequenceStart;
-                    if (this._animationStartedNextLoopDelegate) {
+                    if (this._animationStartedNextLoopDelegate)
+                    {
                         this._animationStartedNextLoopDelegate(this);
                     }
                 }
-                else {
+                else
+                {
                     this._setAnimationRunning(false);
-                    if (this._animationFinishedPlayDelegate) {
+                    if (this._animationFinishedPlayDelegate)
+                    {
                         this._animationFinishedPlayDelegate(this);
                     }
                 }
             }
             this._processAnimation();
-                if (this.getIsAnimationRunning()) {
-                this._showingFrame = this._currentFrame++;
-            }
+                if (this.getIsAnimationRunning())
+                {
+                    this._showingFrame = this._currentFrame++;
+                }
         }
-        else {
+        else
+        {
             // If switched to reverse after final frame played
-            if (this._currentFrame >= this._currentSequenceEnd) {
+            if (this._currentFrame >= this._currentSequenceEnd)
+            {
                 this._currentFrame = this._currentSequenceEnd - 1;
             }
-            if (this._sequenceDelegate && this._timeline) {
+            if (this._sequenceDelegate && this._timeline)
+            {
                 var seq = this._timeline.getSequenceByFirstFrame(this._currentFrame + 1);
-                if (seq) {
+                if (seq)
+                {
                     this._sequenceDelegate(this, seq.name);
                 }
             }
-            if (this._currentFrame < this._currentSequenceStart) {
-                if (this._isLooped) {
+            if (this._currentFrame < this._currentSequenceStart)
+            {
+                if (this._isLooped)
+                {
                     this._currentFrame = this._currentSequenceEnd - 1;
-                    if (this._animationStartedNextLoopDelegate) {
+                    if (this._animationStartedNextLoopDelegate)
+                    {
                         this._animationStartedNextLoopDelegate(this);
                     }
                 }
-                else {
+                else
+                {
                     this._setAnimationRunning(false);
-                    if (this._animationFinishedPlayDelegate) {
+                    if (this._animationFinishedPlayDelegate)
+                    {
                         this._animationFinishedPlayDelegate(this);
                     }
                     return;
                 }
             }
             this._processAnimation();
-            if (this.getIsAnimationRunning()) {
+            if (this.getIsAnimationRunning())
+            {
                 this._showingFrame = this._currentFrame--;
             }
         }
     },
-    _processAnimation : function () {
+    _processAnimation : function ()
+    {
         var id = this._gafproto.getId();
         this._realizeFrame(this._container, this._currentFrame);
-        if (this._framePlayedDelegate) {
+        if (this._framePlayedDelegate)
+        {
             this._framePlayedDelegate(this, this._currentFrame);
         }
     },
-    _realizeFrame : function(out, frameIndex) {
+    _realizeFrame : function(out, frameIndex)
+    {
         var self = this;
         var objects = self._objects;
         var frames = self._gafproto.getFrames();
-        if(frameIndex > frames.length) {
+        if(frameIndex > frames.length)
+        {
             return;
         }
         var currentFrame = frames[frameIndex];
-        if(!currentFrame){
+        if(!currentFrame)
+        {
             return;
         }
         //cc.log("_realizeFrame start tl " + this._gafproto.getId() + "instance " + this.__instanceId);
         var states = currentFrame.states;
-        states.forEach(function(state){
+        states.forEach(function(state)
+        {
             var object = objects[state.objectIdRef];
-            if(!object){
+            if(!object)
+            {
                 return;
             }
             object._updateVisibility(state, self);
-            if(!object.isVisible()){
+            if(!object.isVisible())
+            {
                 return;
             }
             object._applyState(state, self);
             var parent = out;
-            if(state.hasMask){
+            if(state.hasMask)
+            {
                 parent = objects[state.maskObjectIdRef]._getNode();
                 cc.assert(parent, "Error! Mask not found.");
             }
             object._lastVisibleInFrame = 1 + frameIndex;
             gaf.TimeLine.rearrangeSubobject(parent, object, state.depth);
-            if(object._step){
+            if(object._step)
+            {
                 object._step();
             }
         });
         //cc.log("_realizeFrame end tl " + this._gafproto.getId() + "instance " + this.__instanceId);
-
-
     },
 
-    _setAnimationRunning: function (value) {
+    _setAnimationRunning: function (value)
+    {
         this._isRunning = value;
         if(arguments.length > 1 && arguments[1] === false)
+        {
             return; // Don't call recursively
-        this._objects.forEach(function(obj){
-            if (obj && obj.hasOwnProperty("_setAnimationRunning")) {
+        }
+        this._objects.forEach(function(obj)
+        {
+            if (obj && obj.hasOwnProperty("_setAnimationRunning"))
+            {
                 obj._setAnimationRunning(value, false);
             }
         });
     }
-
 });
 
-gaf.TimeLine.rearrangeSubobject = function(out, object, depth){
+gaf.TimeLine.rearrangeSubobject = function(out, object, depth)
+{
     var parent = object.getParent();
     if (parent !== out)
     {

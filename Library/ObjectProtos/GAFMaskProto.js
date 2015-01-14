@@ -1,13 +1,8 @@
 
-gaf._MaskProto = function(atlasFrame, anchor, elementAtlasIdRef) {
-    var anchor = atlasFrame._gafAnchor;
-    delete atlasFrame._gafAnchor;
+gaf._MaskProto = function(mask, idRef) {
 
-    this.getFrame = function(){return atlasFrame};
-    this.getIdRef = function(){return elementAtlasIdRef};
-    this.getAnchor = function() {
-        return anchor;
-    };
+    this.getIdRef = function(){return idRef};
+    this.getMaskNodeProto = function() {return mask};
 
 
     /*
@@ -15,6 +10,7 @@ gaf._MaskProto = function(atlasFrame, anchor, elementAtlasIdRef) {
      */
     this._gafConstruct = function(){
         var ret = new gaf.Mask(this);
+        ret._init();
 
         return ret;
     };
