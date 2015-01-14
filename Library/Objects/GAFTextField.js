@@ -1,5 +1,6 @@
 
-gaf.TextField = gaf.Object.extend({
+gaf.TextField = gaf.Object.extend
+({
     _className: "GAFTextField"
 
 });

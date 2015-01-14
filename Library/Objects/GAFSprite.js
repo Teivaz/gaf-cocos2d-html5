@@ -1,8 +1,10 @@
 
-gaf.Sprite = gaf.Object.extend({
+gaf.Sprite = gaf.Object.extend
+({
     _className: "GAFSprite",
 
-    ctor : function(gafSpriteProto){
+    ctor : function(gafSpriteProto)
+    {
         this._super();
         cc.assert(gafSpriteProto, "Error! Missing mandatory parameter.");
         this._gafproto = gafSpriteProto;
@@ -10,8 +12,8 @@ gaf.Sprite = gaf.Object.extend({
 
     // Private
 
-    _init : function(){
-
+    _init : function()
+    {
         var frame = this._gafproto.getFrame();
         cc.assert(frame instanceof cc.SpriteFrame, "Error. Wrong object type.");
         this._sprite = cc.Sprite.createWithSpriteFrame(frame);
@@ -21,41 +23,38 @@ gaf.Sprite = gaf.Object.extend({
         //this._sprite.setCascadeOpacityEnabled(true);
         this._sprite.setOpacityModifyRGB(true);
 
-        if(cc._renderType === cc._RENDER_TYPE_WEBGL){
+        if(cc._renderType === cc._RENDER_TYPE_WEBGL)
+        {
             // WebGL set up
             this._applyCtxState = this._applyWebGLCtxState;
         }
-        else{
+        else
+        {
             // Canvas
             this._applyCtxState = this._applyCanvasCtxState;
         }
-
-        var self = this;
-        var c = this._sprite._renderCmd;
-        var v = c.visit;
-        c.visit = function(parentCmd) {
-            self;
-            //cc.log("sp " + self._gafproto.getIdRef());
-            v.apply(c, parentCmd);
-        };
     },
 
-    _applyState : function(state, parent){
-        //cc.log("_applyState sp "+ this._gafproto.getIdRef() + " instance " + this.__instanceId);
+    _applyState : function(state, parent)
+    {
         this._parentTimeLine = parent;
         this.setExternalTransform(state.matrix);
         this._sprite.setOpacity(state.alpha);
-        if(gaf._stateHasCtx(state)){
+        if(gaf._stateHasCtx(state))
+        {
             // Set ctx shader
             this._applyCtxState(state);
         }
-        else{
+        else
+        {
             this._resetCtxState();
             // Set normal shader
-            if(state.hasColorTransform){
+            if(state.hasColorTransform)
+            {
                 this._sprite.setColor(state.colorTransform.mult);
             }
-            else{
+            else
+            {
                 if(!cc.colorEqual(this._sprite.getColor(), cc.color.WHITE))
                     this._sprite.setColor(cc.color.WHITE);
             }
@@ -66,7 +65,8 @@ gaf.Sprite = gaf.Object.extend({
 
     _applyCtxState: function(state){},
 
-    _applyWebGLCtxState: function(state){
+    _applyWebGLCtxState: function(state)
+    {
         //var state = this._sprite.getGLProgramState();
     },
 

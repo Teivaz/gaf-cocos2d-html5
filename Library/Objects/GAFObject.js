@@ -1,23 +1,31 @@
 var gaf = gaf || {};
 
-gaf._stateHasCtx = function(state){
+gaf._stateHasCtx = function(state)
+{
     // Check for tint color offset
     if( state.hasColorTransform &&
        (state.colorTransform.offset.r > 0 ||
         state.colorTransform.offset.g > 0 ||
         state.colorTransform.offset.b > 0 ||
-        state.colorTransform.offset.a > 0)){
+        state.colorTransform.offset.a > 0))
+    {
         return true;
     }
 
     // Check for color transform filter
     var BreakException= {};
-    try{if(state.hasEffect){
-        state.effect.forEach(function(effect){
-            if(effect.type === gaf.EFFECT_COLOR_MATRIX) throw BreakException;
-        });
-    }}
-    catch(e){
+    try
+    {
+        if(state.hasEffect)
+        {
+            state.effect.forEach(function(effect)
+            {
+                if(effect.type === gaf.EFFECT_COLOR_MATRIX) throw BreakException;
+            });
+        }
+    }
+    catch(e)
+    {
         if (e!==BreakException) throw e;
         return true;
     }
@@ -25,7 +33,8 @@ gaf._stateHasCtx = function(state){
     return false;
 };
 
-gaf.Object = cc.Node.extend({
+gaf.Object = cc.Node.extend
+({
     _externalTransform : null,
     _asset : null,
     _className : "GAFObject",
@@ -36,7 +45,8 @@ gaf.Object = cc.Node.extend({
 
 
     // Public methods
-    ctor: function(){
+    ctor: function()
+    {
         this._super();
         this._externalTransform = cc.affineTransformMakeIdentity();
     },
@@ -137,12 +147,15 @@ gaf.Object = cc.Node.extend({
      * @method isVisibleInCurrentFrame
      * @return {bool}
      */
-    isVisibleInCurrentFrame : function () {
+    isVisibleInCurrentFrame : function ()
+    {
         if (this._parentTimeLine &&
-            (this._parentTimeLine.getCurrentFrameIndex() + 1 != this._lastVisibleInFrame)) {
+            (this._parentTimeLine.getCurrentFrameIndex() + 1 != this._lastVisibleInFrame))
+        {
             return false;
         }
-        else {
+        else
+        {
             return true;
         }
     },
@@ -242,24 +255,31 @@ gaf.Object = cc.Node.extend({
      */
     setLocator : function (locator){},
 
-    setExternalTransform : function(affineTransform){
-        if(!cc.affineTransformEqualToTransform(this._additionalTransform, affineTransform)){
+    setExternalTransform : function(affineTransform)
+    {
+        if(!cc.affineTransformEqualToTransform(this._additionalTransform, affineTransform))
+        {
             this.setAdditionalTransform(affineTransform);
         }
     },
 
-    getExternalTransform : function(){
+    getExternalTransform : function()
+    {
         return this._externalTransform;
     },
 
-    getNodeToParentTransform : function(){
-        if(this._transformDirty){
+    getNodeToParentTransform : function()
+    {
+        if(this._transformDirty)
+        {
             var scale = 1 / cc.Director.getInstance().getContentScaleFactor();
-            if (scale !== 1){
+            if (scale !== 1)
+            {
                 var transform = cc.affineTransformScale(this.getExternalTransform(), scale, scale);
                 cc.CGAffineToGL(cc.affineTransformTranslate(transform, -this._anchorPointInPoints.x, -this._anchorPointInPoints.y), this._transform.m);
             }
-            else{
+            else
+            {
                 cc.CGAffineToGL(cc.affineTransformTranslate(this.getExternalTransform(), -this._anchorPointInPoints.x, -this._anchorPointInPoints.y), this._transform.m);
             }
             this._transformDirty = false;
@@ -267,7 +287,8 @@ gaf.Object = cc.Node.extend({
         return this._transform;
     },
 
-    getNodeToParentAffineTransform : function(){
+    getNodeToParentAffineTransform : function()
+    {
         if (this._transformDirty)
         {
             var transform = this.getExternalTransform();
@@ -289,20 +310,24 @@ gaf.Object = cc.Node.extend({
     // Private
     ////////////////
 
-    _updateVisibility : function(state, parent){
+    _updateVisibility : function(state, parent)
+    {
         var alphaOffset = state.hasColorTransform ? state.colorTransform.offset.a : 0;
         this.setOpacity(state.alpha + alphaOffset);
         //return this.isVisible();
     },
 
     // @Override
-    isVisible : function(){
+    isVisible : function()
+    {
         return this.getDisplayedOpacity() > 0;
     },
 
     // @Override
-    visit: function(parentCmd) {
-        if(this.isVisibleInCurrentFrame()){
+    visit: function(parentCmd)
+    {
+        if(this.isVisibleInCurrentFrame())
+        {
             this._super(parentCmd);
         }
     },
@@ -313,12 +338,14 @@ gaf.Object = cc.Node.extend({
 
     _setAnimationRunning: function () {},
 
-    _applyState : function(state, parent){
+    _applyState : function(state, parent)
+    {
         this._parentTimeLine = parent;
         this.setExternalTransform(state.matrix);
     },
 
-    _initRendererCmd: function(){
+    _initRendererCmd: function()
+    {
         this._renderCmd = cc.renderer.getRenderCmd(this);
         this._renderCmd._visit = this._renderCmd.visit;
         var self = this;
@@ -329,13 +356,15 @@ gaf.Object = cc.Node.extend({
         }
     },
 
-    _getNode : function(){
+    _getNode : function()
+    {
         return this;
     }
 
 });
 
-gaf.Object._createNullObject = function() {
+gaf.Object._createNullObject = function()
+{
     var ret = new gaf.Object();
     ret.isVisible = function(){return true};
     return ret;

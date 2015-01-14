@@ -1,6 +1,7 @@
 var gaf = gaf || {};
 
-gaf.Asset = cc.Class.extend({
+gaf.Asset = cc.Class.extend
+({
     _className: "GAFAsset",
 
     // Private members
@@ -39,7 +40,8 @@ gaf.Asset = cc.Class.extend({
      * @param {function({path:String})} delegate - is used to change atlas path, e.g. to load `atlas.tga` instead of `atlas.png`
      * @return {bool}
      */
-    initWithGAFBundle: function (zipFilePath, entryFile, delegate) {
+    initWithGAFBundle: function (zipFilePath, entryFile, delegate)
+    {
         debugger;
     },
 
@@ -47,24 +49,33 @@ gaf.Asset = cc.Class.extend({
      * @method setRootTimelineWithName
      * @param {String} name
      */
-    setRootTimelineWithName: function (name) {
+    setRootTimelineWithName: function (name)
+    {
         if (this._rootTimeLine &&
-            this._rootTimeLine.getLinkageName() === name) {
+            this._rootTimeLine.getLinkageName() === name)
+        {
             return;
         }
 
         var BreakException= {};
         var self = this;
-        try {
-            self._timeLineProtos.forEach(function (object) {
-                if (object.getLinkageName() === name) {
+        try
+        {
+            self._timeLines.forEach(function (object)
+            {
+                if (object.getLinkageName() === name)
+                {
                     self._setRootTimeline(object);
                     throw BreakException;
                 }
             });
         }
-        catch(e){
-            if (e!==BreakException) throw e;
+        catch(e)
+        {
+            if (e!==BreakException)
+            {
+                throw e;
+            }
         }
     },
 
@@ -72,7 +83,8 @@ gaf.Asset = cc.Class.extend({
      * @method getRootTimeline
      * @return {gaf.TimeLine}
      */
-    getRootTimeline: function () {
+    getRootTimeline: function ()
+    {
         return this._rootTimeLine;
     },
 
@@ -80,8 +92,9 @@ gaf.Asset = cc.Class.extend({
      * @method getTimelines
      * @return {[gaf.TimeLine]}
      */
-    getTimelines: function () {
-        return this._timeLineProtos;
+    getTimelines: function ()
+    {
+        return this._timeLines;
     },
 
     /**
@@ -91,13 +104,15 @@ gaf.Asset = cc.Class.extend({
      * @param {function({path:String})} delegate - is used to change atlas path, e.g. to load `atlas.tga` instead of `atlas.png`
      * @return {gaf.Asset}
      */
-    createWithBundle: function (zipFilePath, entryFile, delegate) {
+    createWithBundle: function (zipFilePath, entryFile, delegate)
+    {
         var asset = new gaf.Asset();
         asset.initWithGAFBundle(zipFilePath, entryFile, delegate);
         return asset;
     },
 
-    isAssetVersionPlayable: function () {
+    isAssetVersionPlayable: function ()
+    {
         return true;
     },
 
@@ -106,7 +121,8 @@ gaf.Asset = cc.Class.extend({
      * @method createObject
      * @return {gaf.Object}
      */
-    createObject: function () {
+    createObject: function ()
+    {
         debugger;
     },
 
@@ -115,9 +131,11 @@ gaf.Asset = cc.Class.extend({
      * [@param {boolean} arg0 - run looped. False by default]
      * @return {gaf.Object}
      */
-    createObjectAndRun: function (looped) {
+    createObjectAndRun: function (looped)
+    {
         looped = looped || false;
-        if (arguments.length == 1) {
+        if (arguments.length == 1)
+        {
             looped = arguments[0];
         }
         var object = this._instantiateGaf(this._gafData);
@@ -130,7 +148,8 @@ gaf.Asset = cc.Class.extend({
      * @method desiredCsf
      * @return {float}
      */
-    desiredCsf: function () {
+    desiredCsf: function ()
+    {
         debugger;
     },
 
@@ -138,7 +157,8 @@ gaf.Asset = cc.Class.extend({
      * @method setDesiredCsf
      * @param {float} csf
      */
-    setDesiredCsf: function (csf) {
+    setDesiredCsf: function (csf)
+    {
         debugger;
     },
 
@@ -146,7 +166,8 @@ gaf.Asset = cc.Class.extend({
      * @method setTextureLoadDelegate
      * @param {function} delegate
      */
-    setTextureLoadDelegate: function (delegate) {
+    setTextureLoadDelegate: function (delegate)
+    {
         debugger;
     },
 
@@ -154,7 +175,8 @@ gaf.Asset = cc.Class.extend({
      * @method getTextureManager
      * @return {gaf::GAFAssetTextureManager}
      */
-    getTextureManager: function () {
+    getTextureManager: function ()
+    {
         debugger;
     },
 
@@ -162,7 +184,8 @@ gaf.Asset = cc.Class.extend({
      * @method getSceneFps
      * @return {uint}
      */
-    getSceneFps: function () {
+    getSceneFps: function ()
+    {
         return this._sceneFps;
     },
 
@@ -170,7 +193,8 @@ gaf.Asset = cc.Class.extend({
      * @method getSceneWidth
      * @return {uint}
      */
-    getSceneWidth: function () {
+    getSceneWidth: function ()
+    {
         debugger;
     },
 
@@ -178,7 +202,8 @@ gaf.Asset = cc.Class.extend({
      * @method getSceneHeight
      * @return {uint}
      */
-    getSceneHeight: function () {
+    getSceneHeight: function ()
+    {
         debugger;
     },
 
@@ -186,7 +211,8 @@ gaf.Asset = cc.Class.extend({
      * @method getSceneColor
      * @return {cc.color4b}
      */
-    getSceneColor: function () {
+    getSceneColor: function ()
+    {
         debugger;
     },
 
@@ -194,7 +220,8 @@ gaf.Asset = cc.Class.extend({
      * @method setSceneFps
      * @param {uint} fps
      */
-    setSceneFps: function (fps) {
+    setSceneFps: function (fps)
+    {
         this._sceneFps = fps;
     },
 
@@ -202,7 +229,8 @@ gaf.Asset = cc.Class.extend({
      * @method setSceneWidth
      * @param {uint} width
      */
-    setSceneWidth: function (width) {
+    setSceneWidth: function (width)
+    {
         debugger;
     },
 
@@ -210,7 +238,8 @@ gaf.Asset = cc.Class.extend({
      * @method setSceneHeight
      * @param {uint} height
      */
-    setSceneHeight: function (height) {
+    setSceneHeight: function (height)
+    {
         debugger;
     },
 
@@ -218,7 +247,8 @@ gaf.Asset = cc.Class.extend({
      * @method setSceneColor
      * @param {color4b_object} arg0
      */
-    setSceneColor: function (color4B) {
+    setSceneColor: function (color4B)
+    {
         debugger;
     },
 
@@ -226,13 +256,15 @@ gaf.Asset = cc.Class.extend({
      * @method getHeader
      * @return {GAFHeader}
      */
-    getHeader: function () {
+    getHeader: function ()
+    {
         return this._header;
     },
 
     // Private
 
-    ctor : function() {
+    ctor : function()
+    {
         this._header = {};
         this._spriteFrames = [];
         this._timeLines = [];
@@ -242,47 +274,56 @@ gaf.Asset = cc.Class.extend({
         this._protos = [];
     },
 
-    _getProtos: function(){
+    _getProtos: function()
+    {
         return this._protos;
     },
 
-    _setRootTimeline : function(timeLine){
+    _setRootTimeline : function(timeLine)
+    {
         this._rootTimeLine = timeLine;
         this._header.pivot = timeLine.getPivot();
         this._header.frameSize = timeLine.getRect();
     },
 
-    _setHeader : function (gafHeader) {
-        for(var prop in gafHeader){
+    _setHeader : function (gafHeader)
+    {
+        for(var prop in gafHeader)
+        {
             if(gafHeader.hasOwnProperty(prop))
+            {
                 this._header[prop] = gafHeader[prop];
+            }
         }
     },
 
-    _getMajorVerison : function(){
+    _getMajorVerison : function()
+    {
         return this._header.versionMajor;
     },
 
-    _init : function(gafData){
+    _init : function(gafData)
+    {
         var self = this;
         this._gafData = gafData;
         this._setHeader(gafData.header);
         this._timeLinesToLink = [];
-        if(this._getMajorVerison() < 4){
+        if(this._getMajorVerison() < 4)
+        {
             this._pushTimeLine(new gaf._TimeLineProto(this._header.framesCount, this._header.bounds, this._header.pivot));
         }
         gaf._AssetPreload.Tags(this, gafData.tags, this._rootTimeLine);
 
         //Link and create
-        this._objects.forEach(function(item){
-            switch(item.type){
+        this._objects.forEach(function(item)
+        {
+            switch(item.type)
+            {
                 case gaf.TYPE_TEXTURE:
                     // Create gaf sprite proto if it is not yet created
-                    if(!self._protos[item.objectId]) {
+                    if(!self._protos[item.objectId])
+                    {
                         self._protos[item.objectId] = new gaf._SpriteProto(self._spriteFrames[item.elementAtlasIdRef], item.elementAtlasIdRef);
-                    }
-                    else{
-                        var a;
                     }
                     break;
                 case gaf.TYPE_TIME_LINE:
@@ -298,12 +339,15 @@ gaf.Asset = cc.Class.extend({
                     break;
             }
         });
-        this._masks.forEach(function(item){
-            if(self._protos[item.objectId]){
+        this._masks.forEach(function(item)
+        {
+            if(self._protos[item.objectId])
+            {
                 return; // this is continue
             }
             var proto = null;
-            switch(item.type){
+            switch(item.type)
+            {
                 case gaf.TYPE_TEXTURE:
                     // Create gaf sprite proto if it is not yet created
                     proto = new gaf._SpriteProto(self._spriteFrames[item.elementAtlasIdRef], item.elementAtlasIdRef);
@@ -321,15 +365,18 @@ gaf.Asset = cc.Class.extend({
         });
     },
 
-    _pushTimeLine : function(timeLine){
+    _pushTimeLine : function(timeLine)
+    {
         this._timeLines[timeLine.getId()] = timeLine;
 
-        if(timeLine.getId() === 0){
+        if(timeLine.getId() === 0)
+        {
             this._setRootTimeline(timeLine);
         }
     },
 
-    _instantiateGaf : function(){
+    _instantiateGaf : function()
+    {
         var root = null;
         root = this._rootTimeLine._gafConstruct();
         return root;
@@ -344,9 +391,9 @@ gaf.Asset = cc.Class.extend({
  * @param {function({path:String})} delegate - is used to change atlas path, e.g. to load `atlas.tga` instead of `atlas.png`
  * @return {gaf.Asset}
  */
-gaf.Asset.create = function (gafFilePath, delegate) {
+gaf.Asset.create = function (gafFilePath, delegate)
+{
     var asset = new gaf.Asset();
     asset.initWithGAFFile(gafFilePath, delegate);
     return asset;
 };
-

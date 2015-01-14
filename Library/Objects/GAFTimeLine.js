@@ -340,7 +340,6 @@ gaf.TimeLine = gaf.Object.extend
         var self = this;
         var asset = this._gafproto.getAsset();
 
-        //cc.log("starting tl "+ self._gafproto.getId());
         // Construct objects for current time line
         this._gafproto.getObjects().forEach(function(object)
         {
@@ -348,29 +347,17 @@ gaf.TimeLine = gaf.Object.extend
             cc.assert(objectProto, "Error. GAF proto for type: " + object.type + " and reference id: " + object + " not found.");
             self._objects[object] = objectProto._gafConstruct();
         });
-        //cc.log("ending tl "+ self._gafproto.getId());
+
         /*
-         var anchor = {
-         x: (0 - (0 - (this._gafproto.getPivot().x / this._gafproto.getBoundingBox().width))),
-         y: (0 + (1 - (this._gafproto.getPivot().y / this._gafproto.getBoundingBox().height)))
+         var anchor =
+         {
+             x: (0 - (0 - (this._gafproto.getPivot().x / this._gafproto.getBoundingBox().width))),
+             y: (0 + (1 - (this._gafproto.getPivot().y / this._gafproto.getBoundingBox().height)))
          };
          this._container.setContentSize(this._gafproto.getBoundingBox().width, this._gafproto.getBoundingBox().height);
          this._container.setAnchorPoint(anchor);
          this._container.setPosition(-this._gafproto.getBoundingBox().x, this._gafproto.getBoundingBox().height + this._gafproto.getBoundingBox().y);
          */
-
-        var c = this._container._renderCmd;
-        var v = c.visit;
-        c.visit = function(parentCmd)
-        {
-            //cc.log("tl " + self._gafproto.getId());
-            v.apply(c, parentCmd);
-            if(self._gafproto.getId() === 8)
-            {
-                //cc.log("visiting time line " + self._gafproto.getId());
-                //cc.log(JSON.stringify(this.getNodeToParentTransform()));
-            }
-        };
     },
 
     _processAnimations : function (dt)
@@ -386,7 +373,6 @@ gaf.TimeLine = gaf.Object.extend
     },
     _step: function ()
     {
-        //cc.log("time line "+ this._gafproto.getId() + " stepping frame " + (this._currentFrame + 1) + "" );
         this._showingFrame = this._currentFrame;
         if (!this._isReversed)
         {
@@ -492,7 +478,6 @@ gaf.TimeLine = gaf.Object.extend
         {
             return;
         }
-        //cc.log("_realizeFrame start tl " + this._gafproto.getId() + "instance " + this.__instanceId);
         var states = currentFrame.states;
         states.forEach(function(state)
         {
@@ -520,7 +505,6 @@ gaf.TimeLine = gaf.Object.extend
                 object._step();
             }
         });
-        //cc.log("_realizeFrame end tl " + this._gafproto.getId() + "instance " + this.__instanceId);
     },
 
     _setAnimationRunning: function (value)

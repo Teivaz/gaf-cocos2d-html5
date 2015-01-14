@@ -1,5 +1,6 @@
 
-gaf._SpriteProto = function(atlasFrame, elementAtlasIdRef) {
+gaf._SpriteProto = function(atlasFrame, elementAtlasIdRef)
+{
     this._anchor = atlasFrame._gafAnchor;
     //delete atlasFrame._gafAnchor;
 
@@ -7,15 +8,13 @@ gaf._SpriteProto = function(atlasFrame, elementAtlasIdRef) {
     this.getIdRef = function(){return elementAtlasIdRef};
     this.getAnchor = function() {return this._anchor};
 
-
     /*
      * Will construct GAFSprite
      */
-    this._gafConstruct = function(){
+    this._gafConstruct = function()
+    {
         var ret = new gaf.Sprite(this);
         ret._init();
-        //cc.log("creating sp " + elementAtlasIdRef + " instance "+ ret.__instanceId);
-
         return ret;
     };
 };

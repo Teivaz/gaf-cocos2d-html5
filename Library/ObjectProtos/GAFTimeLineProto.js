@@ -1,5 +1,6 @@
 
-gaf._TimeLineProto = function(asset, animationFrameCount, boundingBox, pivotPoint, id, linkageName) {
+gaf._TimeLineProto = function(asset, animationFrameCount, boundingBox, pivotPoint, id, linkageName)
+{
     id = typeof id != 'undefined' ? id : gaf.IDNONE;
     linkageName = linkageName || "";
 
@@ -21,7 +22,8 @@ gaf._TimeLineProto = function(asset, animationFrameCount, boundingBox, pivotPoin
     /*
      * Will construct GAFTimeLine
      */
-    this._gafConstruct = function(){
+    this._gafConstruct = function()
+    {
         var ret = new gaf.TimeLine(this);
         ret._init();
         return ret;
