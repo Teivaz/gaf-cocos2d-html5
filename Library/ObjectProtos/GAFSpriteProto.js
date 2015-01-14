@@ -12,8 +12,8 @@ gaf._SpriteProto = function(atlasFrame, elementAtlasIdRef) {
      * Will construct GAFSprite
      */
     this._gafConstruct = function(){
-        cc.log("creating sp " + elementAtlasIdRef);
         var ret = new gaf.Sprite(this);
+        //cc.log("creating sp " + elementAtlasIdRef + " instance "+ ret.__instanceId);
 
         return ret;
     };

@@ -4,13 +4,13 @@ gaf.Asset = cc.Class.extend({
     _className: "GAFAsset",
 
     // Private members
-    _header: {},
-    _spriteFrames: [],
-    _timeLines: [],
-    _textFields: [],
-    _protos: {},
-    _objects: [],
-    _masks: [],
+    _header: null,
+    _spriteFrames: null,
+    _timeLines: null,
+    _textFields: null,
+    _protos: null,
+    _objects: null,
+    _masks: null,
 
     _rootTimeLine: null,
     _textureLoadDelegate: null,
@@ -233,6 +233,13 @@ gaf.Asset = cc.Class.extend({
     // Private
 
     ctor : function() {
+        this._header = {};
+        this._spriteFrames = [];
+        this._timeLines = [];
+        this._textFields = [];
+        this._objects = [];
+        this._masks = [];
+        this._protos = {};
         this._protos[gaf.TYPE_TEXTURE] = [];
         this._protos[gaf.TYPE_TEXT_FIELD] = [];
         this._protos[gaf.TYPE_TIME_LINE] = [];
@@ -273,6 +280,8 @@ gaf.Asset = cc.Class.extend({
         this._objects.forEach(function(item){
             switch(item.type){
                 case gaf.TYPE_TEXTURE:
+                    // Create gaf sprite proto if it is not yet created
+                    // Create gaf sprite proto if it is not yet created
                     // Create gaf sprite proto if it is not yet created
                     if(!self._protos[gaf.TYPE_TEXTURE][item.objectId]) {
                         self._protos[gaf.TYPE_TEXTURE][item.objectId] = new gaf._SpriteProto(self._spriteFrames[item.elementAtlasIdRef], item.elementAtlasIdRef);

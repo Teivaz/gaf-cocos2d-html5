@@ -23,6 +23,7 @@ gaf._TimeLineProto = function(asset, animationFrameCount, boundingBox, pivotPoin
      */
     this._gafConstruct = function(){
         var ret = new gaf.TimeLine(this);
+        ret._init();
         return ret;
     };
 };

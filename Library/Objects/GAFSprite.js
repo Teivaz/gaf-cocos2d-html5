@@ -24,15 +24,21 @@ gaf.Sprite = gaf.Object.extend({
             // Canvas
             this._applyCtxState = this._applyCanvasCtxState;
         }
-        /*var v = this._sprite._renderCmd.visit;
-        this._sprite._renderCmd.visit = function(parentCmd){
-            v(parentCmd);
-        };*/
+
+        var self = this;
+        var c = this._sprite._renderCmd;
+        var v = c.visit;
+        c.visit = function(parentCmd) {
+            self;
+            //cc.log("sp " + self._gafproto.getIdRef());
+            v.apply(c, parentCmd);
+        };
     },
 
     // Private
 
     _applyState : function(state, parent){
+        //cc.log("_applyState sp "+ this._gafproto.getIdRef() + " instance " + this.__instanceId);
         this._parentTimeLine = parent;
         this.setExternalTransform(state.matrix);
         this._sprite.setOpacity(state.alpha);

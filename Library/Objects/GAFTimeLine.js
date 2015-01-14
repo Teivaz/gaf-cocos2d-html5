@@ -1,6 +1,7 @@
 
 gaf.TimeLine = gaf.Object.extend({
     _className : "GAFTimeLine",
+    _objects: null,
     _container : null,
     _animationStartedNextLoopDelegate : null,
     _animationFinishedPlayDelegate : null,
@@ -15,51 +16,13 @@ gaf.TimeLine = gaf.Object.extend({
     _timeDelta: 0,
     _animationsSelectorScheduled: false,
     _currentFrame: gaf.FIRST_FRAME_INDEX,
-    _objects: [],
 
 
     ctor : function(gafTimeLineProto){
         this._super();
+        this._objects = [];
         cc.assert(gafTimeLineProto,  "Error! Missing mandatory parameter.");
         this._gafproto = gafTimeLineProto;
-        this._init();
-        this._fps = gafTimeLineProto.getFps();
-
-        this._container = new cc.Node();
-        this.addChild(this._container);
-
-        var self = this;
-        var asset = gafTimeLineProto.getAsset();
-
-        cc.log("starting tl "+ self._gafproto.getId());
-        // Construct objects for current time line
-        gafTimeLineProto.getObjects().forEach(function(object){
-            var objectProto = asset._getProtos()[object.type][object.objectId];
-            cc.assert(objectProto, "Error. GAF proto for type: " + object.type + " and reference id: " + object.objectId + " not found.");
-            self._objects[object.objectId] = objectProto._gafConstruct();
-        });
-        cc.log("ending tl "+ self._gafproto.getId());
-/*
-        var anchor = {
-            x: (0 - (0 - (this._gafproto.getPivot().x / this._gafproto.getBoundingBox().width))),
-            y: (0 + (1 - (this._gafproto.getPivot().y / this._gafproto.getBoundingBox().height)))
-        };
-        this._container.setContentSize(this._gafproto.getBoundingBox().width, this._gafproto.getBoundingBox().height);
-        this._container.setAnchorPoint(anchor);
-        this._container.setPosition(-this._gafproto.getBoundingBox().x, this._gafproto.getBoundingBox().height + this._gafproto.getBoundingBox().y);
-*/
-        var self = this;
-        var c = this._container._renderCmd;
-        var v = c.visit;
-        c.visit = function(parentCmd){
-            cc.log("tl " + self._gafproto.getId());
-            v.apply(c, parentCmd);
-            if(self._gafproto.getId() === 8) {
-                //cc.log("visiting time line " + self._gafproto.getId());
-                //cc.log(JSON.stringify(this.getNodeToParentTransform()));
-            }
-
-        };
     },
 
     setAnimationStartedNextLoopDelegate : function (delegate) {
@@ -173,16 +136,15 @@ gaf.TimeLine = gaf.Object.extend({
         this._running = true;
         this.schedule("_processAnimations");
         this._animationsSelectorScheduled = true;
+        this.setLooped(true);
         if (!this._isRunning) {
             this._currentFrame = gaf.FIRST_FRAME_INDEX;
             this._setAnimationRunning(true);
             this._objects.forEach(function(item){
-                item._setAnimationRunning(true);
-                item.setLooped(true);
+                item.start();
             });
         }
     },
-
     stop: function () {
         this.unschedule("_processAnimations");
         this._animationsSelectorScheduled = false;
@@ -299,6 +261,44 @@ gaf.TimeLine = gaf.Object.extend({
 
     _init : function(){
         this._currentSequenceEnd = this._gafproto.getTotalFrames() + 1;
+        this._fps = this._gafproto.getFps();
+
+        this._container = new cc.Node();
+        this.addChild(this._container);
+
+        var self = this;
+        var asset = this._gafproto.getAsset();
+
+        //cc.log("starting tl "+ self._gafproto.getId());
+        // Construct objects for current time line
+        this._gafproto.getObjects().forEach(function(object){
+            var objectProto = asset._getProtos()[object.type][object.objectId];
+            cc.assert(objectProto, "Error. GAF proto for type: " + object.type + " and reference id: " + object.objectId + " not found.");
+            self._objects[object.objectId] = objectProto._gafConstruct();
+        });
+        //cc.log("ending tl "+ self._gafproto.getId());
+        /*
+         var anchor = {
+         x: (0 - (0 - (this._gafproto.getPivot().x / this._gafproto.getBoundingBox().width))),
+         y: (0 + (1 - (this._gafproto.getPivot().y / this._gafproto.getBoundingBox().height)))
+         };
+         this._container.setContentSize(this._gafproto.getBoundingBox().width, this._gafproto.getBoundingBox().height);
+         this._container.setAnchorPoint(anchor);
+         this._container.setPosition(-this._gafproto.getBoundingBox().x, this._gafproto.getBoundingBox().height + this._gafproto.getBoundingBox().y);
+         */
+
+        var c = this._container._renderCmd;
+        var v = c.visit;
+        c.visit = function(parentCmd){
+            //cc.log("tl " + self._gafproto.getId());
+            v.apply(c, parentCmd);
+            if(self._gafproto.getId() === 8) {
+                //cc.log("visiting time line " + self._gafproto.getId());
+                //cc.log(JSON.stringify(this.getNodeToParentTransform()));
+            }
+
+        };
+
     },
 
     _processAnimations : function (dt) {
@@ -392,6 +392,7 @@ gaf.TimeLine = gaf.Object.extend({
         if(!currentFrame){
             return;
         }
+        //cc.log("_realizeFrame start tl " + this._gafproto.getId() + "instance " + this.__instanceId);
         var states = currentFrame.states;
         states.forEach(function(state){
             var object = objects[state.objectIdRef];
@@ -414,6 +415,7 @@ gaf.TimeLine = gaf.Object.extend({
                 object._step();
             }
         });
+        //cc.log("_realizeFrame end tl " + this._gafproto.getId() + "instance " + this.__instanceId);
 
 
     },

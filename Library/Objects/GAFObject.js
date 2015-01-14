@@ -26,11 +26,11 @@ gaf._stateHasCtx = function(state){
 };
 
 gaf.Object = cc.Node.extend({
-    _externalTransform : cc.affineTransformMakeIdentity(),
+    _externalTransform : null,
     _asset : null,
     _className : "GAFObject",
     _id : gaf.IDNONE,
-    _gafProto : {},
+    _gafproto : null,
     _parentTimeLine : null,
     _lastVisibleInFrame : 0,
 
@@ -38,6 +38,7 @@ gaf.Object = cc.Node.extend({
     // Public methods
     ctor: function(){
         this._super();
+        this._externalTransform = cc.affineTransformMakeIdentity();
     },
 
     /**
