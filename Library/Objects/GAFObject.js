@@ -337,6 +337,5 @@ gaf.Object = cc.Node.extend({
 gaf.Object._createNullObject = function() {
     var ret = new gaf.Object();
     ret.isVisible = function(){return true};
-    ret._updateVisibility = function(){};
     return ret;
 };

@@ -1,7 +1,10 @@
 
-gaf._TimeLineProto = function(animationFrameCount, boundingBox, pivotPoint, id, linkageName) {
+gaf._TimeLineProto = function(asset, animationFrameCount, boundingBox, pivotPoint, id, linkageName) {
     id = typeof id != 'undefined' ? id : gaf.IDNONE;
     linkageName = linkageName || "";
+
+    this._objects = [];
+
     this.getTotalFrames = function(){return animationFrameCount};
     this.getBoundingBox = function() {return boundingBox};
     this.getId = function() {return id};
@@ -12,14 +15,14 @@ gaf._TimeLineProto = function(animationFrameCount, boundingBox, pivotPoint, id, 
     this.getSequences = function() {return {}}; // Map name -> {start, end}
     this.getFrames = function(){return []}; // Array {states, actions}
     this.getFps = function(){return 60};
+    this.getObjects = function(){return this._objects};
+    this.getAsset = function(){return asset};
 
     /*
      * Will construct GAFTimeLine
      */
-    this._gafConstruct = function(sharedObjects){
+    this._gafConstruct = function(){
         var ret = new gaf.TimeLine(this);
-        ret._getSharedObjects = function(){return sharedObjects};
-
         return ret;
     };
 };

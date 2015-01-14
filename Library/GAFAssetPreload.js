@@ -64,31 +64,20 @@ gaf._AssetPreload.Atlases = function(asset, content, timeLine){
         //var offset = {x: 0, y: 0};
         //var originalSize = cc.rect(0, 0, item.size.x / item.scale, item.size.y / item.scale);
         var frame = new cc.SpriteFrame(texture, rect/*, rotated, offset, originalSize*/);
-        var gafAnchor = {
+        frame._gafAnchor = {
             x: (0 - (0 - (item.pivot.x / item.size.x))),
             y: (0 + (1 - (item.pivot.y / item.size.y)))};
         //frame.setAnchorPoint(frame._gafAnchor);
-        asset._spriteProtos[item.elementAtlasId] = new gaf._SpriteProto(frame, gafAnchor, item.elementAtlasId);
+        asset._spriteFrames[item.elementAtlasId] = frame;
         // 9 grid
     });
 };
 
 gaf._AssetPreload.AnimationObjects = function(asset, content, timeLine) {
     content.forEach(function(item){
-        switch (item.type){
-            case gaf.TYPE_TEXT_FIELD:
-                break;
-
-            case gaf.TYPE_TIME_LINE:
-                // Will be linked to time lines when all time lines are constructed
-                asset._timeLinesToLink.push(item);
-                break;
-
-            case gaf.TYPE_TEXTURE:
-            default:
-                asset._objects[item.objectId] = asset._spriteProtos[item.elementAtlasIdRef];
-                break;
-        }
+        item.type = (item.type === undefined) ? gaf.TYPE_TEXTURE : item.type;
+        timeLine._objects[item.objectId] = item;
+        asset._objects[item.objectId] = item;
     });
 };
 
@@ -206,7 +195,7 @@ gaf._AssetPreload.AnimationMasks = function(asset, content, timeLine){
 };
 
 gaf._AssetPreload.TimeLine = function(asset, content, timeLine) {
-    var result = new gaf._TimeLineProto(content.animationFrameCount, content.boundingBox, content.pivotPoint, content.id, content.linkageName);
+    var result = new gaf._TimeLineProto(asset, content.animationFrameCount, content.boundingBox, content.pivotPoint, content.id, content.linkageName);
     asset._pushTimeLine(result);
     gaf._AssetPreload.Tags(asset, content.tags, result);
 };

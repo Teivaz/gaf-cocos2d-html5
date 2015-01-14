@@ -5,10 +5,13 @@ gaf.Asset = cc.Class.extend({
 
     // Private members
     _header: {},
-    _objects: [],
     _spriteFrames: [],
-    _spriteProtos: [],
-    _timeLineProtos: [],
+    _timeLines: [],
+    _textFields: [],
+    _protos: {},
+    _objects: [],
+    _masks: [],
+
     _rootTimeLine: null,
     _textureLoadDelegate: null,
     _sceneFps: 60,
@@ -229,6 +232,16 @@ gaf.Asset = cc.Class.extend({
 
     // Private
 
+    ctor : function() {
+        this._protos[gaf.TYPE_TEXTURE] = [];
+        this._protos[gaf.TYPE_TEXT_FIELD] = [];
+        this._protos[gaf.TYPE_TIME_LINE] = [];
+    },
+
+    _getProtos: function(){
+        return this._protos;
+    },
+
     _setRootTimeline : function(timeLine){
         this._rootTimeLine = timeLine;
         this._header.pivot = timeLine.getPivot();
@@ -256,15 +269,32 @@ gaf.Asset = cc.Class.extend({
         }
         gaf._AssetPreload.Tags(this, gafData.tags, this._rootTimeLine);
 
-        // Link Time Lines
-        this._timeLinesToLink.forEach(function(content){
-            self._objects[content.objectId] = self._timeLineProtos[content.elementAtlasIdRef];
+        //Link and create
+        this._objects.forEach(function(item){
+            switch(item.type){
+                case gaf.TYPE_TEXTURE:
+                    // Create gaf sprite proto if it is not yet created
+                    if(!self._protos[gaf.TYPE_TEXTURE][item.objectId]) {
+                        self._protos[gaf.TYPE_TEXTURE][item.objectId] = new gaf._SpriteProto(self._spriteFrames[item.elementAtlasIdRef], item.elementAtlasIdRef);
+                    }
+                    break;
+                case gaf.TYPE_TIME_LINE:
+                    // All time line protos are already created, just copy reference
+                    self._protos[gaf.TYPE_TIME_LINE][item.objectId] = self._timeLines[item.elementAtlasIdRef];
+                    break;
+                case gaf.TYPE_TEXT_FIELD:
+                    // All text field protos are already created, just copy reference
+                    self._protos[gaf.TYPE_TEXT_FIELD][item.objectId] = self._textFields[item.elementAtlasIdRef];
+                    break;
+                default:
+                    cc.log("Unknown object type: " + item.type);
+                    break;
+            }
         });
-        delete this._timeLinesToLink;
     },
 
     _pushTimeLine : function(timeLine){
-        this._timeLineProtos[timeLine.getId()] = timeLine;
+        this._timeLines[timeLine.getId()] = timeLine;
 
         if(timeLine.getId() === 0){
             this._setRootTimeline(timeLine);
@@ -273,30 +303,7 @@ gaf.Asset = cc.Class.extend({
 
     _instantiateGaf : function(){
         var root = null;
-        var timeLines = [];
-        var sharedObjects = [];
-        for(var i = 0, end = this._objects.length; i < end; i++){
-            var object = this._objects[i];
-            if(object){
-                if(object.hasOwnProperty("_gafConstruct")) {
-                    var constructedObject = object._gafConstruct(sharedObjects);
-                    sharedObjects[i] = constructedObject;
-                    if(constructedObject._className === "GAFTimeLine"){
-                        timeLines.push(constructedObject);
-                    }
-                }
-                else {
-                    sharedObjects[i] = object;
-                }
-                if(object === this._rootTimeLine){
-                    root = sharedObjects[i];
-                }
-            }
-        }
-        if(!root){
-            root = this._rootTimeLine._gafConstruct(sharedObjects);
-        }
-        root._timeLines = timeLines;
+        root = this._rootTimeLine._gafConstruct();
         return root;
     }
 
