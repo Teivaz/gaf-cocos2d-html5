@@ -183,7 +183,7 @@ gaf._AssetPreload.NamedParts = function(asset, content, timeLine)
     var parts = {};
     content.forEach(function(item)
     {
-        parts[item.name] = item.objectIdRef;
+        parts[item.name] = item.objectId;
     });
     timeLine.getNamedParts = function(){return parts};
 };

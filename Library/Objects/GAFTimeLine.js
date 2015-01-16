@@ -1,17 +1,19 @@
 
 gaf.TimeLine = gaf.Object.extend
 ({
-    _className : "GAFTimeLine",
+    _className: "GAFTimeLine",
     _objects: null,
-    _container : null,
-    _animationStartedNextLoopDelegate : null,
-    _animationFinishedPlayDelegate : null,
-    _framePlayedDelegate : null,
-    _sequenceDelegate : null,
-    _fps : 60,
-    _currentSequenceStart : gaf.FIRST_FRAME_INDEX,
-    _currentSequenceEnd : gaf.FIRST_FRAME_INDEX,
-    _isRunning : false,
+    _container: null,
+    _animationStartedNextLoopDelegate: null,
+    _animationFinishedPlayDelegate: null,
+    _framePlayedDelegate: null,
+    _sequenceDelegate: null,
+    _fps: 60,
+    _frameTime: 1/60,
+    _currentSequenceStart: gaf.FIRST_FRAME_INDEX,
+    _currentSequenceEnd: gaf.FIRST_FRAME_INDEX,
+    _totalFrameCount: 0,
+    _isRunning: false,
     _isLooped: false,
     _isReversed: false,
     _timeDelta: 0,
@@ -19,44 +21,36 @@ gaf.TimeLine = gaf.Object.extend
     _currentFrame: gaf.FIRST_FRAME_INDEX,
 
 
-    ctor : function(gafTimeLineProto)
-    {
-        this._super();
-        this._objects = [];
-        cc.assert(gafTimeLineProto,  "Error! Missing mandatory parameter.");
-        this._gafproto = gafTimeLineProto;
-    },
-
-    setAnimationStartedNextLoopDelegate : function (delegate)
+    setAnimationStartedNextLoopDelegate: function (delegate)
     {
         this._animationStartedNextLoopDelegate = delegate;
     },
-    setAnimationFinishedPlayDelegate : function (delegate)
+    setAnimationFinishedPlayDelegate: function (delegate)
     {
         this._animationFinishedPlayDelegate = delegate;
     },
-    setLooped : function (looped)
+    setLooped: function (looped)
     {
         this._isLooped = looped;
     },
-    getBoundingBoxForCurrentFrame : function ()
+    getBoundingBoxForCurrentFrame: function ()
     {
         debugger;
         return cc.rect();
     },
-    setFps : function (fps)
+    setFps: function (fps)
     {
         cc.assert(fps !== 0, 'Error! Fps is set to zero.');
         this._fps = fps;
+        this._frameTime = 1/fps;
     },
     getObjectByName: function (name)
     {
-        debugger;
         var elements = name.split('.');
         var result = null;
         var retId = -1;
         var timeLine = this;
-        var objects = this._objects;
+        var BreakException = {};
         try
         {
             elements.forEach(function(element)
@@ -69,22 +63,25 @@ gaf.TimeLine = gaf.Object.extend
                 else
                 {
                     // Sequence is incorrect
-                    throw new Error("NamedPartsSequenceError");
+                    BreakException.lastElement = element;
+                    throw BreakException;
                 }
-                result = objects[retId];
+                result = timeLine._objects[retId];
                 timeLine = result;
             });
         }
         catch (e)
         {
-            if(typeof e !== "Error" || e.getText() !== "NamedPartsSequenceError")
+            if (e!==BreakException)
             {
                 throw e;
             }
+            cc.log("Sequence incorrect: `" + name + "` At: `" + BreakException.lastElement + "`")
+            return null;
         }
         return result;
     },
-    clearSequence : function ()
+    clearSequence: function ()
     {
         this._currentSequenceStart = gaf.FIRST_FRAME_INDEX;
         this._currentSequenceEnd = this._gafproto.getTotalFrames();
@@ -129,7 +126,7 @@ gaf.TimeLine = gaf.Object.extend
         }
         return false;
     },
-    getStartFrame : function (frameLabel)
+    getStartFrame: function (frameLabel)
     {
         if (!this._asset)
         {
@@ -155,7 +152,7 @@ gaf.TimeLine = gaf.Object.extend
         }
         return gaf.IDNONE;
     },
-    setFramePlayedDelegate : function (delegate)
+    setFramePlayedDelegate: function (delegate)
     {
         this._framePlayedDelegate = delegate;
     },
@@ -313,9 +310,15 @@ gaf.TimeLine = gaf.Object.extend
     },
 
 
-
-
     // Private
+
+    ctor: function(gafTimeLineProto)
+    {
+        this._super();
+        this._objects = [];
+        cc.assert(gafTimeLineProto,  "Error! Missing mandatory parameter.");
+        this._gafproto = gafTimeLineProto;
+    },
 
     setExternalTransform: function(affineTransform)
     {
@@ -329,10 +332,11 @@ gaf.TimeLine = gaf.Object.extend
         this._super(s, p);
     },*/
 
-    _init : function()
+    _init: function()
     {
         this._currentSequenceEnd = this._gafproto.getTotalFrames() + 1;
-        this._fps = this._gafproto.getFps();
+        this._totalFrameCount = this._currentSequenceEnd;
+        this.setFps(this._gafproto.getFps());
 
         this._container = new cc.Node();
         this.addChild(this._container);
@@ -360,17 +364,16 @@ gaf.TimeLine = gaf.Object.extend
          */
     },
 
-    _processAnimations : function (dt)
+    _processAnimations: function (dt)
     {
         this._timeDelta += dt;
-        var frameTime = 1 / this._fps;
-        while (this._timeDelta >= frameTime)
+        while (this._timeDelta >= this._frameTime)
         {
-            this._timeDelta -= frameTime;
-
+            this._timeDelta -= this._frameTime;
             this._step();
         }
     },
+
     _step: function ()
     {
         this._showingFrame = this._currentFrame;
@@ -455,7 +458,7 @@ gaf.TimeLine = gaf.Object.extend
             }
         }
     },
-    _processAnimation : function ()
+    _processAnimation: function ()
     {
         var id = this._gafproto.getId();
         this._realizeFrame(this._container, this._currentFrame);
@@ -464,7 +467,7 @@ gaf.TimeLine = gaf.Object.extend
             this._framePlayedDelegate(this, this._currentFrame);
         }
     },
-    _realizeFrame : function(out, frameIndex)
+    _realizeFrame: function(out, frameIndex)
     {
         var self = this;
         var objects = self._objects;

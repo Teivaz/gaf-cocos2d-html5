@@ -57,7 +57,7 @@ gaf.Asset = cc.Class.extend
             return;
         }
 
-        var BreakException= {};
+        var BreakException = {};
         var self = this;
         try
         {
@@ -310,7 +310,7 @@ gaf.Asset = cc.Class.extend
         this._timeLinesToLink = [];
         if(this._getMajorVerison() < 4)
         {
-            this._pushTimeLine(new gaf._TimeLineProto(this._header.framesCount, this._header.bounds, this._header.pivot));
+            this._pushTimeLine(new gaf._TimeLineProto(this._header.framesCount, this._header.frameSize, this._header.pivot));
         }
         gaf._AssetPreload.Tags(this, gafData.tags, this._rootTimeLine);
 

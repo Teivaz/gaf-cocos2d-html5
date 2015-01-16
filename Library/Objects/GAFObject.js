@@ -7,7 +7,8 @@ gaf._stateHasCtx = function(state)
        (state.colorTransform.offset.r > 0 ||
         state.colorTransform.offset.g > 0 ||
         state.colorTransform.offset.b > 0 ||
-        state.colorTransform.offset.a > 0))
+        state.colorTransform.offset.a > 0)
+    )
     {
         return true;
     }

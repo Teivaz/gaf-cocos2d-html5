@@ -161,7 +161,7 @@ gaf.Tag.DefineNamedParts.tagName = "TagDefineNamedParts";
 gaf.Tag.DefineNamedParts.doParse = function(s) {
     var exec = s.array('Uint', s.fields(
         'objectId', 'Uint',
-        'tagName', 'String'
+        'name', 'String'
     ));
     var result = {'content': exec()};
 //    debugger;

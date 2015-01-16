@@ -4,7 +4,7 @@ var gaf = gaf || {};
 gaf.Loader = function(){
 
     var readHeaderBegin = function(stream, header){
-        header.magic = stream.Uint();
+        header.compression = stream.Uint();
         header.versionMajor = stream.Ubyte();
         header.versionMinor = stream.Ubyte();
         header.fileLength = stream.Uint();
@@ -12,20 +12,20 @@ gaf.Loader = function(){
 
     var readHeaderEndV3 = function(stream, header) {
         header.framesCount = stream.Ushort();
-        header.bounds = stream.Rect();
-        header.point = stream.Point();
+        header.frameSize = stream.Rect();
+        header.pivot = stream.Point();
     };
 
     var readHeaderEndV4 = function(stream, header){
-        header.scaleCount = stream.Uint();
-        header.scales = [];
-        for(var i = 0; i < header.scaleCount; ++i){
-            header.scales.push(stream.float());
+        var scaleCount = stream.Uint();
+        header.scaleValues = [];
+        for(var i = 0; i < scaleCount; ++i){
+            header.scaleValues.push(stream.float());
         }
-        header.csfCount = stream.Uint();
-        header.csfs = [];
-        for(var i = 0; i < header.csfCount; ++i){
-            header.csfs.push(stream.float());
+        var csfCount = stream.Uint();
+        header.csfValues = [];
+        for(var i = 0; i < csfCount; ++i){
+            header.csfValues.push(stream.float());
         }
     };
 
@@ -46,9 +46,9 @@ gaf.Loader = function(){
     this.LoadStream = function(stream){
         var header = {};
         readHeaderBegin(stream, header);
-        if(header.magic == gaf.COMPRESSION_NONE) { // GAF
+        if(header.compression == gaf.COMPRESSION_NONE) { // GAF
         }
-        else if(header.magic == gaf.COMPRESSION_ZIP){ // GAC
+        else if(header.compression == gaf.COMPRESSION_ZIP){ // GAC
             var compressed = stream.dataRaw.slice(stream.tell());
 
             var inflate = new window.Zlib.Inflate(new Uint8Array(compressed));
