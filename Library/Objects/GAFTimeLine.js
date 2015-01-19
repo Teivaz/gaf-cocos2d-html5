@@ -128,10 +128,6 @@ gaf.TimeLine = gaf.Object.extend
     },
     getStartFrame: function (frameLabel)
     {
-        if (!this._asset)
-        {
-            return gaf.IDNONE;
-        }
         var seq = this._gafproto.getSequences()[frameLabel];
         if (seq)
         {
@@ -141,10 +137,6 @@ gaf.TimeLine = gaf.Object.extend
     },
     getEndFrame: function (frameLabel)
     {
-        if (!this._asset)
-        {
-            return gaf.IDNONE;
-        }
         var seq = this._gafproto.getSequences()[frameLabel];
         if (seq)
         {
@@ -224,10 +216,6 @@ gaf.TimeLine = gaf.Object.extend
     {
         looped = looped || false;
         resume = resume || true;
-        if (!this._asset || !this._timeline)
-        {
-            return false;
-        }
         var s = this.getStartFrame(name);
         var e = this.getEndFrame(name);
         if (gaf.IDNONE === s || gaf.IDNONE === e)
@@ -383,8 +371,9 @@ gaf.TimeLine = gaf.Object.extend
             {
                 this._currentFrame = this._currentSequenceStart;
             }
-            if (this._sequenceDelegate && this._timeline)
+            if (this._sequenceDelegate)
             {
+                debugger;
                 var seq = this._timeline.getSequenceByLastFrame(this._currentFrame);
                 if (seq)
                 {
@@ -423,8 +412,9 @@ gaf.TimeLine = gaf.Object.extend
             {
                 this._currentFrame = this._currentSequenceEnd - 1;
             }
-            if (this._sequenceDelegate && this._timeline)
+            if (this._sequenceDelegate)
             {
+                debugger;
                 var seq = this._timeline.getSequenceByFirstFrame(this._currentFrame + 1);
                 if (seq)
                 {

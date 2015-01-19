@@ -192,7 +192,7 @@ gaf._AssetPreload.Sequences = function(asset, content, timeLine)
 {
     var sequences = {};
     content.forEach(function(item){
-        sequences[item.name] = {start: item.start, end: item.end};
+        sequences[item.id] = {start: item.start, end: item.end};
     });
     timeLine.getSequences = function(){return sequences};
 };
