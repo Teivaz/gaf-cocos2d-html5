@@ -79,23 +79,7 @@ gaf.Asset = cc.Class.extend
         }
     },
 
-    /**
-     * @method getRootTimeline
-     * @return {gaf.TimeLine}
-     */
-    getRootTimeline: function ()
-    {
-        return this._rootTimeLine;
-    },
 
-    /**
-     * @method getTimelines
-     * @return {[gaf.TimeLine]}
-     */
-    getTimelines: function ()
-    {
-        return this._timeLines;
-    },
 
     /**
      * @method createWithBundle
@@ -123,43 +107,21 @@ gaf.Asset = cc.Class.extend
      */
     createObject: function ()
     {
-        debugger;
+        return this._instantiateGaf(this._gafData);
     },
 
     /**
      * @method createObjectAndRun
-     * [@param {boolean} arg0 - run looped. False by default]
+     * @param {boolean} arg0 - run looped
      * @return {gaf.Object}
      */
     createObjectAndRun: function (looped)
     {
-        looped = looped || false;
-        if (arguments.length == 1)
-        {
-            looped = arguments[0];
-        }
+        cc.assert(arguments.length === 1, "GAFAsset::createObjectAndRun should have one param");
         var object = this._instantiateGaf(this._gafData);
-        object.setLooped(looped);
+        object.setLooped(looped, true);
         object.start();
         return object;
-    },
-
-    /**
-     * @method desiredCsf
-     * @return {float}
-     */
-    desiredCsf: function ()
-    {
-        debugger;
-    },
-
-    /**
-     * @method setDesiredCsf
-     * @param {float} csf
-     */
-    setDesiredCsf: function (csf)
-    {
-        debugger;
     },
 
     /**
@@ -171,14 +133,6 @@ gaf.Asset = cc.Class.extend
         debugger;
     },
 
-    /**
-     * @method getTextureManager
-     * @return {gaf::GAFAssetTextureManager}
-     */
-    getTextureManager: function ()
-    {
-        debugger;
-    },
 
     /**
      * @method getSceneFps

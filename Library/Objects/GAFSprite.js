@@ -12,6 +12,10 @@ gaf.Sprite = gaf.Object.extend
 
     // Private
 
+    getBoundingBoxForCurrentFrame : function(){
+        return this._sprite.getBoundingBox();
+    },
+
     _init : function()
     {
         var frame = this._gafproto.getFrame();

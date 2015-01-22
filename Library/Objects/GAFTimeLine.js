@@ -1,4 +1,55 @@
 
+gaf.ccRectUnion = function(src1, src2){
+    var thisLeftX = src1.x;
+    var thisRightX = src1.x + src1.width;
+    var thisTopY = src1.y + src1.height;
+    var thisBottomY = src1.y;
+
+    if (thisRightX < thisLeftX)
+    {
+        // This rect has negative width
+        var tmp = thisRightX;
+        thisRightX = thisLeftX;
+        thisLeftX = tmp;
+    }
+
+    if (thisTopY < thisBottomY)
+    {
+        // This rect has negative height
+        var tmp = thisTopY;
+        thisTopY = thisBottomY;
+        thisBottomY = tmp;
+    }
+
+    var otherLeftX = src2.x;
+    var otherRightX = src2.x + src2.width;
+    var otherTopY = src2.y + src2.height;
+    var otherBottomY = src2.y;
+
+    if (otherRightX < otherLeftX)
+    {
+        // Other rect has negative width
+        var tmp = otherLeftX;
+        otherLeftX = otherRightX;
+        otherRightX = tmp;
+    }
+
+    if (otherTopY < otherBottomY)
+    {
+        // Other rect has negative height
+        var tmp = otherTopY;
+        otherTopY = otherBottomY;
+        otherBottomY = tmp;
+    }
+
+    var combinedLeftX = Math.min(thisLeftX, otherLeftX);
+    var combinedRightX = Math.max(thisRightX, otherRightX);
+    var combinedTopY = Math.max(thisTopY, otherTopY);
+    var combinedBottomY = Math.min(thisBottomY, otherBottomY);
+
+    return cc.rect(combinedLeftX, combinedBottomY, combinedRightX - combinedLeftX, combinedTopY - combinedBottomY);
+};
+
 gaf.TimeLine = gaf.Object.extend
 ({
     _className: "GAFTimeLine",
@@ -29,14 +80,41 @@ gaf.TimeLine = gaf.Object.extend
     {
         this._animationFinishedPlayDelegate = delegate;
     },
-    setLooped: function (looped)
+    setLooped: function (looped, recursively)
     {
         this._isLooped = looped;
+        if (recursively)
+        {
+            this._objects.forEach(function (item)
+            {
+                item.setLooped(looped, recursively);
+            });
+        }
     },
     getBoundingBoxForCurrentFrame: function ()
     {
-        debugger;
-        return cc.rect();
+        var result = cc.rect();
+        var isFirstObj = true;
+        this._objects.forEach(function (item) {
+            if(item.isVisible())
+            {
+                var bb = item.getBoundingBoxForCurrentFrame();
+                if(!bb)
+                {
+                    bb = item.getBoundingBox();
+                }
+                if (isFirstObj)
+                {
+                    result = bb;
+                }
+                else
+                {
+                    result = gaf.ccRectUnion(result, bb);
+                }
+                isFirstObj = false;
+            }
+        });
+        return result;
     },
     setFps: function (fps)
     {
@@ -76,7 +154,7 @@ gaf.TimeLine = gaf.Object.extend
             {
                 throw e;
             }
-            cc.log("Sequence incorrect: `" + name + "` At: `" + BreakException.lastElement + "`")
+            cc.log("Sequence incorrect: `" + name + "` At: `" + BreakException.lastElement + "`");
             return null;
         }
         return result;
@@ -103,7 +181,7 @@ gaf.TimeLine = gaf.Object.extend
         }
         if (this.setFrame(frame))
         {
-            this._setAnimationRunning(false);
+            this._setAnimationRunning(false, false);
             return true;
         }
         return false;
@@ -111,7 +189,7 @@ gaf.TimeLine = gaf.Object.extend
     gotoAndPlay: function (value)
     {
         var frame = 0;
-        if (typeof value === 'String')
+        if (typeof value === 'string')
         {
             frame = this.getStartFrame(value);
         }
@@ -121,7 +199,7 @@ gaf.TimeLine = gaf.Object.extend
         }
         if (this.setFrame(frame))
         {
-            this._setAnimationRunning(true);
+            this._setAnimationRunning(true, false);
             return true;
         }
         return false;
@@ -158,40 +236,20 @@ gaf.TimeLine = gaf.Object.extend
     },
     start: function ()
     {
-        this._running = true;
-        this.schedule("_processAnimations");
-        this._animationsSelectorScheduled = true;
-        this.setLooped(true);
+        this._enableTick(true);
         if (!this._isRunning)
         {
             this._currentFrame = gaf.FIRST_FRAME_INDEX;
-            this._setAnimationRunning(true);
-            this._objects.forEach(function(item)
-            {
-                item.start();
-            });
+            this._setAnimationRunning(true, true);
         }
     },
     stop: function ()
     {
-        this.unschedule("_processAnimations");
-        this._animationsSelectorScheduled = false;
+        this._enableTick(false);
         if (this._isRunning)
         {
             this._currentFrame = gaf.FIRST_FRAME_INDEX;
-            this._setAnimationRunning(false);
-        }
-    },
-    isVisibleInCurrentFrame: function ()
-    {
-        if (this._timelineParentObject &&
-            (this._timelineParentObject.getCurrentFrameIndex() + 1 !== this._lastVisibleInFrame))
-        {
-            return false;
-        }
-        else
-        {
-            return true;
+            this._setAnimationRunning(false, true);
         }
     },
     isDone: function ()
@@ -212,10 +270,8 @@ gaf.TimeLine = gaf.Object.extend
             }
         }
     },
-    playSequence: function (name, looped, resume)
+    playSequence: function (name, looped)
     {
-        looped = looped || false;
-        resume = resume || true;
         var s = this.getStartFrame(name);
         var e = this.getEndFrame(name);
         if (gaf.IDNONE === s || gaf.IDNONE === e)
@@ -232,15 +288,8 @@ gaf.TimeLine = gaf.Object.extend
         {
             this._currentFrame = this._currentSequenceStart;
         }
-        this.setLooped(looped);
-        if (resume)
-        {
-            this.resumeAnimation();
-        }
-        else
-        {
-            this.stop();
-        }
+        this.setLooped(looped, false);
+        this.resumeAnimation();
         return true;
     },
     isReversed: function ()
@@ -253,7 +302,7 @@ gaf.TimeLine = gaf.Object.extend
     },
     setFrame: function (index)
     {
-        if (index < this._totalFrameCount)
+        if (index >= gaf.FIRST_FRAME_INDEX && index < this._totalFrameCount)
         {
             this._showingFrame = index;
             this._currentFrame = index;
@@ -270,7 +319,7 @@ gaf.TimeLine = gaf.Object.extend
     {
         if (this._isRunning)
         {
-            this._setAnimationRunning(false);
+            this._setAnimationRunning(false, false);
         }
     },
     isLooped: function ()
@@ -281,7 +330,7 @@ gaf.TimeLine = gaf.Object.extend
     {
         if (!this._isRunning)
         {
-            this._setAnimationRunning(true);
+            this._setAnimationRunning(true, false);
         }
     },
     setReversed: function (reversed)
@@ -310,19 +359,15 @@ gaf.TimeLine = gaf.Object.extend
 
     setExternalTransform: function(affineTransform)
     {
-        //if(!cc.affineTransformEqualToTransform(this._container._additionalTransform, affineTransform))
-        // {
+         if(!cc.affineTransformEqualToTransform(this._container._additionalTransform, affineTransform))
+         {
             this._container.setAdditionalTransform(affineTransform);
-        //}
+         }
     },
-/*
-    _applyState: function(s, p){
-        this._super(s, p);
-    },*/
 
     _init: function()
     {
-        this._currentSequenceEnd = this._gafproto.getTotalFrames() + 1;
+        this._currentSequenceEnd = this._gafproto.getTotalFrames();
         this._totalFrameCount = this._currentSequenceEnd;
         this.setFps(this._gafproto.getFps());
 
@@ -352,6 +397,20 @@ gaf.TimeLine = gaf.Object.extend
          */
     },
 
+    _enableTick: function(val)
+    {
+        if (!this._animationsSelectorScheduled && val)
+        {
+            this.schedule("_processAnimations");
+            this._animationsSelectorScheduled = true;
+        }
+        else if (this._animationsSelectorScheduled && !val)
+        {
+            this.unschedule("_processAnimations");
+            this._animationsSelectorScheduled = false;
+        }
+    },
+
     _processAnimations: function (dt)
     {
         this._timeDelta += dt;
@@ -374,51 +433,48 @@ gaf.TimeLine = gaf.Object.extend
             if (this._sequenceDelegate)
             {
                 debugger;
-                var seq = this._timeline.getSequenceByLastFrame(this._currentFrame);
+                var seq = this._getSequenceByLastFrame(this._currentFrame);
                 if (seq)
                 {
-                    this._sequenceDelegate(this, seq.name);
+                    this._sequenceDelegate(this, seq);
                 }
             }
-            if (this._currentFrame >= this._currentSequenceEnd - 1)
+            if (this._isLooped && (this._currentFrame > this._currentSequenceEnd - 1))
             {
-                if (this._isLooped)
+                this._currentFrame = this._currentSequenceStart;
+                if (this._animationStartedNextLoopDelegate)
                 {
-                    this._currentFrame = this._currentSequenceStart;
-                    if (this._animationStartedNextLoopDelegate)
-                    {
-                        this._animationStartedNextLoopDelegate(this);
-                    }
+                    this._animationStartedNextLoopDelegate(this);
                 }
-                else
+            }
+            else if(!this._isLooped && (this._currentFrame >= this._currentSequenceEnd - 1))
+            {
+                this._setAnimationRunning(false, false);
+                if (this._animationFinishedPlayDelegate)
                 {
-                    this._setAnimationRunning(false);
-                    if (this._animationFinishedPlayDelegate)
-                    {
-                        this._animationFinishedPlayDelegate(this);
-                    }
+                    this._animationFinishedPlayDelegate(this);
                 }
             }
             this._processAnimation();
-                if (this.getIsAnimationRunning())
-                {
-                    this._showingFrame = this._currentFrame++;
-                }
+            if (this.getIsAnimationRunning())
+            {
+                this._showingFrame = this._currentFrame++;
+            }
         }
         else
         {
             // If switched to reverse after final frame played
-            if (this._currentFrame >= this._currentSequenceEnd)
+            if (this._currentFrame >= this._currentSequenceEnd || this._currentFrame < gaf.FIRST_FRAME_INDEX)
             {
                 this._currentFrame = this._currentSequenceEnd - 1;
             }
             if (this._sequenceDelegate)
             {
                 debugger;
-                var seq = this._timeline.getSequenceByFirstFrame(this._currentFrame + 1);
+                var seq = this._getSequenceByLastFrame(this._currentFrame + 1);
                 if (seq)
                 {
-                    this._sequenceDelegate(this, seq.name);
+                    this._sequenceDelegate(this, seq);
                 }
             }
             if (this._currentFrame < this._currentSequenceStart)
@@ -433,7 +489,7 @@ gaf.TimeLine = gaf.Object.extend
                 }
                 else
                 {
-                    this._setAnimationRunning(false);
+                    this._setAnimationRunning(false, false);
                     if (this._animationFinishedPlayDelegate)
                     {
                         this._animationFinishedPlayDelegate(this);
@@ -448,6 +504,8 @@ gaf.TimeLine = gaf.Object.extend
             }
         }
     },
+
+
     _processAnimation: function ()
     {
         var id = this._gafproto.getId();
@@ -499,21 +557,32 @@ gaf.TimeLine = gaf.Object.extend
             }
         });
     },
-
-    _setAnimationRunning: function (value)
+    _setAnimationRunning: function (value, recursively)
     {
         this._isRunning = value;
-        if(arguments.length > 1 && arguments[1] === false)
+        if(recursively)
         {
-            return; // Don't call recursively
-        }
-        this._objects.forEach(function(obj)
-        {
-            if (obj && obj.hasOwnProperty("_setAnimationRunning"))
+            this._objects.forEach(function (obj)
             {
-                obj._setAnimationRunning(value, false);
+                if (obj && obj._setAnimationRunning)
+                {
+                    obj._setAnimationRunning(value, recursively);
+                }
+            });
+        }
+    },
+
+    _getSequenceByLastFrame: function(){
+        var sequences = this._gafproto.getSequences();
+        for(var item in sequences){
+            if(sequences.hasOwnProperty(item)){
+                if(sequences[item].end === frame + 1)
+                {
+                    return item;
+                }
             }
-        });
+        }
+        return "";
     }
 });
 

@@ -74,7 +74,7 @@ gaf.Object = cc.Node.extend
      * @method getBoundingBoxForCurrentFrame
      * @return {cc.Rect}
      */
-    getBoundingBoxForCurrentFrame : function () {return cc.rect();},
+    getBoundingBoxForCurrentFrame : function () {return null;},
 
     /**
      * @method setFps
@@ -151,7 +151,7 @@ gaf.Object = cc.Node.extend
     isVisibleInCurrentFrame : function ()
     {
         if (this._parentTimeLine &&
-            (this._parentTimeLine.getCurrentFrameIndex() + 1 != this._lastVisibleInFrame))
+            ((this._parentTimeLine.getCurrentFrameIndex() + 1) != this._lastVisibleInFrame))
         {
             return false;
         }
@@ -170,7 +170,7 @@ gaf.Object = cc.Node.extend
     /**
      * @method playSequence
      * @param {String} name - name of the sequence to play
-     * @param {bool} looped - play looped. False by default
+     * @param {bool} looped - play looped
      * @param {bool} resume - whether to resume animation if stopped. True by default
      * @return {bool}
      */
@@ -269,7 +269,7 @@ gaf.Object = cc.Node.extend
         return this._externalTransform;
     },
 
-    getNodeToParentTransform : function()
+    /*getNodeToParentTransform : function()
     {
         if(this._transformDirty)
         {
@@ -286,7 +286,7 @@ gaf.Object = cc.Node.extend
             this._transformDirty = false;
         }
         return this._transform;
-    },
+    },*/
 
     getNodeToParentAffineTransform : function()
     {
@@ -310,6 +310,7 @@ gaf.Object = cc.Node.extend
     ////////////////
     // Private
     ////////////////
+    _enableTick: function(val){},
 
     _updateVisibility : function(state, parent)
     {
@@ -321,7 +322,7 @@ gaf.Object = cc.Node.extend
     // @Override
     isVisible : function()
     {
-        return this.getDisplayedOpacity() > 0;
+        return this.getOpacity() > 0;
     },
 
     // @Override
