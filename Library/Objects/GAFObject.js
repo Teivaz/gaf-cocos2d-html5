@@ -36,7 +36,6 @@ gaf._stateHasCtx = function(state)
 
 gaf.Object = cc.Node.extend
 ({
-    _externalTransform : null,
     _asset : null,
     _className : "GAFObject",
     _id : gaf.IDNONE,
@@ -49,7 +48,6 @@ gaf.Object = cc.Node.extend
     ctor: function()
     {
         this._super();
-        this._externalTransform = cc.affineTransformMakeIdentity();
     },
 
     /**
@@ -266,7 +264,7 @@ gaf.Object = cc.Node.extend
 
     getExternalTransform : function()
     {
-        return this._externalTransform;
+        return this._additionalTransform;
     },
 
     /*getNodeToParentTransform : function()
@@ -286,7 +284,7 @@ gaf.Object = cc.Node.extend
             this._transformDirty = false;
         }
         return this._transform;
-    },*/
+    },
 
     getNodeToParentAffineTransform : function()
     {
@@ -305,7 +303,7 @@ gaf.Object = cc.Node.extend
         cc.GLToCGAffine(this._transform.m, this.transform);
 
         return transform;
-    },
+    },*/
 
     ////////////////
     // Private

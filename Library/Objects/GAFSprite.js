@@ -12,10 +12,6 @@ gaf.Sprite = gaf.Object.extend
 
     // Private
 
-    getBoundingBoxForCurrentFrame : function(){
-        return this._sprite.getBoundingBox();
-    },
-
     _init : function()
     {
         var frame = this._gafproto.getFrame();
@@ -72,6 +68,12 @@ gaf.Sprite = gaf.Object.extend
     _applyWebGLCtxState: function(state)
     {
         //var state = this._sprite.getGLProgramState();
+    },
+
+    getBoundingBoxForCurrentFrame: function ()
+    {
+        var result = this._sprite.getBoundingBox();
+        return cc._rectApplyAffineTransformIn(result, this.getNodeToParentTransform());
     },
 
     _applyCanvasCtxState: function(state){}

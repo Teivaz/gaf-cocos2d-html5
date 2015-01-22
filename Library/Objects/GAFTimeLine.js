@@ -1,55 +1,4 @@
 
-gaf.ccRectUnion = function(src1, src2){
-    var thisLeftX = src1.x;
-    var thisRightX = src1.x + src1.width;
-    var thisTopY = src1.y + src1.height;
-    var thisBottomY = src1.y;
-
-    if (thisRightX < thisLeftX)
-    {
-        // This rect has negative width
-        var tmp = thisRightX;
-        thisRightX = thisLeftX;
-        thisLeftX = tmp;
-    }
-
-    if (thisTopY < thisBottomY)
-    {
-        // This rect has negative height
-        var tmp = thisTopY;
-        thisTopY = thisBottomY;
-        thisBottomY = tmp;
-    }
-
-    var otherLeftX = src2.x;
-    var otherRightX = src2.x + src2.width;
-    var otherTopY = src2.y + src2.height;
-    var otherBottomY = src2.y;
-
-    if (otherRightX < otherLeftX)
-    {
-        // Other rect has negative width
-        var tmp = otherLeftX;
-        otherLeftX = otherRightX;
-        otherRightX = tmp;
-    }
-
-    if (otherTopY < otherBottomY)
-    {
-        // Other rect has negative height
-        var tmp = otherTopY;
-        otherTopY = otherBottomY;
-        otherBottomY = tmp;
-    }
-
-    var combinedLeftX = Math.min(thisLeftX, otherLeftX);
-    var combinedRightX = Math.max(thisRightX, otherRightX);
-    var combinedTopY = Math.max(thisTopY, otherTopY);
-    var combinedBottomY = Math.min(thisBottomY, otherBottomY);
-
-    return cc.rect(combinedLeftX, combinedBottomY, combinedRightX - combinedLeftX, combinedTopY - combinedBottomY);
-};
-
 gaf.TimeLine = gaf.Object.extend
 ({
     _className: "GAFTimeLine",
@@ -93,10 +42,10 @@ gaf.TimeLine = gaf.Object.extend
     },
     getBoundingBoxForCurrentFrame: function ()
     {
-        var result = cc.rect();
+        var result = null;//cc.rect();
         var isFirstObj = true;
         this._objects.forEach(function (item) {
-            if(item.isVisible())
+            if(item.isVisibleInCurrentFrame() && item.isVisible())
             {
                 var bb = item.getBoundingBoxForCurrentFrame();
                 if(!bb)
@@ -105,16 +54,16 @@ gaf.TimeLine = gaf.Object.extend
                 }
                 if (isFirstObj)
                 {
+                    isFirstObj = false;
                     result = bb;
                 }
                 else
                 {
-                    result = gaf.ccRectUnion(result, bb);
+                    result = cc.rectUnion(result, bb);
                 }
-                isFirstObj = false;
             }
         });
-        return result;
+        return cc._rectApplyAffineTransformIn(result, this._container.getNodeToParentTransform());
     },
     setFps: function (fps)
     {
@@ -385,7 +334,7 @@ gaf.TimeLine = gaf.Object.extend
             self._objects[object] = objectProto._gafConstruct();
         });
 
-        /*
+
          var anchor =
          {
              x: (0 - (0 - (this._gafproto.getPivot().x / this._gafproto.getBoundingBox().width))),
@@ -394,7 +343,7 @@ gaf.TimeLine = gaf.Object.extend
          this._container.setContentSize(this._gafproto.getBoundingBox().width, this._gafproto.getBoundingBox().height);
          this._container.setAnchorPoint(anchor);
          this._container.setPosition(-this._gafproto.getBoundingBox().x, this._gafproto.getBoundingBox().height + this._gafproto.getBoundingBox().y);
-         */
+
     },
 
     _enableTick: function(val)
