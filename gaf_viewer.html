@@ -9,13 +9,14 @@
     <script src="Library/Loader/GAFLoader.js"></script>
     <script src="Library/Loader/GAFTags.js"></script>
     <script src="Library/Loader/GAFDataReader.js"></script>
+    <script src="gaf_viewer.js"></script>
     <link rel="stylesheet" type="text/css" href="gaf_viewer.css">
 </head>
-<body>
+<body onload="bodyOnLoad()">
+<div id="fade" style="display: none"></div>
 <div id="drop_zone">Drop GAF here</div>
-<output id="list"></output>
+<div id="output" class="gaf">
 
-
-<script src="gaf_viewer.js"></script>
+</div>
 </body>
 </html>

@@ -1,42 +1,53 @@
-#drop_zone {    
+body {
+    width: 100%;
+    height: 100%;
+    top: 0px;
+    left: 0px;
+    margin: 0px;
+    position: absolute;
+}
+
+#drop_zone {
+    padding-top: 20%;
     border: 2px dashed #bbb;
     -moz-border-radius: 5px;
     -webkit-border-radius: 5px;
     border-radius: 5px;
-    padding: 25px;
+    width: 95%;
+    height: 95%;
     text-align: center;
-    font: 20pt bold 'Vollkorn';
+    vertical-align: middle;
+    font: 20pt bold;
     color: #bbb;
-    
+    position: fixed;
+    margin: 2.5%;
+    background: #fff;
+    z-index: 1001;
 }
-.renderjson a {
-    text-decoration: none; 
+
+#fade {
+    padding: 0px;
+    margin: 0px;
+    border: 0px;
+    position: fixed;
+    background: #000;
+    opacity: 0.2;
+    width: 100%;
+    height: 100%;
+    display: block;
+    top: 0px;
+    left: 0px;
+    z-index: 1000;
 }
-.renderjson .disclosure {
-    color: crimson;
-    font-size: 150%; 
+
+.expandable {
+    margin-left: 25pt;
+    margin-top: 0pt;
+    margin-bottom: 0pt;
+    display: block;
+
 }
-.renderjson .syntax {
-    color: grey; 
-}
-.renderjson .string {
-    color: darkred; 
-}
-.renderjson .number {
-    color: darkcyan; 
-}
-.renderjson .boolean {
-    color: blueviolet; 
-}
-.renderjson .key    {
-    color: darkblue; 
-}
-.renderjson .keyword {
-    color: blue; 
-}
-.renderjson .object.syntax {
-    color: lightseagreen; 
-}
-.renderjson .array.syntax  {
-    color: orange; 
+
+.itemName{
+    font-family: monospace;
 }
