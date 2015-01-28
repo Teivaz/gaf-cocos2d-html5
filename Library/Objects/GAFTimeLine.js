@@ -479,8 +479,11 @@ gaf.TimeLine = gaf.Object.extend
             return;
         }
         var states = currentFrame.states;
-        states.forEach(function(state)
+        for(var stateIdx = 0, total = states.length; stateIdx < total; ++stateIdx)
         {
+            var state = states[stateIdx];
+        //states.forEach(function(state)
+        //{
             var object = objects[state.objectIdRef];
             if(!object)
             {
@@ -504,7 +507,7 @@ gaf.TimeLine = gaf.Object.extend
             {
                 object._step();
             }
-        });
+        }//);
     },
     _setAnimationRunning: function (value, recursively)
     {

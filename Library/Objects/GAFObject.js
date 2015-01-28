@@ -14,23 +14,14 @@ gaf._stateHasCtx = function(state)
     }
 
     // Check for color transform filter
-    var BreakException= {};
-    try
+    if(state.hasEffect)
     {
-        if(state.hasEffect)
+        for(var i = 0, total = state.effect.length; i < total; ++i)
         {
-            state.effect.forEach(function(effect)
-            {
-                if(effect.type === gaf.EFFECT_COLOR_MATRIX) throw BreakException;
-            });
+            if(state.effect[i].type === gaf.EFFECT_COLOR_MATRIX)
+                return true;
         }
     }
-    catch(e)
-    {
-        if (e!==BreakException) throw e;
-        return true;
-    }
-
     return false;
 };
 

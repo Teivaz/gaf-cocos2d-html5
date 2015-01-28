@@ -51,7 +51,8 @@ gaf.Sprite = gaf.Object.extend
             // Set normal shader
             if(state.hasColorTransform)
             {
-                this._sprite.setColor(state.colorTransform.mult);
+                if(!cc.colorEqual(this._sprite.getColor(), state.colorTransform.mult))
+                    this._sprite.setColor(state.colorTransform.mult);
             }
             else
             {
