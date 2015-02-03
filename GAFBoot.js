@@ -6,7 +6,8 @@ gaf.CCGAFLoader = function()
 {
     this.load = function(realUrl, url, item, cb)
     {
-        if(gaf._initialized){
+        if(!gaf._initialized)
+        {
             gaf._setup();
         }
         var loader = new gaf.Loader();

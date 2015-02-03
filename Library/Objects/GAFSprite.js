@@ -19,7 +19,12 @@ gaf.Sprite = gaf.Object.extend
     {
         var frame = this._gafproto.getFrame();
         cc.assert(frame instanceof cc.SpriteFrame, "Error. Wrong object type.");
-        this._sprite = cc.Sprite.createWithSpriteFrame(frame);
+
+        // Create sprite with custom render command from frame
+        this._sprite = new cc.Sprite();
+        this._sprite._renderCmd = this._gafCreateRenderCmd(this._sprite);
+        this._sprite.initWithSpriteFrame(frame);
+
         this._sprite.setAnchorPoint(this._gafproto.getAnchor());
         this.addChild(this._sprite);
         //this._sprite.setCascadeColorEnabled(true);
@@ -76,6 +81,12 @@ gaf.Sprite = gaf.Object.extend
     {
         var result = this._sprite.getBoundingBox();
         return cc._rectApplyAffineTransformIn(result, this.getNodeToParentTransform());
-    }
+    },
 
+    _gafCreateRenderCmd: function(item){
+        if(cc._renderType === cc._RENDER_TYPE_CANVAS)
+            return new gaf.Sprite.CanvasRenderCmd(item);
+        else
+            return new gaf.Sprite.WebGLRenderCmd(item);
+    }
 });

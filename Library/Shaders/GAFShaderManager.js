@@ -12,14 +12,14 @@ gaf._glShaderInit = function() {
 
     gaf._shaderCreate = function (fs, vs) {
         var program = new cc.GLProgram();
-        var result = program.initWithVertexShaderByteArray(fs, vs);
+        var result = program.initWithVertexShaderByteArray(vs, fs);
         cc.assert(result, "Shader init error");
         result = program.link();
         cc.assert(result, "Shader linking error");
         program.updateUniforms();
-        program.bindAttribLocation(cc.ATTRIBUTE_NAME_POSITION, cc.VERTEX_ATTRIB_POSITION);
-        program.bindAttribLocation(cc.ATTRIBUTE_NAME_COLOR, cc.VERTEX_ATTRIB_COLOR);
-        program.bindAttribLocation(cc.ATTRIBUTE_NAME_TEX_COORD, cc.VERTEX_ATTRIB_TEX_COORDS);
+        program.addAttribute(cc.ATTRIBUTE_NAME_POSITION, cc.VERTEX_ATTRIB_POSITION);
+        program.addAttribute(cc.ATTRIBUTE_NAME_COLOR, cc.VERTEX_ATTRIB_COLOR);
+        program.addAttribute(cc.ATTRIBUTE_NAME_TEX_COORD, cc.VERTEX_ATTRIB_TEX_COORDS);
         return program;
     };
 
@@ -59,6 +59,6 @@ gaf._setupShaders = function() {
         gaf._glShaderInit();
     }
     else {
-        delete gaf._glShaderInit();
+        delete gaf._glShaderInit;
     }
 };
