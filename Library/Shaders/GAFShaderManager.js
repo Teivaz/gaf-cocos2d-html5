@@ -53,11 +53,12 @@ gaf._glShaderInit = function() {
         Glow: gaf._shaderCreateGlow()
     };
 };
-/*
-if(cc._renderType === cc._RENDER_TYPE_WEBGL){
-    gaf._glShaderInit();
-}
-else{
-    delete gaf._glShaderInit();
-}
-*/
+
+gaf._setupShaders = function() {
+    if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
+        gaf._glShaderInit();
+    }
+    else {
+        delete gaf._glShaderInit();
+    }
+};

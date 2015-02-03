@@ -3,6 +3,9 @@ gaf.Sprite = gaf.Object.extend
 ({
     _className: "GAFSprite",
 
+    _hasCtx: false,
+    _hasFilter: false,
+
     ctor : function(gafSpriteProto)
     {
         this._super();
@@ -23,16 +26,7 @@ gaf.Sprite = gaf.Object.extend
         //this._sprite.setCascadeOpacityEnabled(true);
         this._sprite.setOpacityModifyRGB(true);
 
-        if(cc._renderType === cc._RENDER_TYPE_WEBGL)
-        {
-            // WebGL set up
-            this._applyCtxState = this._applyWebGLCtxState;
-        }
-        else
-        {
-            // Canvas
-            this._applyCtxState = this._applyCanvasCtxState;
-        }
+
     },
 
     _applyState : function(state, parent)
@@ -42,12 +36,22 @@ gaf.Sprite = gaf.Object.extend
         this._sprite.setOpacity(state.alpha);
         if(gaf._stateHasCtx(state))
         {
+            // Enable ctx state if wasn't enabled
+            if(this._hasCtx)
+            {
+                this._enableCtx();
+            }
             // Set ctx shader
             this._applyCtxState(state);
+            this._hasCtx = true;
         }
         else
         {
-            this._resetCtxState();
+            // Disable ctx state if was enabled
+            if(this._hasCtx)
+            {
+                this._disableCtx();
+            }
             // Set normal shader
             if(state.hasColorTransform)
             {
@@ -59,35 +63,19 @@ gaf.Sprite = gaf.Object.extend
                 if(!cc.colorEqual(this._sprite.getColor(), cc.color.WHITE))
                     this._sprite.setColor(cc.color.WHITE);
             }
+            this._hasCtx = false;
         }
     },
 
-    _resetCtxState: function(){},
+    _enableCtx: function(){},
+    _disableCtx: function(){},
 
     _applyCtxState: function(state){},
-
-    _applyWebGLCtxState: function(state)
-    {
-        //var state = this._sprite.getGLProgramState();
-    },
 
     getBoundingBoxForCurrentFrame: function ()
     {
         var result = this._sprite.getBoundingBox();
         return cc._rectApplyAffineTransformIn(result, this.getNodeToParentTransform());
-    },
-
-    _applyCanvasCtxState: function(state){}
-
+    }
 
 });
-/*
-if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
-}
-else{
-    gaf._tmp.WebGLGAFSprite();
-    delete  gaf._tmp.WebGLGAFSprite;
-}
-
-
-*/

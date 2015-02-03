@@ -16,7 +16,7 @@ gaf.Mask = gaf.Object.extend
         var maskNodeProto = this._gafproto.getMaskNodeProto();
         cc.assert(maskNodeProto, "Error. Mask node for id ref " + this._gafproto.getIdRef() + " not found.");
         this._maskNode = maskNodeProto._gafConstruct();
-        this._clippingNode = cc.ClippingNode.create(this._maskNode);
+            this._clippingNode = cc.ClippingNode.create(this._maskNode);
         this._clippingNode.setAlphaThreshold(0.5);
         this.addChild(this._clippingNode);
     },
