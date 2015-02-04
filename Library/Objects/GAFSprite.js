@@ -72,10 +72,19 @@ gaf.Sprite = gaf.Object.extend
         }
     },
 
-    _enableCtx: function(){},
-    _disableCtx: function(){},
+    _enableCtx: function()
+    {
+        this._sprite._renderCmd._enableCtx();
+    },
 
-    _applyCtxState: function(state){},
+    _disableCtx: function()
+    {
+        this._sprite._renderCmd._disableCtx();
+    },
+
+    _applyCtxState: function(state){
+        this._sprite._renderCmd._applyCtxState(state);
+    },
 
     getBoundingBoxForCurrentFrame: function ()
     {

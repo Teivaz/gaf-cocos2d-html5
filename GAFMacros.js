@@ -29,5 +29,5 @@ gaf.UNIFORM_GLOW_TEXEL_OFFSET = "u_step";
 gaf.UNIFORM_GLOW_COLOR = "u_glowColor";
 gaf.UNIFORM_ALPHA_TINT_MULT = "colorTransformMult";
 gaf.UNIFORM_ALPHA_TINT_OFFSET = "colorTransformOffsets";
-gaf.UNIFORM_ALPHA_COLOR_MATRIX_BODY = "ColorMatrixBody";
-gaf.UNIFORM_ALPHA_COLOR_MATRIX_APPENDIX = "ColorMatrixAppendix";
+gaf.UNIFORM_ALPHA_COLOR_MATRIX_BODY = "colorMatrix";
+gaf.UNIFORM_ALPHA_COLOR_MATRIX_APPENDIX = "colorMatrix2";

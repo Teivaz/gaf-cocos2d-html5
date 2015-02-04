@@ -14,22 +14,21 @@ gaf._glShaderInit = function() {
         var program = new cc.GLProgram();
         var result = program.initWithVertexShaderByteArray(vs, fs);
         cc.assert(result, "Shader init error");
-        result = program.link();
-        cc.assert(result, "Shader linking error");
-        program.updateUniforms();
         program.addAttribute(cc.ATTRIBUTE_NAME_POSITION, cc.VERTEX_ATTRIB_POSITION);
         program.addAttribute(cc.ATTRIBUTE_NAME_COLOR, cc.VERTEX_ATTRIB_COLOR);
         program.addAttribute(cc.ATTRIBUTE_NAME_TEX_COORD, cc.VERTEX_ATTRIB_TEX_COORDS);
+        result = program.link();
+        cc.assert(result, "Shader linking error");
+        program.updateUniforms();
         return program;
     };
 
     gaf._shaderCreateAlpha = function () {
         var program = gaf._shaderCreate(gaf.SHADER_COLOR_MATRIX_FRAG, cc.SHADER_POSITION_TEXTURE_COLOR_VERT);
-        program._glContext.getUniformLocation(program._programObj, gaf.UNIFORM_BLUR_TEXEL_OFFSET);
-        gaf._Uniforms.ColorTransformMult = program._glContext.getUniformLocation(program._programObj, gaf.UNIFORM_ALPHA_TINT_MULT);
-        gaf._Uniforms.ColorTransformOffset = program._glContext.getUniformLocation(program._programObj, gaf.UNIFORM_ALPHA_TINT_OFFSET);
-        gaf._Uniforms.ColorMatrixBody = program._glContext.getUniformLocation(program._programObj, gaf.UNIFORM_ALPHA_COLOR_MATRIX_BODY);
-        gaf._Uniforms.ColorMatrixAppendix = program._glContext.getUniformLocation(program._programObj, gaf.UNIFORM_ALPHA_COLOR_MATRIX_APPENDIX);
+        gaf._Uniforms.ColorTransformMult = program.getUniformLocationForName(gaf.UNIFORM_ALPHA_TINT_MULT);
+        gaf._Uniforms.ColorTransformOffset = program.getUniformLocationForName(gaf.UNIFORM_ALPHA_TINT_OFFSET);
+        gaf._Uniforms.ColorMatrixBody = program.getUniformLocationForName(gaf.UNIFORM_ALPHA_COLOR_MATRIX_BODY);
+        gaf._Uniforms.ColorMatrixAppendix = program.getUniformLocationForName(gaf.UNIFORM_ALPHA_COLOR_MATRIX_APPENDIX);
         return program;
     };
 
