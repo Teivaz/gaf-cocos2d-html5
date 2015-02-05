@@ -36,13 +36,11 @@ gaf.Sprite = gaf.Object.extend
 
     _applyState : function(state, parent)
     {
-        this._parentTimeLine = parent;
-        this.setExternalTransform(state.matrix);
-        this._sprite.setOpacity(state.alpha);
-        if(gaf._stateHasCtx(state))
+        this._super(state, parent);
+        if(this._needsCtx)
         {
             // Enable ctx state if wasn't enabled
-            if(this._hasCtx)
+            if(!this._hasCtx)
             {
                 this._enableCtx();
             }

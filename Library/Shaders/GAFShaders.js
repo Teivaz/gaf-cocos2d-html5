@@ -46,7 +46,7 @@ gaf.SHADER_COLOR_MATRIX_FRAG =
     + "{ \n"
     + "    vec4 texColor = texture2D(CC_Texture0, v_texCoord);                          \n"
     + "    const float kMinimalAlphaAllowed = 1.0e-8;                                   \n"
-    + "    if (texColor.a > kMinimalAlphaAllowed)                                       \n"
+    + "    //if (texColor.a > kMinimalAlphaAllowed)                                       \n"
     + "    {                                                                            \n"
     + "        texColor = vec4(texColor.rgb / texColor.a, texColor.a);                  \n"
     + "        vec4 ctxColor = texColor * colorTransformMult + colorTransformOffsets;   \n"

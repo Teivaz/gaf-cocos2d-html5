@@ -33,22 +33,29 @@
         this.setShaderProgram(this._customShader);
     };
 
-    proto._applyCtxState = function(state){/*
+    proto._applyCtxState = function(state){
+
+        var tintMult = this._node.getColor();
+
         this._tintMult = [
-            state.colorTransform.mult.r / 255 ,
-            state.colorTransform.mult.g / 255 ,
-            state.colorTransform.mult.b / 255 ,
-            state.colorTransform.mult.a / 255
+            tintMult.r / 255,
+            tintMult.g / 255,
+            tintMult.b / 255,
+            tintMult.a / 255
         ];
+
+        var tintOffset = this._node._cascadeTintOffset;
         this._tintOffset = [
-            state.colorTransform.offset.r / 255 ,
-            state.colorTransform.offset.g / 255 ,
-            state.colorTransform.offset.b / 255 ,
-            state.colorTransform.offset.a / 255
+            tintOffset.r / 255,
+            tintOffset.g / 255,
+            tintOffset.b / 255,
+            tintOffset.a / 255
         ];
-        if(state.hasEffect && state.effect[0].type === gaf.EFFECT_COLOR_MATRIX)
+
+        var filterStack = this._node._filterStack;
+        if(filterStack && filterStack.length > 0 && filterStack[0].type === gaf.EFFECT_COLOR_MATRIX)
         {
-            var m = state.effect[0].colorMatrix;
+            var m = filterStack[0].colorMatrix;
             this._ctxMatrixBody = [
                 m.rr, m.gr, m.br, m.ar,
                 m.rg, m.gg, m.bg, m.ag,
@@ -61,7 +68,7 @@
         {
             this._ctxMatrixBody = null;
             this._ctxMatrixAppendix = null;
-        }*/
+        }
     };
 
     proto._setUniforms = function()
@@ -84,8 +91,6 @@
             }
             else
             {
-                this._shaderProgram._glContext.uniform4fv(gaf._Uniforms.ColorTransformMult, this._identityVec);
-                this._shaderProgram._glContext.uniform4fv(gaf._Uniforms.ColorTransformMult, this._identityVec);
                 this._shaderProgram.setUniformLocationWith4fv(
                     gaf._Uniforms.ColorTransformMult,
                     this._identityVec,

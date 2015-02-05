@@ -33,12 +33,15 @@ gaf.Object = cc.Node.extend
     _gafproto : null,
     _parentTimeLine : null,
     _lastVisibleInFrame : 0,
-
+    _filterStack : null,
+    _cascadeTintOffset : null,
+    _needsCtx : false,
 
     // Public methods
     ctor: function()
     {
         this._super();
+        this._cascadeTintOffset = cc.color(0, 0, 0, 0);
     },
 
     /**
@@ -331,8 +334,59 @@ gaf.Object = cc.Node.extend
 
     _applyState : function(state, parent)
     {
+        this._needsCtx = false;
+        this._filterStack = [];
         this._parentTimeLine = parent;
         this.setExternalTransform(state.matrix);
+
+        this.setOpacity(state.alpha);
+
+        if (state.hasEffect) {
+            this._filterStack.push(state.effect);
+            this._needsCtx = true;
+        }
+        if (parent._filterStack && parent._filterStack.length > 0) {
+            this._filterStack.push(parent._filterStack);
+            this._needsCtx = true;
+        }
+        if (state.hasColorTransform)
+        {
+            if(!cc.colorEqual(this.getColor(), state.colorTransform.mult))
+            {
+                this.setColor(state.colorTransform.mult);
+            }
+
+            this._cascadeTintOffset.r = state.colorTransform.offset.r;
+            this._cascadeTintOffset.g = state.colorTransform.offset.g;
+            this._cascadeTintOffset.b = state.colorTransform.offset.b;
+            this._cascadeTintOffset.a = state.colorTransform.offset.a;
+            if (this._cascadeTintOffset.r > 0 ||
+                this._cascadeTintOffset.g > 0 ||
+                this._cascadeTintOffset.b > 0 ||
+                this._cascadeTintOffset.a > 0)
+            {
+                this._needsCtx = true;
+            }
+        }
+        else
+        {
+            if(!cc.colorEqual(this.getColor(), cc.color.WHITE))
+            {
+                this.setColor(cc.color.WHITE);
+            }
+
+            this._cascadeTintOffset.r = 0;
+            this._cascadeTintOffset.g = 0;
+            this._cascadeTintOffset.b = 0;
+            this._cascadeTintOffset.a = 0;
+        }
+        if(parent._cascadeTintOffset)
+        {
+            this._cascadeTintOffset.r += parent._cascadeTintOffset.r;
+            this._cascadeTintOffset.g += parent._cascadeTintOffset.g;
+            this._cascadeTintOffset.b += parent._cascadeTintOffset.b;
+            this._cascadeTintOffset.a += parent._cascadeTintOffset.a;
+        }
     },
 
     _initRendererCmd: function()
