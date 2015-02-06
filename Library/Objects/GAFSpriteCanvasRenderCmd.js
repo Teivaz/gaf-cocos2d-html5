@@ -10,6 +10,6 @@
 
     proto._enableCtx = function(){};
 
-    proto._applyCtxState = function(state){};
+    proto._applyCtxState = function(gafObject){};
 
 })();

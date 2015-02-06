@@ -33,10 +33,8 @@
         this.setShaderProgram(this._customShader);
     };
 
-    proto._applyCtxState = function(state){
-
-        var tintMult = this._node.getColor();
-
+    proto._applyCtxState = function(gafObject){
+        var tintMult = gafObject.getDisplayedColor();
         this._tintMult = [
             tintMult.r / 255,
             tintMult.g / 255,
@@ -44,7 +42,7 @@
             tintMult.a / 255
         ];
 
-        var tintOffset = this._node._cascadeTintOffset;
+        var tintOffset = gafObject._cascadeColorOffset;
         this._tintOffset = [
             tintOffset.r / 255,
             tintOffset.g / 255,
@@ -52,8 +50,8 @@
             tintOffset.a / 255
         ];
 
-        var filterStack = this._node._filterStack;
-        if(filterStack && filterStack.length > 0 && filterStack[0].type === gaf.EFFECT_COLOR_MATRIX)
+        var filterStack = gafObject._filterStack;
+        if(false)//filterStack && filterStack.length > 0 && filterStack[0].type === gaf.EFFECT_COLOR_MATRIX)
         {
             var m = filterStack[0].colorMatrix;
             this._ctxMatrixBody = [

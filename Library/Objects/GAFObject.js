@@ -34,14 +34,17 @@ gaf.Object = cc.Node.extend
     _parentTimeLine : null,
     _lastVisibleInFrame : 0,
     _filterStack : null,
-    _cascadeTintOffset : null,
+    _cascadeColorMult : null,
+    _cascadeColorOffset : null,
     _needsCtx : false,
 
     // Public methods
     ctor: function()
     {
         this._super();
-        this._cascadeTintOffset = cc.color(0, 0, 0, 0);
+        this._cascadeColorMult = cc.color(255, 255, 255, 255);
+        this._cascadeColorOffset = cc.color(0, 0, 0, 0);
+        this._filterStack = [];
     },
 
     /**
@@ -334,58 +337,60 @@ gaf.Object = cc.Node.extend
 
     _applyState : function(state, parent)
     {
-        this._needsCtx = false;
-        this._filterStack = [];
-        this._parentTimeLine = parent;
-        this.setExternalTransform(state.matrix);
+        this._needsCtx = parent._needsCtx;
+        this._filterStack.length = 0; // clear
+        this._parentTimeLine = parent; // only gaf time line can call applyState. Assign it as parent
+        this.setExternalTransform(state.matrix); // apply transformations of the state
 
-        this.setOpacity(state.alpha);
-
+        // Cascade filters
+        // TODO: apply more than one filter
         if (state.hasEffect) {
             this._filterStack.push(state.effect);
             this._needsCtx = true;
         }
         if (parent._filterStack && parent._filterStack.length > 0) {
             this._filterStack.push(parent._filterStack);
+        }
+
+        if(this._filterStack.length > 0 && this._filterStack[0].type === gaf.EFFECT_COLOR_MATRIX)
+        {
             this._needsCtx = true;
         }
+
+        // Cascade color transformations
+
+        // If state has a tint, then we should process it
         if (state.hasColorTransform)
         {
-            if(!cc.colorEqual(this.getColor(), state.colorTransform.mult))
-            {
-                this.setColor(state.colorTransform.mult);
-            }
+            this._cascadeColorMult.r = state.colorTransform.mult.r * parent._cascadeColorMult.r / 255;
+            this._cascadeColorMult.g = state.colorTransform.mult.g * parent._cascadeColorMult.g / 255;
+            this._cascadeColorMult.b = state.colorTransform.mult.b * parent._cascadeColorMult.b / 255;
+            this._cascadeColorMult.a = state.colorTransform.mult.a * parent._cascadeColorMult.a / 255;
 
-            this._cascadeTintOffset.r = state.colorTransform.offset.r;
-            this._cascadeTintOffset.g = state.colorTransform.offset.g;
-            this._cascadeTintOffset.b = state.colorTransform.offset.b;
-            this._cascadeTintOffset.a = state.colorTransform.offset.a;
-            if (this._cascadeTintOffset.r > 0 ||
-                this._cascadeTintOffset.g > 0 ||
-                this._cascadeTintOffset.b > 0 ||
-                this._cascadeTintOffset.a > 0)
-            {
-                this._needsCtx = true;
-            }
+            this._cascadeColorOffset.r = state.colorTransform.offset.r + parent._cascadeColorOffset.r;
+            this._cascadeColorOffset.g = state.colorTransform.offset.g + parent._cascadeColorOffset.g;
+            this._cascadeColorOffset.b = state.colorTransform.offset.b + parent._cascadeColorOffset.b;
+            this._cascadeColorOffset.a = state.colorTransform.offset.a + parent._cascadeColorOffset.a;
         }
         else
         {
-            if(!cc.colorEqual(this.getColor(), cc.color.WHITE))
-            {
-                this.setColor(cc.color.WHITE);
-            }
+            this._cascadeColorMult.r = parent._cascadeColorMult.r;
+            this._cascadeColorMult.g = parent._cascadeColorMult.g;
+            this._cascadeColorMult.b = parent._cascadeColorMult.b;
+            this._cascadeColorMult.a = state.alpha * parent._cascadeColorMult.a / 255;
 
-            this._cascadeTintOffset.r = 0;
-            this._cascadeTintOffset.g = 0;
-            this._cascadeTintOffset.b = 0;
-            this._cascadeTintOffset.a = 0;
+            this._cascadeColorOffset.r = parent._cascadeColorOffset.r;
+            this._cascadeColorOffset.g = parent._cascadeColorOffset.g;
+            this._cascadeColorOffset.b = parent._cascadeColorOffset.b;
+            this._cascadeColorOffset.a = parent._cascadeColorOffset.a;
         }
-        if(parent._cascadeTintOffset)
+
+        if (this._cascadeColorOffset.r > 0 ||
+            this._cascadeColorOffset.g > 0 ||
+            this._cascadeColorOffset.b > 0 ||
+            this._cascadeColorOffset.a > 0)
         {
-            this._cascadeTintOffset.r += parent._cascadeTintOffset.r;
-            this._cascadeTintOffset.g += parent._cascadeTintOffset.g;
-            this._cascadeTintOffset.b += parent._cascadeTintOffset.b;
-            this._cascadeTintOffset.a += parent._cascadeTintOffset.a;
+            this._needsCtx = true;
         }
     },
 

@@ -482,8 +482,6 @@ gaf.TimeLine = gaf.Object.extend
         for(var stateIdx = 0, total = states.length; stateIdx < total; ++stateIdx)
         {
             var state = states[stateIdx];
-        //states.forEach(function(state)
-        //{
             var object = objects[state.objectIdRef];
             if(!object)
             {

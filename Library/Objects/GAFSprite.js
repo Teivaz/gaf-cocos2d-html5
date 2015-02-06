@@ -34,6 +34,11 @@ gaf.Sprite = gaf.Object.extend
 
     },
 
+    setExternalTransform: function(m)
+    {
+        this._sprite.setAdditionalTransform(m);
+    },
+
     _applyState : function(state, parent)
     {
         this._super(state, parent);
@@ -43,10 +48,10 @@ gaf.Sprite = gaf.Object.extend
             if(!this._hasCtx)
             {
                 this._enableCtx();
+                this._hasCtx = true;
             }
             // Set ctx shader
             this._applyCtxState(state);
-            this._hasCtx = true;
         }
         else
         {
@@ -54,19 +59,8 @@ gaf.Sprite = gaf.Object.extend
             if(this._hasCtx)
             {
                 this._disableCtx();
+                this._hasCtx = false;
             }
-            // Set normal shader
-            if(state.hasColorTransform)
-            {
-                if(!cc.colorEqual(this._sprite.getColor(), state.colorTransform.mult))
-                    this._sprite.setColor(state.colorTransform.mult);
-            }
-            else
-            {
-                if(!cc.colorEqual(this._sprite.getColor(), cc.color.WHITE))
-                    this._sprite.setColor(cc.color.WHITE);
-            }
-            this._hasCtx = false;
         }
     },
 
@@ -81,7 +75,7 @@ gaf.Sprite = gaf.Object.extend
     },
 
     _applyCtxState: function(state){
-        this._sprite._renderCmd._applyCtxState(state);
+        this._sprite._renderCmd._applyCtxState(this);
     },
 
     getBoundingBoxForCurrentFrame: function ()
