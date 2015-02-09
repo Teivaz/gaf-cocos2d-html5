@@ -34,7 +34,7 @@
     };
 
     proto._applyCtxState = function(gafObject){
-        var tintMult = gafObject.getDisplayedColor();
+        var tintMult = gafObject._cascadeColorMult;
         this._tintMult = [
             tintMult.r / 255,
             tintMult.g / 255,
@@ -51,16 +51,21 @@
         ];
 
         var filterStack = gafObject._filterStack;
-        if(false)//filterStack && filterStack.length > 0 && filterStack[0].type === gaf.EFFECT_COLOR_MATRIX)
+        if(filterStack && filterStack.length > 0 && filterStack[0].type === gaf.EFFECT_COLOR_MATRIX)
         {
             var m = filterStack[0].colorMatrix;
             this._ctxMatrixBody = [
-                m.rr, m.gr, m.br, m.ar,
-                m.rg, m.gg, m.bg, m.ag,
-                m.rb, m.gb, m.bb, m.ab,
-                m.ra, m.ga, m.ba, m.aa
+                m.rr, m.rg, m.rb, m.ra,
+                m.gr, m.gg, m.gb, m.ga,
+                m.br, m.bg, m.bb, m.ba,
+                m.ar, m.ag, m.ab, m.aa
             ];
-            this._ctxMatrixAppendix = [m.r, m.g, m.b, m.a];
+            this._ctxMatrixAppendix = [
+                m.r / 255,
+                m.g / 255,
+                m.b / 255,
+                m.a / 255
+            ];
         }
         else
         {
@@ -74,7 +79,6 @@
         if(this._shaderProgram === this._customShader)
         {
             this._shaderProgram.use();
-            if(this._tintMult && this._tintOffset)
             {
                 this._shaderProgram.setUniformLocationWith4fv(
                     gaf._Uniforms.ColorTransformMult,
@@ -84,19 +88,6 @@
                 this._shaderProgram.setUniformLocationWith4fv(
                     gaf._Uniforms.ColorTransformOffset,
                     this._tintOffset,
-                    1
-                );
-            }
-            else
-            {
-                this._shaderProgram.setUniformLocationWith4fv(
-                    gaf._Uniforms.ColorTransformMult,
-                    this._identityVec,
-                    1
-                );
-                this._shaderProgram.setUniformLocationWith4fv(
-                    gaf._Uniforms.ColorTransformOffset,
-                    this._zeroVec,
                     1
                 );
             }
@@ -127,10 +118,6 @@
                     1
                 );
             }
-        }
-        else
-        {
-            var a;
         }
     };
 

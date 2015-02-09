@@ -345,11 +345,11 @@ gaf.Object = cc.Node.extend
         // Cascade filters
         // TODO: apply more than one filter
         if (state.hasEffect) {
-            this._filterStack.push(state.effect);
+            this._filterStack = this._filterStack.concat(state.effect);
             this._needsCtx = true;
         }
         if (parent._filterStack && parent._filterStack.length > 0) {
-            this._filterStack.push(parent._filterStack);
+            this._filterStack = this._filterStack.concat(parent._filterStack);
         }
 
         if(this._filterStack.length > 0 && this._filterStack[0].type === gaf.EFFECT_COLOR_MATRIX)
