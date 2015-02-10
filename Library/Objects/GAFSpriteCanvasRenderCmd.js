@@ -29,7 +29,7 @@
         // Super call
         cc.Sprite.CanvasRenderCmd.prototype.rendering.call(this, ctx, scaleX, scaleY);
 
-        if(this._hasTint)
+        if(false)//this._hasTint)
         {
             var node = this._node;
             var contentSize = node._contentSize;

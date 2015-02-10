@@ -33,12 +33,7 @@ gaf.Sprite = gaf.Object.extend
 
 
     },
-
-    setExternalTransform: function(m)
-    {
-        this._sprite.setAdditionalTransform(m);
-    },
-
+    
     _applyState : function(state, parent)
     {
         this._super(state, parent);
