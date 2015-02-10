@@ -24,7 +24,8 @@ gaf._TimeLineProto = function(asset, animationFrameCount, boundingBox, pivotPoin
      */
     this._gafConstruct = function()
     {
-        var ret = new gaf.TimeLine(this);
+        var usedScale = this.getAsset()._usedAtlasScale;
+        var ret = new gaf.TimeLine(this, usedScale);
         ret._init();
         return ret;
     };

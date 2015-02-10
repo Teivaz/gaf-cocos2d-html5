@@ -55,6 +55,8 @@ gaf._AssetPreload.End = function(asset, content, timeLine){
 
 gaf._AssetPreload.Atlases = function(asset, content, timeLine)
 {
+    asset._atlasScales[content.scale] = asset._atlasScales[content.scale] || [];
+    var spriteFrames = asset._atlasScales[content.scale];
     var csf = cc.Director._getInstance().getContentScaleFactor();
     var atlases = [];
     content.atlases.forEach(function(item)
@@ -67,8 +69,9 @@ gaf._AssetPreload.Atlases = function(asset, content, timeLine)
                 atlasPath = atlasSource.source;
             }
         });
-        atlases[item.id] = cc.textureCache.getTextureForKey(atlasPath);
-        cc.assert(atlases[item.id], "Error loading texture!");
+        var atlas = cc.textureCache.getTextureForKey(atlasPath);
+        cc.assert(atlas, "Error loading texture!");
+        atlases[item.id] = atlas;
     });
 
     content.elements.forEach(function(item)
@@ -86,7 +89,7 @@ gaf._AssetPreload.Atlases = function(asset, content, timeLine)
             y: (0 + (1 - (item.pivot.y / item.size.y)))
         };
         //frame.setAnchorPoint(frame._gafAnchor);
-        asset._spriteFrames[item.elementAtlasId] = frame;
+        spriteFrames[item.elementAtlasId] = frame;
         // 9 grid
     });
 };

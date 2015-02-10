@@ -298,9 +298,9 @@ gaf.TimeLine = gaf.Object.extend
 
     // Private
 
-    ctor: function(gafTimeLineProto)
+    ctor: function(gafTimeLineProto, scale)
     {
-        this._super();
+        this._super(scale);
         this._objects = [];
         cc.assert(gafTimeLineProto,  "Error! Missing mandatory parameter.");
         this._gafproto = gafTimeLineProto;

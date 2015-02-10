@@ -37,10 +37,12 @@ gaf.Object = cc.Node.extend
     _cascadeColorMult : null,
     _cascadeColorOffset : null,
     _needsCtx : false,
+    _usedAtlasScale: 0,
 
     // Public methods
-    ctor: function()
+    ctor: function(scale)
     {
+        this._usedAtlasScale = scale;
         this._super();
         this._cascadeColorMult = cc.color(255, 255, 255, 255);
         this._cascadeColorOffset = cc.color(0, 0, 0, 0);
@@ -340,8 +342,17 @@ gaf.Object = cc.Node.extend
         this._needsCtx = parent._needsCtx;
         this._filterStack.length = 0; // clear
         this._parentTimeLine = parent; // only gaf time line can call applyState. Assign it as parent
-        this.setExternalTransform(state.matrix); // apply transformations of the state
-
+        if(this._usedAtlasScale != 1)
+        {
+            var newMat = cc.clone(state.matrix);
+            newMat.tx *= this._usedAtlasScale;
+            newMat.ty *= this._usedAtlasScale;
+            this.setExternalTransform(newMat); // apply transformations of the state
+        }
+        else
+        {
+            this.setExternalTransform(state.matrix); // apply transformations of the state
+        }
         // Cascade filters
         // TODO: apply more than one filter
         if (state.hasEffect) {

@@ -6,7 +6,6 @@ gaf.Asset = cc.Class.extend
 
     // Private members
     _header: null,
-    _spriteFrames: null,
     _timeLines: null,
     _textFields: null,
     _protos: null,
@@ -20,6 +19,9 @@ gaf.Asset = cc.Class.extend
     _sceneHeight: 0,
     _sceneColor: 0,
     _gafData: null,
+    _desiredAtlasScale: 1,
+    _usedAtlasScale: 0,
+    _atlasScales: null,
 
     /**
      * @method initWithGAFFile
@@ -100,6 +102,32 @@ gaf.Asset = cc.Class.extend
         return true;
     },
 
+    /**
+     * Desired atlas scale.
+     * Default is 1.0f
+     * @returns {number}
+     */
+    desiredAtlasScale : function(){
+        return this._desiredAtlasScale;
+    },
+
+    /**
+     * Sets desired atlas scale. Will choose nearest atlas scale from available.
+     * Default is 1.0f
+     * @param scale
+     */
+    setDesiredAtlasScale : function(desiredAtlasScale){
+        this._desiredAtlasScale = desiredAtlasScale;
+        for(var currentScale in this._atlasScales)if(this._atlasScales.hasOwnProperty(currentScale))
+        {
+            if( (this._usedAtlasScale === 0) ||
+                (Math.abs(this._usedAtlasScale - desiredAtlasScale) > Math.abs(currentScale - desiredAtlasScale) ))
+            {
+                this._usedAtlasScale = currentScale;
+            }
+
+        }
+    },
 
     /**
      * @method createObject
@@ -220,12 +248,12 @@ gaf.Asset = cc.Class.extend
     ctor : function()
     {
         this._header = {};
-        this._spriteFrames = [];
         this._timeLines = [];
         this._textFields = [];
         this._objects = [];
         this._masks = [];
         this._protos = [];
+        this._atlasScales = {};
     },
 
     _getProtos: function()
@@ -264,7 +292,7 @@ gaf.Asset = cc.Class.extend
         this._timeLinesToLink = [];
         if(this._getMajorVerison() < 4)
         {
-            this._pushTimeLine(new gaf._TimeLineProto(this._header.framesCount, this._header.frameSize, this._header.pivot));
+            this._pushTimeLine(new gaf._TimeLineProto(this, this._header.framesCount, this._header.frameSize, this._header.pivot));
         }
         gaf._AssetPreload.Tags(this, gafData.tags, this._rootTimeLine);
 
@@ -277,7 +305,7 @@ gaf.Asset = cc.Class.extend
                     // Create gaf sprite proto if it is not yet created
                     if(!self._protos[item.objectId])
                     {
-                        self._protos[item.objectId] = new gaf._SpriteProto(self._spriteFrames[item.elementAtlasIdRef], item.elementAtlasIdRef);
+                        self._protos[item.objectId] = new gaf._SpriteProto(self, self._atlasScales, item.elementAtlasIdRef);
                     }
                     break;
                 case gaf.TYPE_TIME_LINE:
@@ -304,7 +332,7 @@ gaf.Asset = cc.Class.extend
             {
                 case gaf.TYPE_TEXTURE:
                     // Create gaf sprite proto if it is not yet created
-                    proto = new gaf._SpriteProto(self._spriteFrames[item.elementAtlasIdRef], item.elementAtlasIdRef);
+                    proto = new gaf._SpriteProto(self, self._atlasScales, item.elementAtlasIdRef);
                     break;
                 case gaf.TYPE_TIME_LINE:
                     // All time line protos are already created, just copy reference
@@ -315,8 +343,9 @@ gaf.Asset = cc.Class.extend
                     proto = self._textFields[item.elementAtlasIdRef];
                     break;
             }
-            self._protos[item.objectId] = new gaf._MaskProto(proto, item.elementAtlasIdRef);
+            self._protos[item.objectId] = new gaf._MaskProto(self, proto, item.elementAtlasIdRef);
         });
+        this.setDesiredAtlasScale(this._desiredAtlasScale);
     },
 
     _pushTimeLine : function(timeLine)

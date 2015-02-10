@@ -6,9 +6,9 @@ gaf.Sprite = gaf.Object.extend
     _hasCtx: false,
     _hasFilter: false,
 
-    ctor : function(gafSpriteProto)
+    ctor : function(gafSpriteProto, usedScale)
     {
-        this._super();
+        this._super(usedScale);
         cc.assert(gafSpriteProto, "Error! Missing mandatory parameter.");
         this._gafproto = gafSpriteProto;
     },
