@@ -37,12 +37,15 @@ gaf.Object = cc.Node.extend
     _cascadeColorMult : null,
     _cascadeColorOffset : null,
     _needsCtx : false,
-    _usedAtlasScale: 0,
+    _usedAtlasScale: 1,
 
     // Public methods
     ctor: function(scale)
     {
-        this._usedAtlasScale = scale;
+        if(arguments.length == 1)
+        {
+            this._usedAtlasScale = scale;
+        }
         this._super();
         this._cascadeColorMult = cc.color(255, 255, 255, 255);
         this._cascadeColorOffset = cc.color(0, 0, 0, 0);

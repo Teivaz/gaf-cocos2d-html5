@@ -56,10 +56,17 @@ gaf.Sprite = gaf.Object.extend
                 this._disableCtx();
                 this._hasCtx = false;
             }
+            // Apply color
             if(!cc.colorEqual(this._sprite.getColor(), this._cascadeColorMult))
             {
                 this._sprite.setColor(this._cascadeColorMult);
             }
+            // Apply opacity
+            if(this._sprite.getOpacity() != this._cascadeColorMult.a)
+            {
+                this._sprite.setOpacity(this._cascadeColorMult.a);
+            }
+
         }
     },
 
