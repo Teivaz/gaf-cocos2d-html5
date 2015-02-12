@@ -391,7 +391,7 @@ gaf.Object = cc.Node.extend
             this._cascadeColorMult.r = parent._cascadeColorMult.r;
             this._cascadeColorMult.g = parent._cascadeColorMult.g;
             this._cascadeColorMult.b = parent._cascadeColorMult.b;
-            this._cascadeColorMult.a = state.alpha * parent._cascadeColorMult.a / 255;
+            this._cascadeColorMult.a = state.alpha * (parent._cascadeColorMult.a / 255);
 
             this._cascadeColorOffset.r = parent._cascadeColorOffset.r;
             this._cascadeColorOffset.g = parent._cascadeColorOffset.g;
