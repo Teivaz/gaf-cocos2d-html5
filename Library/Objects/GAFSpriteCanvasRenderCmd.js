@@ -5,8 +5,9 @@
         this._hasTintMult = false;
         this._hasTintOffset = false;
         this._hasCtx = false;
-        this._tintMult = null;
-        this._tintOffset = null;
+        this._tintMult = cc.color(255,255,255,255);
+        this._tintOffset = cc.color(0,0,0,0);
+        this._textureDirty = false;
     };
     var proto = gaf.Sprite.CanvasRenderCmd.prototype = Object.create(cc.Sprite.CanvasRenderCmd.prototype);
     proto.constructor = gaf.Sprite.CanvasRenderCmd;
@@ -21,7 +22,9 @@
     };
 
     proto._applyCtxState = function(gafObject){
-        //this.setDirtyFlag(cc.Node._dirtyFlags.colorDirty | cc.Node._dirtyFlags.opacityDirty);
+        var multDirty = !cc.colorEqual(this._tintMult, gafObject._cascadeColorMult);
+        var offfsetDirty = !cc.colorEqual(this._tintOffset, gafObject._cascadeColorOffset);
+        this._textureDirty = multDirty || offfsetDirty;
         var tintMult = this._tintMult = gafObject._cascadeColorMult;
         this._hasTintMult = (tintMult.r !== 255 ||
                              tintMult.g !== 255 ||
@@ -37,6 +40,15 @@
 
         this._hasCtx = gafObject._filterStack.length > 0 && gafObject._filterStack[0].type === gaf.EFFECT_COLOR_MATRIX;
 
+        // Apply opacity
+        if(this._node.getOpacity() != tintMult.a)
+        {
+            this._node.setOpacity(tintMult.a);
+        }
+        if(multDirty)
+        {
+            this._node.setColor(tintMult);
+        }
     };
 
     proto.rendering = function(ctx, scaleX, scaleY)
@@ -83,52 +95,23 @@
         cc.g_NumberOfDraws++;
     };
 
-    if(!cc.sys._supportCanvasNewBlendModes){
-        proto._updateColor = function () {
-            var node = this._node, displayedColor = this._displayedColor;
-
-            if (displayedColor.r === 255 && displayedColor.g === 255 && displayedColor.b === 255){
-                if(this._colorized){
-                    this._colorized = false;
-                    node.texture = this._originalTexture;
-                }
-                return;
-            }
-
-            var locElement, locTexture = node._texture, locRect = this._textureCoord;
-            if (locTexture && locRect.validRect && this._originalTexture) {
-                locElement = locTexture.getHtmlElementObj();
-                if (!locElement)
-                    return;
-
-                var cacheTextureForColor = cc.textureCache.getTextureColors(this._originalTexture.getHtmlElementObj());
-                if (cacheTextureForColor) {
-                    this._colorized = true;
-                    //generate color texture cache
-                    if (locElement instanceof HTMLCanvasElement && !this._rectRotated && !this._newTextureWhenChangeColor)
-                        cc.Sprite.CanvasRenderCmd._generateTintImage(locElement, cacheTextureForColor, displayedColor, locRect, locElement);
-                    else {
-                        locElement = cc.Sprite.CanvasRenderCmd._generateTintImage(locElement, cacheTextureForColor, displayedColor, locRect);
-                        locTexture = new cc.Texture2D();
-                        locTexture.initWithElement(locElement);
-                        locTexture.handleLoadedTexture();
-                        node.texture = locTexture;
-                    }
-                }
-            }
-        };
-    } else {
+    if(cc.sys._supportCanvasNewBlendModes){
         proto._updateColor = function () {
             var displayedColor = this._displayedColor, node = this._node;
             this._hasTintMult |= (displayedColor.r !== 255 || displayedColor.g !== 255 || displayedColor.b !== 255);
 
             // If no color changes
-            //if(!this._hasTintMult && !this._hasTintOffset && !this._hasCtx)
+            if(this._textureDirty)
             {
+                this._textureDirty = false;
                 if (this._colorized) {
                     this._colorized = false;
                     node.texture = this._originalTexture;
                 }
+            }
+            else
+            {
+                return;
             }
 
             var locElement, locTexture = node._texture, locRect = this._textureCoord;
