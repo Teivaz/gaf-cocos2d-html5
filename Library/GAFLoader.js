@@ -20,12 +20,12 @@ gaf.Loader = function(){
         var scaleCount = stream.Uint();
         header.scaleValues = [];
         for(var i = 0; i < scaleCount; ++i){
-            header.scaleValues.push(stream.float());
+            header.scaleValues.push(stream.Float());
         }
         var csfCount = stream.Uint();
         header.csfValues = [];
         for(var i = 0; i < csfCount; ++i){
-            header.csfValues.push(stream.float());
+            header.csfValues.push(stream.Float());
         }
     };
 

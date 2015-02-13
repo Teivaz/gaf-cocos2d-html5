@@ -43,7 +43,7 @@ gaf.DataReader.prototype.Uint = function() {
     return this.buf.getUint32(this.newOffset(4), true);
 };
 
-gaf.DataReader.prototype.int = function() {
+gaf.DataReader.prototype.Int = function() {
     return this.buf.getInt32(this.newOffset(4), true);
 };
 
@@ -60,7 +60,7 @@ gaf.DataReader.prototype.Ushort = function() {
     return this.buf.getUint16(this.newOffset(2), true);
 };
 
-gaf.DataReader.prototype.float = function() {
+gaf.DataReader.prototype.Float = function() {
     return this.buf.getFloat32(this.newOffset(4), true);
 };
 
@@ -82,28 +82,28 @@ gaf.DataReader.prototype.endNestedBuffer = function() {
 
 gaf.DataReader.prototype.Point = function(){
     return {
-        x: this.float(),
-        y: this.float()
+        x: this.Float(),
+        y: this.Float()
     };
 };
 
 gaf.DataReader.prototype.Rect = function(){
     return {
-        x: this.float(),
-        y: this.float(),
-        width: this.float(),
-        height: this.float()
+        x: this.Float(),
+        y: this.Float(),
+        width: this.Float(),
+        height: this.Float()
     };
 };
 
 gaf.DataReader.prototype.Matrix = function(){
     return {
-        a: this.float(),
-        b: this.float(),
-        c: this.float(),
-        d: this.float(),
-        tx: this.float(),
-        ty: this.float()
+        a: this.Float(),
+        b: this.Float(),
+        c: this.Float(),
+        d: this.Float(),
+        tx: this.Float(),
+        ty: this.Float()
     };
 };
 

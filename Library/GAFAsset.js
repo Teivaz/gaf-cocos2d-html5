@@ -53,49 +53,19 @@ gaf.Asset = cc.Class.extend
      */
     setRootTimelineWithName: function (name)
     {
-        if (this._rootTimeLine &&
-            this._rootTimeLine.getLinkageName() === name)
+        for(var i = 0, end = this._timeLines.length; i < end; ++i)
         {
-            return;
-        }
-
-        var BreakException = {};
-        var self = this;
-        try
-        {
-            self._timeLines.forEach(function (object)
+            var object = this._timeLines[i];
+            if (object && object.getLinkageName() === name)
             {
-                if (object.getLinkageName() === name)
-                {
-                    self._setRootTimeline(object);
-                    throw BreakException;
-                }
-            });
-        }
-        catch(e)
-        {
-            if (e!==BreakException)
-            {
-                throw e;
+                this._setRootTimeline(object);
+                return;
             }
         }
     },
 
-
-
-    /**
-     * @method createWithBundle
-     * @param {String} zipFilePath - path to the archive with .gaf and its textures
-     * @param {String} entryFile - name of the .gaf file in archive
-     * @param {function({path:String})} delegate - is used to change atlas path, e.g. to load `atlas.tga` instead of `atlas.png`
-     * @return {gaf.Asset}
-     */
-    createWithBundle: function (zipFilePath, entryFile, delegate)
-    {
-        var asset = new gaf.Asset();
-        asset.initWithGAFBundle(zipFilePath, entryFile, delegate);
-        return asset;
-    },
+    addEventListener: function(name, listener)
+    {},
 
     isAssetVersionPlayable: function ()
     {
@@ -367,7 +337,6 @@ gaf.Asset = cc.Class.extend
 
 });
 
-
 /**
  * @method initWithGAFFile
  * @param {String} gafFilePath - path to .gaf file
@@ -378,5 +347,19 @@ gaf.Asset.create = function (gafFilePath, delegate)
 {
     var asset = new gaf.Asset();
     asset.initWithGAFFile(gafFilePath, delegate);
+    return asset;
+};
+
+/**
+ * @method createWithBundle
+ * @param {String} zipFilePath - path to the archive with .gaf and its textures
+ * @param {String} entryFile - name of the .gaf file in archive
+ * @param {function({path:String})} delegate - is used to change atlas path, e.g. to load `atlas.tga` instead of `atlas.png`
+ * @return {gaf.Asset}
+ */
+gaf.Asset.createWithBundle = function (zipFilePath, entryFile, delegate)
+{
+    var asset = new gaf.Asset();
+    asset.initWithGAFBundle(zipFilePath, entryFile, delegate);
     return asset;
 };

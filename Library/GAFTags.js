@@ -5,7 +5,7 @@ gaf.ReadSingleTag = function(stream){
     var result = {};
     if(typeof tag === "undefined"){
         console.log("GAF. Non implemented tag detected.");
-        gaf.Tags.default.parse(stream, tagId);
+        gaf.Tags.Default.parse(stream, tagId);
     }
     else{
         //console.log("tag " + tag.tagName);
@@ -37,7 +37,7 @@ gaf.ReadTags = function(stream){
 
 
 gaf.Tag = function(){
-    this.default = Object.create(gaf.Tag.base);
+    this.Default = Object.create(gaf.Tag.base);
     this["0"] = Object.create(gaf.Tag.End);
     this["1"] = Object.create(gaf.Tag.DefineAtlas);
     this["2"] = Object.create(gaf.Tag.DefineAnimationMasks);
@@ -77,18 +77,18 @@ gaf.Tag.DefineAtlas = Object.create(gaf.Tag.base);
 gaf.Tag.DefineAtlas.tagName = "TagDefineAtlas";
 gaf.Tag.DefineAtlas.doParse = function (s) {
     var exec = s.fields(
-        'scale', 'float',
+        'scale', 'Float',
         'atlases', s.array('Ubyte', s.fields(
             'id', 'Uint',
             'sources', s.array('Ubyte', s.fields(
                 'source', 'String',
-                'csf', 'float'
+                'csf', 'Float'
             ))
         )),
         'elements', s.array('Uint', s.fields(
             'pivot', 'Point',
             'origin', 'Point',
-            'scale', 'float',
+            'scale', 'Float',
             'size', 'Point',
             'atlasId', 'Uint',
             'elementAtlasId', 'Uint'
@@ -133,17 +133,17 @@ gaf.Tag.DefineAnimationFrames.doParse = function(s){
             'hasMask', 'Ubyte',
             'hasEffect', 'Ubyte',
             'objectIdRef', 'Uint',
-            'depth', 'int',
-            'alpha', 'float',
+            'depth', 'Int',
+            'alpha', 'Float',
             'matrix', 'Matrix',
             'colorTransform', s.condition('hasColorTransform', 1, s.fields(
-                'alphaOffset', 'float',
-                'redMultiplier', 'float',
-                'redOffset', 'float',
-                'greenMultiplier', 'float',
-                'greenOffset', 'float',
-                'blueMultiplier', 'float',
-                'blueOffset', 'float'
+                'alphaOffset', 'Float',
+                'redMultiplier', 'Float',
+                'redOffset', 'Float',
+                'greenMultiplier', 'Float',
+                'greenOffset', 'Float',
+                'blueMultiplier', 'Float',
+                'blueOffset', 'Float'
             )),
             'effect', s.condition('hasEffect', 1, s.array('Ubyte', gaf.Tag._readFilter(s))),
             'maskObjectIdRef', s.condition('hasMask', 1, s.fields(
@@ -188,8 +188,8 @@ gaf.Tag.DefineTextFields.doParse = function(s) {
         'id', 'Uint',
         'pivot', 'Point',
         'end', 'Ushort',
-        'width', 'float',
-        'height', 'float',
+        'width', 'Float',
+        'height', 'Float',
         'text', 'String',
         'embedFonts', 'Boolean',
         'multiline', 'Boolean',
@@ -211,7 +211,7 @@ gaf.Tag.DefineTextFields.doParse = function(s) {
         'kerning', 'Boolean',
         'leading', 'Uint',
         'leftMargin', 'Uint',
-        'letterSpacing', 'float',
+        'letterSpacing', 'Float',
         'rightMargin', 'Uint',
         'size', 'Uint',
         'tabStops', s.array('Uint', s.fields(
@@ -230,18 +230,18 @@ gaf.Tag.DefineAtlas2 = Object.create(gaf.Tag.base);
 gaf.Tag.DefineAtlas2.tagName = "TagDefineAtlas2";
 gaf.Tag.DefineAtlas2.doParse = function(s) {
     var exec = s.fields(
-        'scale', 'float',
+        'scale', 'Float',
         'atlases', s.array('Ubyte', s.fields(
             'id', 'Uint',
             'sources', s.array('Ubyte', s.fields(
                 'source', 'String',
-                'csf', 'float'
+                'csf', 'Float'
             ))
         )),
         'elements', s.array('Uint', s.fields(
             'pivot', 'Point',
             'origin', 'Point',
-            'scale', 'float',
+            'scale', 'Float',
             'size', 'Point',
             'atlasId', 'Uint',
             'elementAtlasId', 'Uint',
@@ -306,17 +306,17 @@ gaf.Tag.DefineAnimationFrames2.doParse = function(s) {
             'hasMask', 'Boolean',
             'hasEffect', 'Boolean',
             'objectIdRef', 'Uint',
-            'depth', 'int',
-            'alpha', 'float',
+            'depth', 'Int',
+            'alpha', 'Float',
             'matrix', 'Matrix',
             'colorTransform', s.condition('hasColorTransform', 1, s.fields(
-                'alphaOffset', 'float',
-                'redMultiplier', 'float',
-                'redOffset', 'float',
-                'greenMultiplier', 'float',
-                'greenOffset', 'float',
-                'blueMultiplier', 'float',
-                'blueOffset', 'float'
+                'alphaOffset', 'Float',
+                'redMultiplier', 'Float',
+                'redOffset', 'Float',
+                'greenMultiplier', 'Float',
+                'greenOffset', 'Float',
+                'blueMultiplier', 'Float',
+                'blueOffset', 'Float'
             )),
             'effect', s.condition('hasEffect', 1, s.array('Ubyte', gaf.Tag._readFilter(s))),
             'maskObjectIdRef', s.condition('hasMask', 1, function(){return s.Uint()})
@@ -369,31 +369,31 @@ gaf.Tag._readFilter = function(s){
         'type', 'Uint',
         'dropShadow', s.condition('type', gaf.EFFECT_DROP_SHADOW, s.fields( // DropShadow
             'color', 'color',
-            'blurX', 'float',
-            'blurY', 'float',
-            'angle', 'float',
-            'distance', 'float',
-            'strength', 'float',
+            'blurX', 'Float',
+            'blurY', 'Float',
+            'angle', 'Float',
+            'distance', 'Float',
+            'strength', 'Float',
             'inner', 'Boolean',
             'knockout', 'Boolean'
         )),
         'blur', s.condition('type', gaf.EFFECT_BLUR, s.fields( // Blur
-            'blurX', 'float',
-            'blurY', 'float'
+            'blurX', 'Float',
+            'blurY', 'Float'
         )),
         'glow', s.condition('type', gaf.EFFECT_GLOW, s.fields( // Glow
             'color', 'color',
-            'blurX', 'float',
-            'blurY', 'float',
-            'strength', 'float',
+            'blurX', 'Float',
+            'blurY', 'Float',
+            'strength', 'Float',
             'inner', 'Boolean',
             'knockout', 'Boolean'
         )),
         'colorMatrix', s.condition('type', gaf.EFFECT_COLOR_MATRIX, s.fields( // ColorMatrix
-            'rr', 'float', 'gr', 'float', 'br', 'float', 'ar', 'float', 'r', 'float',
-            'rg', 'float', 'gg', 'float', 'bg', 'float', 'ag', 'float', 'g', 'float',
-            'rb', 'float', 'gb', 'float', 'bb', 'float', 'ab', 'float', 'b', 'float',
-            'ra', 'float', 'ga', 'float', 'ba', 'float', 'aa', 'float', 'a', 'float'
+            'rr', 'Float', 'gr', 'Float', 'br', 'Float', 'ar', 'Float', 'r', 'Float',
+            'rg', 'Float', 'gg', 'Float', 'bg', 'Float', 'ag', 'Float', 'g', 'Float',
+            'rb', 'Float', 'gb', 'Float', 'bb', 'Float', 'ab', 'Float', 'b', 'Float',
+            'ra', 'Float', 'ga', 'Float', 'ba', 'Float', 'aa', 'Float', 'a', 'Float'
         ))
     )
 };
