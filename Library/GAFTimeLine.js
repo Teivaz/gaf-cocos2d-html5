@@ -260,10 +260,7 @@ gaf.TimeLine = gaf.Object.extend
         }
         return false;
     },
-    setControlDelegate: function (func)
-    {
-        debugger;
-    },
+
     pauseAnimation: function ()
     {
         if (this._isRunning)
@@ -373,91 +370,74 @@ gaf.TimeLine = gaf.Object.extend
     _step: function ()
     {
         this._showingFrame = this._currentFrame;
-        if (!this._isReversed)
+
+        if(!this.getIsAnimationRunning())
         {
-            if (this._currentFrame < this._currentSequenceStart)
+            this._processAnimation();
+            return;
+        }
+
+        if(this._sequenceDelegate)
+        {
+            var seq;
+            if(!this._isReversed)
             {
-                this._currentFrame = this._currentSequenceStart;
+                seq = this._getSequenceByLastFrame(this._currentFrame);
             }
-            if (this._sequenceDelegate)
+            else
             {
-                debugger;
-                var seq = this._getSequenceByLastFrame(this._currentFrame);
-                if (seq)
-                {
-                    this._sequenceDelegate(this, seq);
-                }
+                seq = this._getSequenceByFirstFrame(this._currentFrame + 1);
             }
-            if (this._isLooped && (this._currentFrame > this._currentSequenceEnd - 1))
+
+            if (seq)
             {
-                this._currentFrame = this._currentSequenceStart;
-                if (this._animationStartedNextLoopDelegate)
-                {
+                this._sequenceDelegate(this, seq);
+            }
+        }
+        if (this._isCurrentFrameLastInSequence())
+        {
+            if(this._isLooped)
+            {
+                if(this._animationStartedNextLoopDelegate)
                     this._animationStartedNextLoopDelegate(this);
-                }
             }
-            else if(!this._isLooped && (this._currentFrame >= this._currentSequenceEnd - 1))
+            else
             {
                 this._setAnimationRunning(false, false);
-                if (this._animationFinishedPlayDelegate)
-                {
+                if(this._animationFinishedPlayDelegate)
                     this._animationFinishedPlayDelegate(this);
-                }
-            }
-            this._processAnimation();
-            if (this.getIsAnimationRunning())
-            {
-                this._showingFrame = this._currentFrame++;
             }
         }
-        else
-        {
-            // If switched to reverse after final frame played
-            if (this._currentFrame >= this._currentSequenceEnd || this._currentFrame < gaf.FIRST_FRAME_INDEX)
-            {
-                this._currentFrame = this._currentSequenceEnd - 1;
-            }
-            if (this._sequenceDelegate)
-            {
-                debugger;
-                var seq = this._getSequenceByLastFrame(this._currentFrame + 1);
-                if (seq)
-                {
-                    this._sequenceDelegate(this, seq);
-                }
-            }
-            if (this._currentFrame < this._currentSequenceStart)
-            {
-                if (this._isLooped)
-                {
-                    this._currentFrame = this._currentSequenceEnd - 1;
-                    if (this._animationStartedNextLoopDelegate)
-                    {
-                        this._animationStartedNextLoopDelegate(this);
-                    }
-                }
-                else
-                {
-                    this._setAnimationRunning(false, false);
-                    if (this._animationFinishedPlayDelegate)
-                    {
-                        this._animationFinishedPlayDelegate(this);
-                    }
-                    return;
-                }
-            }
-            this._processAnimation();
-            if (this.getIsAnimationRunning())
-            {
-                this._showingFrame = this._currentFrame--;
-            }
-        }
+        this._processAnimation();
+        this._currentFrame = this._nextFrame();
     },
 
+    _isCurrentFrameLastInSequence: function()
+    {
+        if (this._isReversed)
+            return this._currentFrame == this._currentSequenceStart;
+        return this._currentFrame == this._currentSequenceEnd - 1;
+    },
+
+    _nextFrame: function()
+    {
+        if (this._isCurrentFrameLastInSequence())
+        {
+            if (!this._isLooped)
+                return this._currentFrame;
+
+            if (this._isReversed)
+                return this._currentSequenceEnd - 1;
+            else
+                return this._currentSequenceStart;
+        }
+
+        return this._currentFrame + (this._isReversed ? -1 : 1);
+    },
 
     _processAnimation: function ()
     {
-        var id = this._gafproto.getId();
+        //var id = this._gafproto.getId();
         this._realizeFrame(this._container, this._currentFrame);
         if (this._framePlayedDelegate)
         {
@@ -527,6 +507,19 @@ gaf.TimeLine = gaf.Object.extend
         for(var item in sequences){
             if(sequences.hasOwnProperty(item)){
                 if(sequences[item].end === frame + 1)
+                {
+                    return item;
+                }
+            }
+        }
+        return "";
+    },
+
+    _getSequenceByFirstFrame: function(){
+        var sequences = this._gafproto.getSequences();
+        for(var item in sequences){
+            if(sequences.hasOwnProperty(item)){
+                if(sequences[item].start === frame)
                 {
                     return item;
                 }

@@ -36,7 +36,7 @@ gaf.Sprite = gaf.Object.extend
     
     _applyState : function(state, parent)
     {
-        this._super(state, parent);
+        this._applyStateSuper(state, parent);
         if(this._needsCtx)
         {
             // Enable ctx state if wasn't enabled
@@ -57,7 +57,7 @@ gaf.Sprite = gaf.Object.extend
                 this._hasCtx = false;
             }
             // Apply color
-            if(!cc.colorEqual(this._sprite.getColor(), this._cascadeColorMult))
+            if(!cc.colorEqual(this._sprite._realColor, this._cascadeColorMult))
             {
                 this._sprite.setColor(this._cascadeColorMult);
             }

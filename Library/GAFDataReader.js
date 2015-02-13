@@ -156,7 +156,6 @@ gaf.DataReader.prototype.fields = function(){
 * */
 
 gaf.DataReader.prototype.condition = function(key, value, func){
-    var self = this;
     var arguments_ = arguments;
     return function() {
         if(arguments_.length != 3){

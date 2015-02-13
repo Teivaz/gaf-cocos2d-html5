@@ -94,9 +94,7 @@ gaf.Tag.DefineAtlas.doParse = function (s) {
             'elementAtlasId', 'Uint'
         ))
     );
-    var result = {'content': exec()};
-//    debugger;
-    return result;
+    return {'content': exec()};
 };
 
 gaf.Tag.DefineAnimationMasks = Object.create(gaf.Tag.base);
@@ -118,9 +116,7 @@ gaf.Tag.DefineAnimationObjects.doParse = function (s) {
         'objectId', 'Uint',
         'elementAtlasIdRef', 'Uint'
     ));
-    var result = {'content': exec()};
-//    debugger;
-    return result;
+    return {'content': exec()};
 };
 
 gaf.Tag.DefineAnimationFrames = Object.create(gaf.Tag.base);
@@ -151,9 +147,7 @@ gaf.Tag.DefineAnimationFrames.doParse = function(s){
             ))
         ))
     ));
-    var result = {'content': exec()};
-//    debugger;
-    return result;
+    return {'content': exec()};
 };
 
 gaf.Tag.DefineNamedParts = Object.create(gaf.Tag.base);
@@ -163,9 +157,7 @@ gaf.Tag.DefineNamedParts.doParse = function(s) {
         'objectId', 'Uint',
         'name', 'String'
     ));
-    var result = {'content': exec()};
-//    debugger;
-    return result;
+    return {'content': exec()};
 };
 
 gaf.Tag.DefineSequences = Object.create(gaf.Tag.base);
@@ -176,9 +168,7 @@ gaf.Tag.DefineSequences.doParse = function(s) {
         'start', 'Ushort',
         'end', 'Ushort'
     ));
-    var result = {'content': exec()};
-//    debugger;
-    return result;
+    return {'content': exec()};
 };
 
 gaf.Tag.DefineTextFields = Object.create(gaf.Tag.base);
@@ -221,9 +211,7 @@ gaf.Tag.DefineTextFields.doParse = function(s) {
         'underline', 'Boolean',
         'url', 'String'
     ));
-    var result = {'content': exec()};
-    debugger;
-    return result;
+    return {'content': exec()};
 };
 
 gaf.Tag.DefineAtlas2 = Object.create(gaf.Tag.base);
@@ -249,9 +237,7 @@ gaf.Tag.DefineAtlas2.doParse = function(s) {
             'scale9GridRect', s.condition('hasScale9Grid', 1, function(){return s.Rect();})
         ))
     );
-    var result = {'content': exec()};
-//    debugger;
-    return result;
+    return {'content': exec()};
 };
 
 gaf.Tag.DefineStage = Object.create(gaf.Tag.base);
@@ -263,9 +249,7 @@ gaf.Tag.DefineStage.doParse = function(s) {
         'width', 'Ushort',
         'height', 'Ushort'
     );
-    var result = {'content': exec()};
-//    debugger;
-    return result;
+    return {'content': exec()};
 };
 
 gaf.Tag.DefineAnimationObjects2 = Object.create(gaf.Tag.base);
@@ -276,9 +260,7 @@ gaf.Tag.DefineAnimationObjects2.doParse = function(s) {
         'elementAtlasIdRef', 'Uint',
         'type', 'Ushort'
     ));
-    var result = {'content': exec()};
-//    debugger;
-    return result;
+    return {'content': exec()};
 };
 
 gaf.Tag.DefineAnimationMasks2 = Object.create(gaf.Tag.base);
@@ -289,9 +271,7 @@ gaf.Tag.DefineAnimationMasks2.doParse  = function(s) {
         'elementAtlasIdRef', 'Uint',
         'type', 'Ushort'
     ));
-    var result = {'content': exec()};
-//    debugger;
-    return result;
+    return {'content': exec()};
 };
 
 gaf.Tag.DefineAnimationFrames2 = Object.create(gaf.Tag.base);
@@ -327,9 +307,7 @@ gaf.Tag.DefineAnimationFrames2.doParse = function(s) {
             'params', gaf.Tag._readActionArguments(s)
         )))
     ));
-    var result = {'content': exec()};
-//    debugger;
-    return result;
+    return {'content': exec()};
 };
 
 gaf.Tag.DefineTimeline = Object.create(gaf.Tag.base);
@@ -346,7 +324,6 @@ gaf.Tag.DefineTimeline.doParse = function(s) {
         })
     );
     var result = {'content': exec()};
-//    debugger;
     result.content.tags = gaf.ReadTags(s);
     return result;
 };

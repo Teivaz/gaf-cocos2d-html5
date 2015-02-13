@@ -150,7 +150,7 @@ gaf.Object = cc.Node.extend
      */
     isVisibleInCurrentFrame : function ()
     {
-        if (this._parentTimeLine &&
+        /*if (this._parentTimeLine &&
             ((this._parentTimeLine.getCurrentFrameIndex() + 1) != this._lastVisibleInFrame))
         {
             return false;
@@ -158,7 +158,8 @@ gaf.Object = cc.Node.extend
         else
         {
             return true;
-        }
+        }*/
+        return !(this._parentTimeLine && ((this._parentTimeLine.getCurrentFrameIndex() + 1) != this._lastVisibleInFrame));
     },
 
     /**
@@ -341,6 +342,11 @@ gaf.Object = cc.Node.extend
     _setAnimationRunning: function () {},
 
     _applyState : function(state, parent)
+    {
+        this._applyStateSuper(state, parent);
+    },
+
+    _applyStateSuper : function(state, parent)
     {
         this._needsCtx = parent._needsCtx;
         this._filterStack.length = 0; // clear
