@@ -232,7 +232,7 @@ gaf._AssetPreload.AnimationFrames = function(asset, content, timeLine)
         {
             frame.state.forEach(function (state)
             {
-                if (state.alpha > 0) {
+                if (state.alpha !== 0) {
                     statesForId[state.objectIdRef] = convertState(state);
                 }
                 else {

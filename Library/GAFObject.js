@@ -313,6 +313,9 @@ gaf.Object = cc.Node.extend
     ////////////////
     _enableTick: function(val){},
 
+    _resetState : function()
+    {},
+
     _updateVisibility : function(state, parent)
     {
         var alphaOffset = state.hasColorTransform ? state.colorTransform.offset.a : 0;

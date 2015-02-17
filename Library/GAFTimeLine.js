@@ -467,6 +467,10 @@ gaf.TimeLine = gaf.Object.extend
             {
                 return;
             }
+            if(state.alpha < 0)
+            {
+                object._resetState();
+            }
             object._updateVisibility(state, self);
             if(!object.isVisible())
             {
@@ -513,6 +517,11 @@ gaf.TimeLine = gaf.Object.extend
             }
         }
         return "";
+    },
+
+    _resetState : function()
+    {
+        this._currentFrame = this._currentSequenceStart;
     },
 
     _getSequenceByFirstFrame: function(){
