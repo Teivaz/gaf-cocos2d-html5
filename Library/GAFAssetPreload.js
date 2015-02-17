@@ -59,8 +59,37 @@ gaf._AssetPreload.Atlases = function(asset, content, timeLine)
     var spriteFrames = asset._atlasScales[content.scale];
     var csf = cc.Director._getInstance().getContentScaleFactor();
     var atlases = [];
+
+    var createFrames = function()
+    {
+        content.elements.forEach(function (item) {
+            var texture = atlases[item.atlasId];
+            var rect = cc.rect(item.origin.x, item.origin.y, item.size.x, item.size.y);
+            //var offset = {x: item.pivot.x, y: item.size.y - item.pivot.y};
+            //var rotated = false;
+            //var offset = {x: 0, y: 0};
+            //var originalSize = cc.rect(0, 0, item.size.x / item.scale, item.size.y / item.scale);
+            var frame = new cc.SpriteFrame(texture, rect/*, rotated, offset, originalSize*/);
+            frame._gafAnchor =
+            {
+                x: (0 - (0 - (item.pivot.x / item.size.x))),
+                y: (0 + (1 - (item.pivot.y / item.size.y)))
+            };
+            //frame.setAnchorPoint(frame._gafAnchor);
+            spriteFrames[item.elementAtlasId] = frame;
+            // 9 grid
+        });
+    };
+
+
     content.atlases.forEach(function(item)
     {
+        var finalizeLoading = function(atlas)
+        {
+            atlases[item.id] = atlas;
+            createFrames();
+        };
+
         var atlasPath = "";
         item.sources.forEach(function(atlasSource)
         {
@@ -69,29 +98,71 @@ gaf._AssetPreload.Atlases = function(asset, content, timeLine)
                 atlasPath = atlasSource.source;
             }
         });
+        cc.assert(atlasPath, "GAF Error. Texture for current CSF not found. Reconvert animation with correct parameters.");
+
+        if(asset._textureLoadDelegate)
+        {
+            atlasPath = asset._textureLoadDelegate(atlasPath);
+        }
+
         var atlas = cc.textureCache.getTextureForKey(atlasPath);
-        cc.assert(atlas, "Error loading texture!");
-        atlases[item.id] = atlas;
+        if(atlas && atlas.isLoaded())
+        {
+            finalizeLoading(atlas);
+        }
+        else
+        {
+            // Search in GAF directory
+            var extendedPath = asset.getGAFName().split('/');
+            extendedPath[extendedPath.length-1] = atlasPath;
+            var alternativePath = extendedPath.join('/');
+            atlas = cc.textureCache.getTextureForKey(alternativePath);
+            if(atlas && atlas.isLoaded())
+            {
+                finalizeLoading(atlas);
+            }
+            else
+            {
+                var loadWithMainPath = function()
+                {
+                    var atlas = cc.textureCache.getTextureForKey(atlasPath);
+                    var valid = atlas && atlas.isLoaded();
+                    if (valid) {
+                        finalizeLoading(atlas);
+                    }
+                    else{
+                        startLoadingTask(alternativePath, loadWithAlternativePath);
+                    }
+                };
+
+                var loadWithAlternativePath = function()
+                {
+                    var atlas = cc.textureCache.getTextureForKey(alternativePath);
+                    var valid = atlas && atlas.isLoaded();
+                    cc.assert(valid, "GAF Error. Couldn't find `" + atlasPath + "` required by `" + asset.getGAFName() + "`");
+                    if (valid) {
+                        finalizeLoading(atlas);
+                    }
+                };
+
+                var startLoadingTask = function (path, callback)
+                {
+                    if (!asset._atlasesToLoad.hasOwnProperty(path)) {
+                        asset._atlasesToLoad[path] = [];
+                        cc.textureCache.addImage(path, asset._onAtlasLoaded, asset);
+                    }
+                    asset._atlasesToLoad[path].push(callback);
+                };
+
+
+                startLoadingTask(atlasPath, loadWithMainPath);
+            }
+        }
+
     });
 
-    content.elements.forEach(function(item)
-    {
-        var texture = atlases[item.atlasId];
-        var rect = cc.rect(item.origin.x, item.origin.y, item.size.x, item.size.y);
-        //var offset = {x: item.pivot.x, y: item.size.y - item.pivot.y};
-        //var rotated = false;
-        //var offset = {x: 0, y: 0};
-        //var originalSize = cc.rect(0, 0, item.size.x / item.scale, item.size.y / item.scale);
-        var frame = new cc.SpriteFrame(texture, rect/*, rotated, offset, originalSize*/);
-        frame._gafAnchor =
-        {
-            x: (0 - (0 - (item.pivot.x / item.size.x))),
-            y: (0 + (1 - (item.pivot.y / item.size.y)))
-        };
-        //frame.setAnchorPoint(frame._gafAnchor);
-        spriteFrames[item.elementAtlasId] = frame;
-        // 9 grid
-    });
+
+
 };
 
 gaf._AssetPreload.AnimationObjects = function(asset, content, timeLine)

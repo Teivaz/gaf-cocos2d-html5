@@ -22,17 +22,34 @@ gaf.Asset = cc.Class.extend
     _desiredAtlasScale: 1,
     _usedAtlasScale: 0,
     _atlasScales: null,
+    _textureLoaded: false, // For async loading with cc.event manager
+    _atlasesToLoad: 0, // Number of atlases that are not yet loaded
+    _gafName: null,
 
     /**
      * @method initWithGAFFile
      * @param {String} filePath - path to .gaf file
-     * @param {function({path:String})} delegate - is used to change atlas path, e.g. to load `atlas.tga` instead of `atlas.png`
+     * @param {String function(String)} textureLoadDelegate - is used to change atlas path, e.g. to load `atlas.tga` instead of `atlas.png`
      * @return {bool}
      */
-    initWithGAFFile: function (filePath, delegate) {
-        var _gafData = cc.loader.getRes(filePath);
-        cc.assert(_gafData, "File `" + filePath + "` not found.");
-        return this._init(_gafData);
+    initWithGAFFile: function (filePath, textureLoadDelegate) {
+        var self = this;
+        this._textureLoadDelegate = textureLoadDelegate;
+        this._gafName = filePath;
+        var gafData = cc.loader.getRes(filePath);
+        if(!gafData)
+        {
+            cc.loader.load(filePath, function(err, data){
+                if(!err)
+                {
+                    self._init(data[0]);
+                }
+            });
+        }
+        else {
+            return this._init(gafData);
+        }
+        return false;
     },
 
     /**
@@ -64,8 +81,8 @@ gaf.Asset = cc.Class.extend
         }
     },
 
-    addEventListener: function(name, listener)
-    {},
+/*    addEventListener: function(name, listener)
+    {},*/
 
     isAssetVersionPlayable: function ()
     {
@@ -213,6 +230,11 @@ gaf.Asset = cc.Class.extend
         return this._header;
     },
 
+    getGAFName: function()
+    {
+        return this._gafName;
+    },
+
     // Private
 
     ctor : function()
@@ -224,6 +246,7 @@ gaf.Asset = cc.Class.extend
         this._masks = [];
         this._protos = [];
         this._atlasScales = {};
+        this._atlasesToLoad = {};
     },
 
     _getProtos: function()
@@ -316,6 +339,11 @@ gaf.Asset = cc.Class.extend
             self._protos[item.objectId] = new gaf._MaskProto(self, proto, item.elementAtlasIdRef);
         });
         this.setDesiredAtlasScale(this._desiredAtlasScale);
+
+        if(Object.keys(this._atlasesToLoad).length === 0)
+        {
+            this._textureLoaded = true;
+        }
     },
 
     _pushTimeLine : function(timeLine)
@@ -333,6 +361,27 @@ gaf.Asset = cc.Class.extend
         var root = null;
         root = this._rootTimeLine._gafConstruct();
         return root;
+    },
+
+    _onAtlasLoaded : function(tex)
+    {
+        var name = tex.url;
+        var callbacks;
+        if(callbacks = this._atlasesToLoad[name])
+        {
+            callbacks.forEach(function(cb){cb()});
+            delete this._atlasesToLoad[name];
+        }
+        if(Object.keys(this._atlasesToLoad).length === 0)
+        {
+            this._textureLoaded = true;
+            this.dispatchEvent("load");
+        }
+    },
+
+    isLoaded : function()
+    {
+        return this._textureLoaded;
     }
 
 });
@@ -363,3 +412,5 @@ gaf.Asset.createWithBundle = function (zipFilePath, entryFile, delegate)
     asset.initWithGAFBundle(zipFilePath, entryFile, delegate);
     return asset;
 };
+
+cc.EventHelper.prototype.apply(gaf.Asset.prototype);
