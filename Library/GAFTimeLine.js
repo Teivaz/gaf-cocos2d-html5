@@ -474,7 +474,7 @@ gaf.TimeLine = gaf.Object.extend
             object._updateVisibility(state, self);
             if(!object.isVisible())
             {
-                return;
+                continue;
             }
             object._applyState(state, self);
             var parent = out;
@@ -489,7 +489,7 @@ gaf.TimeLine = gaf.Object.extend
             {
                 object._step();
             }
-        }//);
+        }
     },
     _setAnimationRunning: function (value, recursively)
     {

@@ -230,7 +230,7 @@ gaf.Asset = cc.Class.extend
         return this._header;
     },
 
-    getGAFName: function()
+    getGAFFileName: function()
     {
         return this._gafName;
     },

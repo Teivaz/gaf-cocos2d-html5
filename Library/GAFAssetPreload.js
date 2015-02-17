@@ -113,7 +113,7 @@ gaf._AssetPreload.Atlases = function(asset, content, timeLine)
         else
         {
             // Search in GAF directory
-            var extendedPath = asset.getGAFName().split('/');
+            var extendedPath = asset.getGAFFileName().split('/');
             extendedPath[extendedPath.length-1] = atlasPath;
             var alternativePath = extendedPath.join('/');
             atlas = cc.textureCache.getTextureForKey(alternativePath);
@@ -139,7 +139,7 @@ gaf._AssetPreload.Atlases = function(asset, content, timeLine)
                 {
                     var atlas = cc.textureCache.getTextureForKey(alternativePath);
                     var valid = atlas && atlas.isLoaded();
-                    cc.assert(valid, "GAF Error. Couldn't find `" + atlasPath + "` required by `" + asset.getGAFName() + "`");
+                    cc.assert(valid, "GAF Error. Couldn't find `" + atlasPath + "` required by `" + asset.getGAFFileName() + "`");
                     if (valid) {
                         finalizeLoading(atlas);
                     }
