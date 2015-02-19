@@ -319,6 +319,8 @@ gaf.TimeLine = gaf.Object.extend
 
         this._container = new cc.Node();
         this.addChild(this._container);
+        this.setContentSize(this._gafproto.getBoundingBox());
+        this._container.setPosition(0, this._gafproto.getBoundingBox().height);
 
         var self = this;
         var asset = this._gafproto.getAsset();
@@ -330,17 +332,6 @@ gaf.TimeLine = gaf.Object.extend
             cc.assert(objectProto, "Error. GAF proto for type: " + object.type + " and reference id: " + object + " not found.");
             self._objects[object] = objectProto._gafConstruct();
         });
-
-
-         var anchor =
-         {
-             x: (0 - (0 - (this._gafproto.getPivot().x / this._gafproto.getBoundingBox().width))),
-             y: (0 + (1 - (this._gafproto.getPivot().y / this._gafproto.getBoundingBox().height)))
-         };
-         this._container.setContentSize(this._gafproto.getBoundingBox().width, this._gafproto.getBoundingBox().height);
-         this._container.setAnchorPoint(anchor);
-         this._container.setPosition(-this._gafproto.getBoundingBox().x, this._gafproto.getBoundingBox().height + this._gafproto.getBoundingBox().y);
-
     },
 
     _enableTick: function(val)
@@ -521,6 +512,7 @@ gaf.TimeLine = gaf.Object.extend
 
     _resetState : function()
     {
+        this._super();
         this._currentFrame = this._currentSequenceStart;
     },
 
