@@ -21,9 +21,12 @@ gaf.Asset = cc.Class.extend
     _gafData: null,
     _desiredAtlasScale: 1,
     _usedAtlasScale: 0,
+
+    _atlases: null,
+    _onLoadTasks: null,
     _atlasScales: null,
     _textureLoaded: false, // For async loading with cc.event manager
-    _atlasesToLoad: 0, // Number of atlases that are not yet loaded
+    _atlasesToLoad: null, // Atlases that are not yet loaded
     _gafName: null,
 
     /**
@@ -245,6 +248,8 @@ gaf.Asset = cc.Class.extend
         this._objects = [];
         this._masks = [];
         this._protos = [];
+        this._atlases = {};
+        this._onLoadTasks = [];
         this._atlasScales = {};
         this._atlasesToLoad = {};
     },
@@ -363,17 +368,14 @@ gaf.Asset = cc.Class.extend
         return root;
     },
 
-    _onAtlasLoaded : function(tex)
+    _onAtlasLoaded : function(id, atlas)
     {
-        var name = tex.url;
-        var callbacks;
-        if(callbacks = this._atlasesToLoad[name])
-        {
-            callbacks.forEach(function(cb){cb()});
-            delete this._atlasesToLoad[name];
-        }
+        this._atlases[id] = atlas;
+        delete this._atlasesToLoad[id];
         if(Object.keys(this._atlasesToLoad).length === 0)
         {
+            this._onLoadTasks.forEach(function(fn){fn()});
+            this._onLoadTasks.length = 0;
             this._textureLoaded = true;
             this.dispatchEvent("load");
         }
@@ -382,8 +384,16 @@ gaf.Asset = cc.Class.extend
     isLoaded : function()
     {
         return this._textureLoaded;
-    }
+    },
 
+    _getSearchPaths: function(imageUrl)
+    {
+        var extendedPath = this.getGAFFileName().split('/');
+        extendedPath[extendedPath.length-1] = imageUrl;
+        var alternativeUrl = extendedPath.join('/');
+
+        return [imageUrl, alternativeUrl];
+    }
 });
 
 /**
