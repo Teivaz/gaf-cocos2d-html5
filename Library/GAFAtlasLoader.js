@@ -5,10 +5,7 @@
 gaf._AtlasLoader = {};
 gaf._AtlasLoader.execute = function(condition, success, fail)
 {
-    if(condition())
-        success();
-    else
-        fail();
+    condition() ? success() : fail();
 };
 
 gaf._AtlasLoader.checkAtlas = function(atlas) // curried function
@@ -18,10 +15,8 @@ gaf._AtlasLoader.checkAtlas = function(atlas) // curried function
 
 gaf._AtlasLoader.load = function(path, success, fail)
 {
-    cc.textureCache.addImage(path, function(atlas)
-    {
-        gaf._AtlasLoader.execute
-        (
+    cc.textureCache.addImage(path, function(atlas){
+        gaf._AtlasLoader.execute(
             gaf._AtlasLoader.checkAtlas(atlas),
             function(){success(atlas)},
             fail
@@ -35,19 +30,17 @@ gaf._AtlasLoader.loadFront = function(arr, success, fail)
     // stops on first success, or fails after last element
     return function()
     {
-        if (arr.length > 0)
-        {
-            gaf._AtlasLoader.load
-            (
+        if (arr.length > 0){
+            gaf._AtlasLoader.load(
                 arr[0],
                 success,
-                gaf._AtlasLoader.loadFront(arr.slice(1), success, fail)
-            );
-        }
+                gaf._AtlasLoader.loadFront(
+                    arr.slice(1),
+                    success,
+                    fail
+        ));}
         else
-        {
             fail();
-        }
     }
 };
 

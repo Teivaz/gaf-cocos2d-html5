@@ -103,7 +103,7 @@ gaf._AssetPreload.prototype.Atlases = function(asset, content, timeLine)
         var paths = asset._getSearchPaths(atlasPath);
         for(var i = 0, len = paths.length; i < len; ++i){
             var path = paths[i];
-            var atlas = cc.textureCache.getTextureForKey(atlasPath);
+            var atlas = cc.textureCache.getTextureForKey(path);
             if(atlas && atlas.isLoaded())
             {
                 loaded = true;
