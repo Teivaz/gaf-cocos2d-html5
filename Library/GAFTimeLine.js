@@ -320,7 +320,7 @@ gaf.TimeLine = gaf.Object.extend
         this._container = new cc.Node();
         this.addChild(this._container);
         this.setContentSize(this._gafproto.getBoundingBox());
-        this._container.setPosition(0, this._gafproto.getBoundingBox().height);
+        this._container.setPosition(-this._gafproto.getBoundingBox().x, this._gafproto.getBoundingBox().height);
 
         var self = this;
         var asset = this._gafproto.getAsset();

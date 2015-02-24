@@ -15,6 +15,10 @@
     proto._disableCtx = function(){
         this._hasTintOffset = false;
         this._hasCtx = false;
+        this._textureDirty = true;
+        this.setDirtyFlag(cc.Node._dirtyFlags.colorDirty);
+        this._tintMult = cc.color(255,255,255,255);
+        this._tintOffset = cc.color(0,0,0,0);
     };
 
     proto._enableCtx = function(){
@@ -22,46 +26,75 @@
     };
 
     proto._applyCtxState = function(gafObject){
-        var multDirty = !cc.colorEqual(this._tintMult, gafObject._cascadeColorMult);
-        var offfsetDirty = !cc.colorEqual(this._tintOffset, gafObject._cascadeColorOffset);
-        this._textureDirty = multDirty || offfsetDirty;
-        var tintMult = this._tintMult = gafObject._cascadeColorMult;
-        this._hasTintMult = (tintMult.r !== 255 ||
-                             tintMult.g !== 255 ||
-                             tintMult.b !== 255 );
-        this._node.setColor(this._tintMult);
-        this._node.setOpacity(this._tintMult.a);
 
-        var tintOffset = this._tintOffset = gafObject._cascadeColorOffset;
-        this._hasTintOffset = (tintOffset.r !== 0 ||
-                               tintOffset.g !== 0 ||
-                               tintOffset.b !== 0 ||
-                               tintOffset.a !== 0 );
-
-        this._hasCtx = gafObject._filterStack.length > 0 && gafObject._filterStack[0].type === gaf.EFFECT_COLOR_MATRIX;
+        var tintMult = gafObject._cascadeColorMult;
+        var tintOffset = gafObject._cascadeColorOffset;
+        var opacity = tintMult.a;
 
         // Apply opacity
-        if(this._node.getOpacity() != tintMult.a)
+        if(this._node.getOpacity() != opacity)
         {
-            this._node.setOpacity(tintMult.a);
+            this._node.setOpacity(opacity);
         }
+
+        // Check Tint multiplicator
+        var multDirty = !cc.colorEqual(this._tintMult, tintMult);
         if(multDirty)
         {
             this._node.setColor(tintMult);
+            this._tintMult = tintMult;
+            this._hasTintMult =
+                (tintMult.r !== 255 ||
+                 tintMult.g !== 255 ||
+                 tintMult.b !== 255 );
         }
+
+        // Check Tint offset
+        var offfsetDirty =
+            (this._tintOffset.r != tintOffset.r) ||
+            (this._tintOffset.g != tintOffset.g) ||
+            (this._tintOffset.b != tintOffset.b) ||
+            (this._tintOffset.a != tintOffset.a);
+
+        if(offfsetDirty)
+        {
+            this._tintOffset = tintOffset;
+            this._hasTintOffset =
+                (tintOffset.r !== 0 ||
+                 tintOffset.g !== 0 ||
+                 tintOffset.b !== 0 ||
+                 tintOffset.a !== 0 );
+        }
+
+        // Update dirty flag
+        this._textureDirty = multDirty || offfsetDirty;
+        if(this._textureDirty)
+        {
+            this.setDirtyFlag(cc.Node._dirtyFlags.colorDirty);
+        }
+
+
+        this._hasCtx = gafObject._filterStack.length > 0 && gafObject._filterStack[0].type === gaf.EFFECT_COLOR_MATRIX;
+
     };
 
     proto.rendering = function(ctx, scaleX, scaleY)
     {
         var node = this._node;
-        var locTextureCoord = this._textureCoord, alpha = (this._displayedOpacity / 255);
+        var locTextureCoord = this._textureCoord,
+            alpha = (this._displayedOpacity / 255);
+
         if ((node._texture && ((locTextureCoord.width === 0 || locTextureCoord.height === 0)            //set texture but the texture isn't loaded.
             || !node._texture._textureLoaded)) || alpha === 0)
             return;
 
-        var wrapper = ctx || cc._renderContext, context = wrapper.getContext();
-        var locX = node._offsetPosition.x, locHeight = node._rect.height, locWidth = node._rect.width,
-            locY = -node._offsetPosition.y - locHeight, image;
+        var wrapper = ctx || cc._renderContext,
+            context = wrapper.getContext();
+        var locX = node._offsetPosition.x,
+            locHeight = node._rect.height,
+            locWidth = node._rect.width,
+            locY = -node._offsetPosition.y - locHeight,
+            image;
 
         wrapper.setTransform(this._worldTransform, scaleX, scaleY);
         wrapper.setCompositeOperation(this._blendFuncStr);
