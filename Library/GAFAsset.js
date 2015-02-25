@@ -64,7 +64,8 @@ gaf.Asset = cc.Class.extend
      */
     initWithGAFBundle: function (zipFilePath, entryFile, delegate)
     {
-        debugger;
+        cc.assert(false, "initWithGAFBundle is not yet implemented");
+        return false;
     },
 
     /**
