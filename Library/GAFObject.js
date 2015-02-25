@@ -432,6 +432,18 @@ gaf.Object = cc.Node.extend
     _getNode : function()
     {
         return this;
+    },
+
+    setAnchorPoint : function(point, y)
+    {
+        if (y === undefined)
+        {
+            this._super(point.x, point.y - 1);
+        }
+        else
+        {
+            this._super(point, y - 1);
+        }
     }
 
 });

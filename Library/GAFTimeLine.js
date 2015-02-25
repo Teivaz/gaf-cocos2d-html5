@@ -305,22 +305,20 @@ gaf.TimeLine = gaf.Object.extend
 
     setExternalTransform: function(affineTransform)
     {
-         if(!cc.affineTransformEqualToTransform(this._container._additionalTransform, affineTransform))
-         {
-            this._container.setAdditionalTransform(affineTransform);
-         }
+        if(!cc.affineTransformEqualToTransform(this._container._additionalTransform, affineTransform))
+        {
+           this._container.setAdditionalTransform(affineTransform);
+        }
     },
 
     _init: function()
     {
+        this.setContentSize(this._gafproto.getBoundingBox());
         this._currentSequenceEnd = this._gafproto.getTotalFrames();
         this._totalFrameCount = this._currentSequenceEnd;
         this.setFps(this._gafproto.getFps());
-
         this._container = new cc.Node();
         this.addChild(this._container);
-        this.setContentSize(this._gafproto.getBoundingBox());
-        this._container.setPosition(-this._gafproto.getBoundingBox().x, this._gafproto.getBoundingBox().height);
 
         var self = this;
         var asset = this._gafproto.getAsset();
