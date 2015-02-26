@@ -253,6 +253,9 @@ gaf.Asset = cc.Class.extend
         this._onLoadTasks = [];
         this._atlasScales = {};
         this._atlasesToLoad = {};
+
+        if(arguments.length > 0)
+            this.initWithGAFFile.apply(this, arguments);
     },
 
     _getProtos: function()
@@ -405,9 +408,7 @@ gaf.Asset = cc.Class.extend
  */
 gaf.Asset.create = function (gafFilePath, delegate)
 {
-    var asset = new gaf.Asset();
-    asset.initWithGAFFile(gafFilePath, delegate);
-    return asset;
+    return new gaf.Asset();
 };
 
 /**
