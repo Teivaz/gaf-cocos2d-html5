@@ -130,7 +130,7 @@ gaf.TimeLine = gaf.Object.extend
         }
         if (this.setFrame(frame))
         {
-            this._setAnimationRunning(false, false);
+            this.setAnimationRunning(false, false);
             return true;
         }
         return false;
@@ -148,7 +148,7 @@ gaf.TimeLine = gaf.Object.extend
         }
         if (this.setFrame(frame))
         {
-            this._setAnimationRunning(true, false);
+            this.setAnimationRunning(true, false);
             return true;
         }
         return false;
@@ -189,7 +189,7 @@ gaf.TimeLine = gaf.Object.extend
         if (!this._isRunning)
         {
             this._currentFrame = gaf.FIRST_FRAME_INDEX;
-            this._setAnimationRunning(true, true);
+            this.setAnimationRunning(true, true);
         }
     },
     stop: function ()
@@ -198,7 +198,7 @@ gaf.TimeLine = gaf.Object.extend
         if (this._isRunning)
         {
             this._currentFrame = gaf.FIRST_FRAME_INDEX;
-            this._setAnimationRunning(false, true);
+            this.setAnimationRunning(false, true);
         }
     },
     isDone: function ()
@@ -265,7 +265,7 @@ gaf.TimeLine = gaf.Object.extend
     {
         if (this._isRunning)
         {
-            this._setAnimationRunning(false, false);
+            this.setAnimationRunning(false, false);
         }
     },
     isLooped: function ()
@@ -276,7 +276,7 @@ gaf.TimeLine = gaf.Object.extend
     {
         if (!this._isRunning)
         {
-            this._setAnimationRunning(true, false);
+            this.setAnimationRunning(true, false);
         }
     },
     setReversed: function (reversed)
@@ -392,7 +392,7 @@ gaf.TimeLine = gaf.Object.extend
             }
             else
             {
-                this._setAnimationRunning(false, false);
+                this.setAnimationRunning(false, false);
                 if(this._animationFinishedPlayDelegate)
                     this._animationFinishedPlayDelegate(this);
             }
@@ -480,16 +480,16 @@ gaf.TimeLine = gaf.Object.extend
             }
         }
     },
-    _setAnimationRunning: function (value, recursively)
+    setAnimationRunning: function (value, recursively)
     {
         this._isRunning = value;
         if(recursively)
         {
             this._objects.forEach(function (obj)
             {
-                if (obj && obj._setAnimationRunning)
+                if (obj && obj.setAnimationRunning)
                 {
-                    obj._setAnimationRunning(value, recursively);
+                    obj.setAnimationRunning(value, recursively);
                 }
             });
         }

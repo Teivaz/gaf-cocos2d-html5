@@ -270,43 +270,7 @@ gaf.Object = cc.Node.extend
         return this._additionalTransform;
     },
 
-    /*getNodeToParentTransform : function()
-    {
-        if(this._transformDirty)
-        {
-            var scale = 1 / cc.Director.getInstance().getContentScaleFactor();
-            if (scale !== 1)
-            {
-                var transform = cc.affineTransformScale(this.getExternalTransform(), scale, scale);
-                cc.CGAffineToGL(cc.affineTransformTranslate(transform, -this._anchorPointInPoints.x, -this._anchorPointInPoints.y), this._transform.m);
-            }
-            else
-            {
-                cc.CGAffineToGL(cc.affineTransformTranslate(this.getExternalTransform(), -this._anchorPointInPoints.x, -this._anchorPointInPoints.y), this._transform.m);
-            }
-            this._transformDirty = false;
-        }
-        return this._transform;
-    },
-
-    getNodeToParentAffineTransform : function()
-    {
-        if (this._transformDirty)
-        {
-            var transform = this.getExternalTransform();
-            var scale = 1 / cc.Director.getInstance().getContentScaleFactor();
-            if (scale !== 1)
-            {
-                transform = cc.affineTransformScale(transform, scale, scale);
-            }
-
-            cc.CGAffineToGL(cc.affineTransformTranslate(transform, -this._anchorPointInPoints.x, -this._anchorPointInPoints.y), this._transform.m);
-            this._transformDirty = false;
-        }
-        cc.GLToCGAffine(this._transform.m, this.transform);
-
-        return transform;
-    },*/
+    setAnimationRunning: function () {},
 
     ////////////////
     // Private
@@ -342,7 +306,6 @@ gaf.Object = cc.Node.extend
 
     _processAnimation : function(){},
 
-    _setAnimationRunning: function () {},
 
     _applyState : function(state, parent)
     {
