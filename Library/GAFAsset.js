@@ -408,7 +408,7 @@ gaf.Asset = cc.Class.extend
  */
 gaf.Asset.create = function (gafFilePath, delegate)
 {
-    return new gaf.Asset();
+    return new gaf.Asset(gafFilePath, delegate);
 };
 
 /**
