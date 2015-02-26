@@ -1,7 +1,7 @@
 
 gaf._TimeLineProto = function(asset, animationFrameCount, boundingBox, pivotPoint, id, linkageName)
 {
-    id = typeof id != 'undefined' ? id : gaf.IDNONE;
+    id = typeof id != 'undefined' ? id : 0;
     linkageName = linkageName || "";
 
     this._objects = [];
