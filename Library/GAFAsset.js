@@ -352,6 +352,7 @@ gaf.Asset = cc.Class.extend
         if(Object.keys(this._atlasesToLoad).length === 0)
         {
             this._textureLoaded = true;
+            this.dispatchEvent("load");
         }
     },
 
