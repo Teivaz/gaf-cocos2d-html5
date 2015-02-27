@@ -31,6 +31,7 @@ gaf.Loader = function(){
 
     this.LoadFile = function(filePath, onLoaded){
         var oReq = new XMLHttpRequest();
+        oReq.open("GET", filePath, true);
         var self = this;
         oReq.responseType = "arraybuffer";
         oReq.onload = function(oEvent) {
@@ -39,7 +40,6 @@ gaf.Loader = function(){
             if(onLoaded)
                 onLoaded(gafFile);
         };
-        oReq.open("GET", filePath, true);
         oReq.send();
     };
 
