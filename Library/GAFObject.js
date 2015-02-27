@@ -101,6 +101,13 @@ gaf.Object = cc.Node.extend
     getIsAnimationRunning : function () {return false;},
 
     /**
+     * @method getSequences
+     * @return [string] - list of sequences if has any
+     */
+    getSequences : function(){return [];},
+
+
+    /**
      * @method gotoAndStop
      * @param {uint|String} value - label ot frame number
      * @return {bool}

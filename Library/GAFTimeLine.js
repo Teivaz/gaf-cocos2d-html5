@@ -219,6 +219,10 @@ gaf.TimeLine = gaf.Object.extend
             }
         }
     },
+    getSequences: function()
+    {
+        return this._gafproto.getSequences();
+    },
     playSequence: function (name, looped)
     {
         var s = this.getStartFrame(name);
