@@ -66,8 +66,29 @@ gaf.DataReader.prototype.Float = function() {
 
 gaf.DataReader.prototype.String = function() {
     var strLen = this.Ushort();
+    var from = this.newOffset(strLen);
+    var to = this.getOffset();
 
-    return decodeURIComponent(escape(String.fromCharCode.apply(null, new Uint8Array(this.dataRaw.slice(this.newOffset(strLen), this.getOffset())))));
+    try
+    {
+        var str = this.dataRaw.slice(from, to);
+    }
+    catch(e)
+    {
+        // Internet Explorer 10 T.T
+        if(e.message == "Object doesn't support property or method 'slice'")
+        {
+            str = [];
+            for(var i = from; i < to; ++i)
+                str.push(this.buf.getUint8(i));
+        }
+        else
+        {
+            throw(e);
+        }
+    }
+    return decodeURIComponent(escape(String.fromCharCode.apply(null, new Uint8Array(str))));
+    
 };
 
 gaf.DataReader.prototype.startNestedBuffer = function(length) {
