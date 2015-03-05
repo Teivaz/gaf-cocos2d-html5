@@ -340,12 +340,12 @@ gaf.TimeLine = gaf.Object.extend
     {
         if (!this._animationsSelectorScheduled && val)
         {
-            this.schedule("_processAnimations");
+            this.schedule(this._processAnimations);
             this._animationsSelectorScheduled = true;
         }
         else if (this._animationsSelectorScheduled && !val)
         {
-            this.unschedule("_processAnimations");
+            this.unschedule(this._processAnimations);
             this._animationsSelectorScheduled = false;
         }
     },

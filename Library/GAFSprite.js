@@ -31,7 +31,8 @@ gaf.Sprite = gaf.Object.extend
         //this._sprite.setCascadeOpacityEnabled(true);
         this._sprite.setOpacityModifyRGB(true);
 
-
+        if(cc._renderType === cc._RENDER_TYPE_WEBGL)
+            this._sprite.setBlendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
     },
     
     _applyState : function(state, parent)

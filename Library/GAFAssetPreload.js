@@ -106,6 +106,7 @@ gaf._AssetPreload.prototype.Atlases = function(asset, content, timeLine)
             var atlas = cc.textureCache.getTextureForKey(path);
             if(atlas && atlas.isLoaded())
             {
+                atlas.handleLoadedTexture(true);
                 loaded = true;
                 asset._atlases[atlasId] = atlas;
                 finalizeLoading();
@@ -116,6 +117,7 @@ gaf._AssetPreload.prototype.Atlases = function(asset, content, timeLine)
         if(!loaded)
         {
             var success = function (atlas) {
+                atlas.handleLoadedTexture(true);
                 asset._onAtlasLoaded(atlasId, atlas);
             };
 
